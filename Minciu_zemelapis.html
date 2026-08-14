@@ -4954,6 +4954,211 @@ dz.addEventListener('drop',e=>{
   U$('file').dispatchEvent(new Event('change'));
 });
 
+/* ===== TEKSTAS → MINČIŲ ŽEMĖLAPIS (metodikos variklis) =====
+   Pilna semantinė dekompozicija (ne santrauka — redistribucija), semantinis grupavimas,
+   MECE, salience hierarchija (etiketė = pagrindinė propozicija, pastaba = tik papildoma),
+   radialinė koduotė. Vaidmenys→spalvos: potemė n-tools · pagrindinė mintis n-env ·
+   detalė/citata n-key · išvada n-action. Įvadas ir baigiamoji — atskiros potemės. 7±2. */
+(function(){
+  const CH_PAGE=2800;                       // ~simbolių puslapyje (šaltinio nuorodai)
+  const RE_REF=/\b[A-ZĄČĖĮŠŲŪŽ][a-ząčėįšųūž]{2,}\s+\d+:\d+(?:[–\-]\d+)?/;   // Pradžios 7:11
+  const RE_CONCL=/^\s*(taigi|vadinasi|todėl|tad|apibendrinant|apibendrindami|išvada|galiausiai|pabaigai|matome|akivaizdu|darytina)/i;
+  const RE_END=/(apibendrin|pabaigai|apsvarstėme|aptarėme|baigiam|susumuo|galiausiai|pažad)/i;
+  const RE_INTRO=/(įvad|pradžioje|apsvarstysime|aptarsime|kalbėsime|pristat|šiandien)/i;
+  const STOP=new Set(('ir bet o jei kad tai yra buvo bus taip nes su be į iš už po apie nuo iki per prie kaip kai tik jau dar labai savo jų jis ji jie jos mes jūs aš tu ne nėra gali galima turi turime kuris kuri kurie kurios kurį kurią tas ta tie tos šis ši šie šios to tą tų tam tuo visi visa visos tačiau todėl taigi vadinasi tarp prieš pagal net gal turbūt ką kas kur kada kodėl arba ar nors bei pat tam kartu tada čia ten'
+    ).split(/\s+/));
+  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+  /* sakiniai (nekapojam ties 7:11, psl., pvz.) */
+  function sentences(t){
+    return String(t).replace(/([.!?…])\s+(?=[A-ZĄČĖĮŠŲŪŽ„"])/g,'$1\u0001')
+      .split('\u0001').map(s=>s.trim()).filter(s=>s.length>1);
+  }
+  /* etiketė: pagrindinė propozicija, be jungiamųjų žodžių, natūraliai nukirpta */
+  function makeLabel(s,max){
+    max=max||64;
+    const fin=v=>{ v=String(v||'').replace(/[.,;:\s]+$/,'').trim();
+      if(v&&/[a-ząčėęįšųūž]/.test(v.charAt(0))) v=v.charAt(0).toUpperCase()+v.slice(1);
+      return v; };
+    let x=String(s||'').trim().replace(/^[-–—•*·\s]+/,'').replace(/^\d+[.)]\s*/,'')
+      .replace(/^(Taigi|Tačiau|Be to|Todėl|Tad|Kaip|Nes|Ir|Bet|O|Vadinasi|Galiausiai|Matome)[,\s]+/i,'').trim();
+    if(!x) x=String(s||'').trim();
+    if(x.length<=max) return fin(x);
+    const cut=x.slice(0,max+20); let best=-1;
+    [' — ',' – ',' - ','; ',', ',': '].forEach(m=>{const i=cut.lastIndexOf(m); if(i>max*0.42&&i>best) best=i;});
+    if(best>0) return fin(cut.slice(0,best));
+    const sp=cut.lastIndexOf(' ',max);
+    return fin(sp>max*0.5?cut.slice(0,sp):cut.slice(0,max))+'…';
+  }
+  const isQuote=s=>/[„"“][^”"“]{8,}/.test(s)||RE_REF.test(s);
+  function keywords(t){
+    const m=String(t).toLowerCase().match(/[a-ząčėęįšųūž]{5,}/g)||[];
+    const c={}; m.forEach(w=>{ if(!STOP.has(w)) c[w]=(c[w]||0)+1; });
+    return Object.keys(c).sort((a,b)=>c[b]-c[a]).slice(0,6);
+  }
+  /* Antraštė: markdown #, numeruota („1. Ar tvanas įvyko?"), DIDŽIOSIOMIS,
+     arba trumpa savarankiška eilutė BE galinio skyrybos ženklo („Įvadas“, „Baigiamoji dalis“).
+     Klausimas be numerio NĖRA antraštė — tai turinio mintis. */
+  function isHeading(l){
+    if(l.length>92) return false;
+    if(/^#{1,4}\s/.test(l)) return true;
+    if(/^(\d+|[IVXL]+)\s*[.)]\s+\S/.test(l)) return true;
+    const letters=l.replace(/[^A-Za-zĄČĖĘĮŠŲŪŽąčėęįšųūž]/g,'');
+    if(letters.length>2&&letters===letters.toUpperCase()&&l.split(/\s+/).length<=10) return true;
+    if(/[.!?…;:,]$/.test(l)) return false;
+    return /^[A-ZĄČĖĘĮŠŲŪŽ]/.test(l)&&l.split(/\s+/).length<=8&&l.length<=60;
+  }
+
+  window.mmGenerateFromText=function(raw,opt){
+    opt=opt||{};
+    const wantSrc=opt.src!==false, wantLinks=opt.links!==false;
+    const text=String(raw||'').replace(/\r/g,'').trim();
+    if(text.length<40) return false;
+
+    /* --- 1. Blokai: antraštės ir pastraipos (citatos NĖRA pastraipos) --- */
+    const blocks=[]; let off=0, paraNo=0;
+    text.split(/\n\s*\n+/).map(b=>b.trim()).filter(Boolean).forEach(b=>{
+      const lines=b.split(/\n/).map(l=>l.trim()).filter(Boolean);
+      let head=null, body=lines;
+      if(lines.length&&isHeading(lines[0])&&(lines.length>1||b.length<92)){ head=lines[0]; body=lines.slice(1); }
+      if(head) blocks.push({t:'h',x:head.replace(/^#{1,4}\s*/,''),pg:Math.floor(off/CH_PAGE)+1,pr:paraNo});
+      const rest=body.join(' ').trim();
+      if(rest&&rest.length>=12){
+        const quote=isQuote(rest)&&rest.length<340&&!/\.\s+\S+\s+\S+\s+\S+\s+\S+\s+\S+\./.test(rest);
+        if(!quote) paraNo++;
+        blocks.push({t:quote?'q':'p',x:rest,pg:Math.floor(off/CH_PAGE)+1,pr:quote?paraNo:paraNo});
+      }
+      off+=b.length+2;
+    });
+    if(!blocks.length) return false;
+
+    /* --- 2. Centrinė tema (pirmas blokas SUVARTOJAMAS, kad nesidubliuotų) --- */
+    let title='';
+    if(blocks.length>1&&(blocks[0].t==='h'||(blocks[0].x.length<=95&&sentences(blocks[0].x).length<=1))){
+      title=makeLabel(blocks[0].x,62); blocks.shift();
+    } else {
+      title=makeLabel(sentences(blocks[0].x)[0]||blocks[0].x,58);
+    }
+    title=title.replace(/^#{1,4}\s*/,'').replace(/^(\d+|[IVXL]+)\s*[.)]\s*/,'').trim()||'Minčių žemėlapis';
+
+    /* --- 3. Potemės: pagal antraštes; be jų — semantiniai chunk'ai --- */
+    let secs=[];
+    if(blocks.some(b=>b.t==='h')){
+      let cur=null;
+      blocks.forEach(b=>{
+        if(b.t==='h'){ cur={name:b.x,items:[]}; secs.push(cur); }
+        else { if(!cur){ cur={name:'Įvadas',items:[]}; secs.push(cur); } cur.items.push(b); }
+      });
+    } else {
+      const items=blocks.filter(b=>b.t!=='h');
+      const per=Math.max(3,Math.ceil(items.length/Math.min(6,Math.max(2,Math.round(items.length/4)))));
+      for(let i=0;i<items.length;i+=per){
+        const grp=items.slice(i,i+per);
+        secs.push({name:makeLabel(sentences(grp[0].x)[0]||grp[0].x,52),items:grp});
+      }
+    }
+    secs=secs.filter(s=>s.items.length);
+    if(!secs.length) return false;
+
+    /* metodika: įvadas ir baigiamoji — atskiros, savarankiškos potemės */
+    if(secs.length>1){
+      const f=secs[0], l=secs[secs.length-1];
+      if(!/įvad/i.test(f.name)&&RE_INTRO.test(f.items.map(i=>i.x).join(' ').slice(0,300))) f.name='Įvadas';
+      const lt=l.items.map(i=>i.x).join(' ');
+      if(!/baigiam|pabaig/i.test(l.name)&&RE_END.test(lt.slice(0,400))) l.name='Baigiamoji dalis';
+    }
+
+    /* --- 4. Kortelės --- */
+    let uid=0; const nid=()=>'g'+(++uid);
+    const srcLine=b=>wantSrc?'<p class="src">📄 Psl. '+b.pg+', '+Math.max(1,b.pr)+' pastr.</p>':'';
+    const noteOf=(bodyHtml,b)=>{ const s=srcLine(b); return (bodyHtml||s)?(bodyHtml||'')+s:''; };
+
+    function cardFrom(b,role){
+      const ss=sentences(b.x);
+      let label, body='';
+      if(b.t==='q'||isQuote(ss[0]||'')){
+        /* citata + jos paaiškinimas = VIENA kortelė */
+        const q=ss[0]||b.x, rest=ss.slice(1).join(' ');
+        const ref=(q.match(RE_REF)||[])[0];
+        const gist=rest?makeLabel(rest,42):makeLabel(q.replace(/[„"“”]/g,''),46);
+        label=ref?ref+' — '+gist:makeLabel(q.replace(/[„"“”]/g,''),58);
+        body='<p><i>'+esc(q)+'</i></p>'+(rest?'<p>'+esc(rest)+'</p>':'');
+        role=role||'n-key';
+      } else {
+        label=makeLabel(ss[0]||b.x,62);
+        const rest=ss.slice(1);
+        if(rest.length) body='<p>'+esc(rest.join(' '))+'</p>';
+        if(!role) role=RE_CONCL.test(b.x)?'n-action':'n-env';
+      }
+      if(!label||label.length<3) label=makeLabel(b.x,62)||b.x.slice(0,58);
+      return {id:nid(),label:label,cls:role,note:noteOf(body,b),children:[],_kw:keywords(b.x)};
+    }
+
+    const root={id:'root',label:title,cls:'n-center',
+      note:'<p>Žemėlapis sugeneruotas iš pateikto teksto. Kiekviena mintis — savo kortelėje, su nuoroda į šaltinį.</p>',
+      children:[]};
+
+    secs.forEach(sec=>{
+      const node={id:nid(),label:makeLabel(sec.name,58),cls:'n-tools',note:'',children:[],_kw:keywords(sec.items.map(i=>i.x).join(' '))};
+      let last=null;
+      sec.items.forEach(b=>{
+        if(b.t==='q'&&last){ last.children.push(cardFrom(b,'n-key')); return; }  // citata → detalė prie minties
+        const c=cardFrom(b);
+        /* ilgą pastraipą skaidom: papildomos propozicijos → detalės (n-key) */
+        const ss=sentences(b.x);
+        if(c.cls!=='n-key'&&ss.length>3){
+          const extra=ss.slice(1).filter(s=>s.length>45);
+          if(extra.length>=2){
+            c.note=noteOf('',b);
+            extra.slice(0,5).forEach(s=>c.children.push({id:nid(),label:makeLabel(s,58),
+              cls:RE_CONCL.test(s)?'n-action':'n-key',note:noteOf('<p>'+esc(s)+'</p>',b),children:[]}));
+          }
+        }
+        node.children.push(c); last=c;
+      });
+      /* 7±2: tik kai TIKRAI daug — grupuojam pagal bendrą temą (nė viena mintis neprarandama;
+         grupės pavadinimas kyla iš jos vaikų raktažodžių, ne iš pirmo vaiko turinio) */
+      if(node.children.length>10){
+        const out=[], per=5;
+        for(let i=0;i<node.children.length;i+=per){
+          const chunk=node.children.slice(i,i+per);
+          const kw=[]; chunk.forEach(c=>(c._kw||[]).forEach(k=>{ if(kw.indexOf(k)<0&&kw.length<2) kw.push(k); }));
+          const lab=kw.length?kw.join(', ').replace(/^./,m=>m.toUpperCase()):'Dalis '+(out.length+1);
+          out.push({id:nid(),label:lab,cls:'n-keygrp',note:'',children:chunk,_kw:kw});
+        }
+        node.children=out;
+      }
+      root.children.push(node);
+    });
+
+    /* --- 5. Sąsajos tarp potemių (bendri raktažodžiai) --- */
+    if(wantLinks&&root.children.length>1){
+      root.children.forEach(a=>{
+        const hit=root.children.find(b=>b!==a&&b._kw&&a._kw&&b._kw.some(k=>a._kw.indexOf(k)>=0));
+        if(hit) a.note=(a.note||'')+'<p>↳ Susiję: „'+esc(hit.label)+'"</p>';
+      });
+    }
+
+    /* --- 6. Švarus pradinis vaizdas: gilesnės grupės suskleistos --- */
+    (function collapse(n,d){ if(d>=2&&n.children&&n.children.length) n._c=true;
+      (n.children||[]).forEach(c=>collapse(c,d+1)); })(root,0);
+    (function clean(n){ delete n._kw; (n.children||[]).forEach(clean); })(root);
+
+    /* --- 7. Įkeliam --- */
+    Object.keys(DATA).forEach(k=>delete DATA[k]); Object.assign(DATA,root);
+    Object.keys(OBJ).forEach(k=>delete OBJ[k]);
+    (function idx(n,p){ n._p=p; OBJ[n.id]=n; (n.children||[]).forEach(c=>idx(c,n)); })(DATA,null);
+    try{ manual={}; }catch(e){}
+    try{ renumberAll(); }catch(e){}
+    if(window.hideUpload) window.hideUpload();
+    render(); center(); try{ userZoomed=false; }catch(e){}
+    setTimeout(()=>{ try{ fitAll(true); }catch(e){} },80);
+    try{ if(typeof refreshExpandLabel==='function') refreshExpandLabel(); }catch(e){}
+    try{ showToast('Žemėlapis sugeneruotas iš teksto'); }catch(e){}
+    return true;
+  };
+})();
+
 /* ===== SUKŪRIMAS ===== */
 U$('go').onclick=async()=>{
   const pane=document.querySelector('.pane.on').id;
@@ -4996,9 +5201,17 @@ U$('go').onclick=async()=>{
   setTimeout(()=>{
     clearInterval(timer);
     U$('busy').classList.remove('on');
-    // kol kas atidarom pavyzdinį žemėlapį
-    hideUpload();
-  },2600);
+    // GENERUOJAM žemėlapį iš pateikto teksto (pagal metodiką), o ne rodom pavyzdį
+    try{
+      const ok=window.mmGenerateFromText(source,{
+        src:U$('optSrc').checked, links:U$('optLinks').checked
+      });
+      if(!ok) alert('Nepavyko atpažinti struktūros. Įklijuok bent kelias pastraipas teksto — geriausiai su antraštėmis ir skyriais.');
+    }catch(err){
+      console.error(err);
+      alert('Klaida generuojant žemėlapį: '+(err&&err.message?err.message:err));
+    }
+  },1600);
 };
 
 const smp=U$('openSample'); if(smp) smp.onclick=()=>{ hideUpload(); };
@@ -5073,6 +5286,9 @@ updateState();
 
   // ekrano rodymas / slėpimas
   window.hideUpload=function(){
+    // BŪTINA nuimti ir 'mm-show-upload' — CSS `html.mm-show-upload #uploadScreen{display:block!important}`
+    // kitaip perdengia .hidden ir kūrimo ekranas lieka matomas virš žemėlapio.
+    document.documentElement.classList.remove('mm-show-upload');
     document.getElementById('uploadScreen').classList.add('hidden');
     setTimeout(()=>{ if(typeof center==='function') center(); },120);
   };
