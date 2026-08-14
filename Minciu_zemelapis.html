@@ -74,6 +74,8 @@
   body[data-theme="night"] .n-tools{ background:#3f382e; color:#f7efdc }
   body[data-theme="night"] .n-key{ background:#f5efe0; color:#1a1410; border-color:#4a4136 }
   body[data-theme="night"] .n-action{ background:#f5c93a; color:#241a04; border-color:#2e261b }
+  body[data-theme="night"] .n-verse{ background:#ded2ee; color:#241436; border-color:#4a4136 }
+  body[data-theme="night"] .n-example{ background:#f0e2c0; color:#3d2c08; border-color:#4a4136 }
   body[data-theme="night"] #notes, body[data-theme="night"] #editor{
     background:var(--note); border:2px solid #3b3226;
     box-shadow:6px 7px 0 rgba(30,24,16,.45);
@@ -140,6 +142,10 @@
     margin:0; order:0; font-size:.4em; min-width:2.1em; height:2.1em; padding:0 .55em; border-radius:.62em;
     background:transparent; box-shadow:inset 0 0 0 1.5px currentColor; color:#EAF2F8; opacity:.72; letter-spacing:.6px }
   body[data-theme="cosmos"] .n-action::before{ content:"" }
+  body[data-theme="cosmos"] .n-verse{ border-color:rgba(167,139,250,.85); box-shadow:0 0 14px rgba(167,139,250,.22) }
+  body[data-theme="cosmos"] .n-example{ border-color:rgba(245,197,66,.85); box-shadow:0 0 14px rgba(245,197,66,.20) }
+  body[data-theme="cosmos"] .n-verse::before{ content:"❝";margin-right:4px;opacity:.8;color:#C4B5FD }
+  body[data-theme="cosmos"] .n-example::before{ content:"❖";margin-right:4px;opacity:.85;color:#F5C542 }
   body[data-theme="cosmos"] #notes{ background:rgba(10,15,24,.92); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); box-shadow:-8px 0 30px rgba(0,0,0,.5) }
   body[data-theme="cosmos"] #nHead{ border-bottom:1px solid #223046 }
   body[data-theme="cosmos"] #nTitle{ color:#EAF2F8 }
@@ -224,6 +230,8 @@
   body[data-theme="street"] .n-key{ background:#E9E2D2; color:#221E19; border-color:#14110E }
   body[data-theme="street"] .n-keygrp{ background:#D8CFBB; color:#221E19; border-color:#14110E }
   body[data-theme="street"] .n-action{ background:#1F8A3D; color:#fff; border-color:#14110E }
+  body[data-theme="street"] .n-verse{ background:#8B5CF6; color:#fff; border-color:#14110E }
+  body[data-theme="street"] .n-example{ background:#F5C518; color:#141210; border-color:#14110E }
   body[data-theme="street"] #bar #title{ background:rgba(20,17,13,.92); border:2px solid #14110E; color:#F5F0E6 }
   body[data-theme="street"] #title small{ color:#B9AE9C }
   body[data-theme="street"] .btn{ background:rgba(20,17,13,.92); border:2px solid #14110E; color:#F5F0E6 }
@@ -316,6 +324,12 @@
   body[data-theme="paveikslas"] .n-action{ color:#F4F1E0; background-image:
       repeating-linear-gradient(105deg, rgba(14,20,8,.16) 0px, rgba(14,20,8,.16) 1px, transparent 1px, transparent 8px),
       linear-gradient(160deg,#61762F,#42541F); }
+  body[data-theme="paveikslas"] .n-verse{ color:#F1E7FF; border-color:#5B4478; background-image:
+      repeating-linear-gradient(105deg, rgba(20,10,35,.16) 0px, rgba(20,10,35,.16) 1px, transparent 1px, transparent 8px),
+      linear-gradient(160deg,#6B4E96,#452F6B); }
+  body[data-theme="paveikslas"] .n-example{ color:#2A2010; border-color:#8A6B2E; background-image:
+      repeating-linear-gradient(105deg, rgba(96,70,20,.14) 0px, rgba(96,70,20,.14) 1px, transparent 1px, transparent 9px),
+      linear-gradient(160deg,#EBCF92,#D4B063); }
   body[data-theme="paveikslas"] #bar #title, body[data-theme="paveikslas"] .btn{
     color:#2A2317; border:2px solid #4A4028;
     background-color:#E9DBB9;
@@ -463,6 +477,13 @@
   .n-key{background:#eef1f6;color:#39435a;font-size:13px;border-color:#c2cbda}
   .n-keygrp{background:#dfe4ec;color:#39435a;font-size:13.5px;border-color:#c2cbda}
   .n-action{background:#e3f3f0;color:var(--action);font-size:13px;border-color:var(--action)}
+  /* ===== NAUJI VAIDMENYS ===== */
+  /* Rašto eilutė — citata iš Šventojo Rašto (violetinė) */
+  .n-verse{background:#EFE7FB;color:#43277F;font-size:13px;border-color:#8B6BD4}
+  .n-verse::before{content:"❝";font-weight:800;margin-right:3px;opacity:.7}
+  /* Pavyzdys / iliustracija — mintį paaiškinantis pavyzdys (gintarinė) */
+  .n-example{background:#FBF0DA;color:#63430D;font-size:13px;border-color:#D9A441}
+  .n-example::before{content:"❖";font-weight:700;margin-right:4px;opacity:.75}
   .n-action::before{content:"→";font-weight:800;margin-right:2px}
   /* ===== VIENODA GEOMETRIJA IR TIPOGRAFIJA VISOMS TEMOMS =====
      Temos keičia tik spalvas, faktūras ir apvadus; kortelių bei šriftų dydžiai
@@ -881,8 +902,9 @@
   .sw{width:13px;height:13px;border-radius:4px;flex:none;border:2px solid}
   #hint{position:fixed;right:14px;bottom:14px;z-index:15;color:var(--muted);font-size:11px;
     background:rgba(255,255,255,.8);border:1px solid #e3e8ee;border-radius:8px;padding:6px 10px}
-  #legend,#hint,#backToUpload{display:none!important}
-  @media(max-width:640px){#legend{display:none}#title small{display:none}}
+  /* #legend nebeslepiamas — jį pakeitė nauja spalvų legenda (žr. „SPALVŲ LEGENDA (premium)") */
+  #hint,#backToUpload{display:none!important}
+  @media(max-width:640px){#title small{display:none}}
   #editor{position:fixed;right:16px;bottom:16px;width:290px;z-index:60;background:#fff;
     border:1px solid #dde3ea;border-radius:12px;box-shadow:0 8px 30px rgba(20,30,55,.18);
     transform:translateY(140%);transition:transform .25s;overflow:hidden}
@@ -1578,6 +1600,73 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
   font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5D7387;transition:color .18s ease}
 .exCancel:hover{color:#EAF2F8}
 
+
+/* ===== SPALVŲ LEGENDA (premium) ===== */
+#legend{position:fixed;left:18px;bottom:18px;z-index:30;display:block;
+  min-width:212px;max-width:262px;padding:0;border-radius:16px;overflow:hidden;
+  background:rgba(255,255,255,.93);
+  -webkit-backdrop-filter:blur(18px) saturate(1.5);backdrop-filter:blur(18px) saturate(1.5);
+  border:1px solid rgba(18,28,48,.10);
+  box-shadow:0 12px 34px -10px rgba(16,24,40,.20),0 2px 6px rgba(16,24,40,.06),
+             inset 0 1px 0 rgba(255,255,255,.7);
+  font-family:"Segoe UI",system-ui,-apple-system,sans-serif;
+  transition:box-shadow .2s ease}
+#legend:hover{box-shadow:0 16px 44px -10px rgba(16,24,40,.26),0 2px 6px rgba(16,24,40,.08),
+             inset 0 1px 0 rgba(255,255,255,.7)}
+#legend .lgHead{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:11px 14px 9px;cursor:pointer;user-select:none;
+  border-bottom:1px solid rgba(18,28,48,.07)}
+#legend .lgTitle{font-size:10px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;
+  color:#6B7484;white-space:nowrap}
+#legend .lgChev{width:14px;height:14px;flex:none;color:#9AA3B2;transition:transform .22s ease}
+#legend.lgOff .lgChev{transform:rotate(-90deg)}
+#legend.lgOff .lgWrap{display:none}
+#legend.lgOff .lgHead{border-bottom:none}
+#legend .lgWrap{padding:9px 14px 12px}
+#legend .lgRow{display:flex;align-items:center;gap:10px;padding:4px 0;line-height:1.25}
+#legend .lgSw{width:15px;height:15px;flex:none;border-radius:5px;border:1.6px solid;
+  box-shadow:0 1px 2px rgba(16,24,40,.10)}
+#legend .lgSw.rnd{border-radius:50%}
+#legend .lgTx{font-size:12px;font-weight:600;color:#22293A;letter-spacing:-.1px}
+#legend .lgN{margin-left:auto;font-size:10.5px;font-weight:700;color:#98A1B0;
+  font-variant-numeric:tabular-nums}
+#legend .lgSep{height:1px;background:rgba(18,28,48,.07);margin:9px 0 8px}
+#legend .lgMark{display:flex;align-items:center;gap:9px;padding:2.5px 0;font-size:11px;color:#6B7484}
+#legend .lgMark b{display:inline-flex;align-items:center;justify-content:center;
+  min-width:19px;height:19px;border-radius:6px;background:rgba(18,28,48,.06);
+  font-size:11px;font-weight:800;color:#4A5468;flex:none}
+#legend .lgNote{margin-top:9px;padding:8px 10px;border-radius:9px;font-size:11px;line-height:1.45;
+  background:rgba(46,158,143,.10);color:#1F6B60;border-left:2.5px solid #2E9E8F}
+/* tamsios temos */
+body[data-theme="cosmos"] #legend,body[data-theme="street"] #legend,body[data-theme="night"] #legend,
+body[data-theme="paveikslas"] #legend{display:block}
+body[data-theme="cosmos"] #legend{background:rgba(11,17,27,.86);border-color:rgba(140,180,220,.18);
+  box-shadow:0 14px 40px -10px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.06)}
+body[data-theme="cosmos"] #legend .lgHead{border-bottom-color:rgba(140,180,220,.14)}
+body[data-theme="cosmos"] #legend .lgTitle{color:#8FA3B8}
+body[data-theme="cosmos"] #legend .lgTx{color:#E4ECF5}
+body[data-theme="cosmos"] #legend .lgN{color:#7B8798}
+body[data-theme="cosmos"] #legend .lgSep{background:rgba(140,180,220,.14)}
+body[data-theme="cosmos"] #legend .lgMark{color:#93A3B6}
+body[data-theme="cosmos"] #legend .lgMark b{background:rgba(160,190,225,.12);color:#C6D3E2}
+body[data-theme="night"] #legend{background:rgba(232,223,200,.95);border-color:#3b3226;border-radius:8px;
+  box-shadow:5px 6px 0 rgba(30,24,16,.45)}
+body[data-theme="night"] #legend .lgTitle{color:#5a4d3c}
+body[data-theme="night"] #legend .lgTx{color:#241c14}
+body[data-theme="street"] #legend{background:rgba(20,17,13,.94);border:2px solid #14110E;border-radius:10px}
+body[data-theme="street"] #legend .lgTitle{color:#B9AE9C}
+body[data-theme="street"] #legend .lgTx{color:#F5F0E6}
+body[data-theme="street"] #legend .lgN{color:#8E8474}
+body[data-theme="street"] #legend .lgSep{background:rgba(245,240,230,.16)}
+body[data-theme="street"] #legend .lgMark{color:#B9AE9C}
+body[data-theme="street"] #legend .lgMark b{background:rgba(245,240,230,.12);color:#F5F0E6}
+body[data-theme="paveikslas"] #legend{background:#E9DBB9;border:2px solid #4A4028;border-radius:10px}
+body[data-theme="paveikslas"] #legend .lgTitle{color:#6E5F3F}
+body[data-theme="paveikslas"] #legend .lgTx{color:#2A2317}
+body[data-theme="paveikslas"] #legend .lgSep{background:rgba(74,64,40,.20)}
+body[data-theme="paveikslas"] #legend .lgMark{color:#6E5F3F}
+@media(max-width:760px){#legend{display:none!important}}
+body.presenting #legend{opacity:0;pointer-events:none}
 </style>
 </head>
 <body>
@@ -2076,17 +2165,7 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
   </div>
 </div>
 
-<div id="legend">
-  <b>Spalvos</b>
-  <div class="lg"><span class="sw" style="background:var(--center);border-color:var(--center)"></span> Centrinė tema</div>
-  <div class="lg"><span class="sw" style="background:#3B4A6B;border-color:#3B4A6B"></span> Verslo šaka</div>
-  <div class="lg"><span class="sw" style="background:var(--tools);border-color:var(--tools)"></span> Įrankiai (grupė)</div>
-  <div class="lg"><span class="sw" style="background:#eef1f6;border-color:#c2cbda"></span> Įrankis / raktas</div>
-  <div class="lg"><span class="sw" style="background:#e3f3f0;border-color:var(--action)"></span> → Veiksmas</div>
-  <div class="lg" style="margin-top:6px;color:var(--muted)">📋 = yra užrašinė su detalėmis</div>
-  <div class="lg"><span class="step" style="width:17px;height:17px;font-size:10px">1</span> = veiksmų eilės numeris</div>
-  <div class="lg"><span class="tsbadge" style="background:rgba(0,0,0,.12)">1:51</span> = vieta video įraše</div>
-</div>
+<div id="legend"><div id="legendBody"></div></div>
 <div id="hint">Tempk = perkelti · dešinys paspaudimas = keisti spalvą/tekstą · ratukas = mastelis</div>
 
 <!-- ===== PERŽIŪROS REŽIMAS ===== -->
@@ -2561,31 +2640,31 @@ const THEMES = {
   standard: {
     name:"Standartinė",
     colorOf:{ "n-center":"#2B2D6E","n-theme":"#3B4A6B","n-tools":"#6C7A89","n-claude":"#A6C34C","n-composio":"#4A78D6",
-      "n-trigger":"#E8A33D","n-env":"#E8615D","n-deploy":"#7E57C2","n-skill":"#26A69A","n-key":"#8E9BAE","n-keygrp":"#8E9BAE","n-action":"#2E9E8F"},
+      "n-trigger":"#E8A33D","n-env":"#E8615D","n-deploy":"#7E57C2","n-skill":"#26A69A","n-key":"#8E9BAE","n-keygrp":"#8E9BAE","n-action":"#2E9E8F","n-verse":"#7E57C2","n-example":"#C9902B"},
     lineWidth:2.2, lineOpacity:.55, lineDash:null
   },
   night: {
     name:"Naktinis miestas",
     colorOf:{ "n-center":"#8f231c","n-theme":"#4a4136","n-tools":"#4a4136","n-claude":"#8a7a2e","n-composio":"#3f5a7a",
-      "n-trigger":"#f2c230","n-env":"#c1352b","n-deploy":"#5c4a6b","n-skill":"#3f6b5f","n-key":"#5a4d3c","n-keygrp":"#5a4d3c","n-action":"#b8891a"},
+      "n-trigger":"#f2c230","n-env":"#c1352b","n-deploy":"#5c4a6b","n-skill":"#3f6b5f","n-key":"#5a4d3c","n-keygrp":"#5a4d3c","n-action":"#b8891a","n-verse":"#5c4a6b","n-example":"#b8891a"},
     lineWidth:1.7, lineOpacity:.85, lineDash:"4 3"
   },
   cosmos: {
     name:"Cosmos",
     colorOf:{ "n-center":"#7DE3FF","n-theme":"#6C82A3","n-tools":"#6C82A3","n-claude":"#A6C34C","n-composio":"#4A78D6",
-      "n-trigger":"#E8A33D","n-env":"#E07856","n-deploy":"#7E57C2","n-skill":"#26A69A","n-key":"#7C93AE","n-keygrp":"#7C93AE","n-action":"#4FBE83"},
+      "n-trigger":"#E8A33D","n-env":"#E07856","n-deploy":"#7E57C2","n-skill":"#26A69A","n-key":"#7C93AE","n-keygrp":"#7C93AE","n-action":"#4FBE83","n-verse":"#A78BFA","n-example":"#F5C542"},
     lineWidth:2, lineOpacity:.5, lineDash:null
   },
   street: {
     name:"Street Art",
     colorOf:{ "n-center":"#F5C518","n-theme":"#29B6D8","n-tools":"#29B6D8","n-claude":"#A6C34C","n-composio":"#4A78D6",
-      "n-trigger":"#F07818","n-env":"#E0447A","n-deploy":"#9B59B6","n-skill":"#1F8A3D","n-key":"#B9AE9C","n-keygrp":"#B9AE9C","n-action":"#2FA84F"},
+      "n-trigger":"#F07818","n-env":"#E0447A","n-deploy":"#9B59B6","n-skill":"#1F8A3D","n-key":"#B9AE9C","n-keygrp":"#B9AE9C","n-action":"#2FA84F","n-verse":"#8B5CF6","n-example":"#F5C518"},
     lineWidth:2.6, lineOpacity:.85, lineDash:null
   },
   paveikslas: {
     name:"Paveikslas",
     colorOf:{ "n-center":"#C9A86A","n-theme":"#6E938A","n-tools":"#6E938A","n-claude":"#A6C34C","n-composio":"#4A78D6",
-      "n-trigger":"#C9A86A","n-env":"#C05A2B","n-deploy":"#7E57C2","n-skill":"#55682C","n-key":"#B7A98A","n-keygrp":"#B7A98A","n-action":"#7C9440"},
+      "n-trigger":"#C9A86A","n-env":"#C05A2B","n-deploy":"#7E57C2","n-skill":"#55682C","n-key":"#B7A98A","n-keygrp":"#B7A98A","n-action":"#7C9440","n-verse":"#6B4E96","n-example":"#C9A86A"},
     lineWidth:2.6, lineOpacity:.88, lineDash:"6 4"
   }
 };
@@ -5001,6 +5080,13 @@ dz.addEventListener('drop',e=>{
     return out;
   }
   const isQuote=s=>/[„"“][^”"“]{8,}/.test(s)||RE_REF.test(s);
+  /* naujų vaidmenų atpažinimas: rašto eilutė ir pavyzdys/iliustracija */
+  const RE_EXAMPLE=/\b(pavyzd(ys|žiui|į)|iliustrac|tarsi|panašiai kaip|įsivaizduok|palygin|analogij)/i;
+  function roleOf(text, fallback){
+    if(RE_REF.test(text)) return 'n-verse';              // Šventojo Rašto eilutė
+    if(RE_EXAMPLE.test(text)) return 'n-example';        // pavyzdys / iliustracija
+    return fallback;
+  }
   function keywords(t){
     const m=String(t).toLowerCase().match(/[a-ząčėęįšųūž]{5,}/g)||[];
     const c={}; m.forEach(w=>{ if(!STOP.has(w)) c[w]=(c[w]||0)+1; });
@@ -5124,12 +5210,12 @@ dz.addEventListener('drop',e=>{
         const quote=(b.t==='q');
         if(quote&&last){                                   // citata → detalė prie ankstesnės minties
           const ref=(b.x.match(RE_REF)||[])[0];
-          const c={id:nid(),label:ref?ref:shortLabel(b.x,8),cls:'n-key',
+          const c={id:nid(),label:ref?ref:shortLabel(b.x,8),cls:roleOf(b.x,'n-key'),
             note:'<p><i>'+esc(b.x)+'</i></p>'+srcOf(b),children:[]};
           last.children.push(reg(c,b.x)); return;
         }
         if(ss.length<=1){                                   // vienas sakinys = viena kortelė
-          const c={id:nid(),label:shortLabel(b.x,8),cls:RE_CONCL.test(b.x)?'n-action':'n-env',
+          const c={id:nid(),label:shortLabel(b.x,8),cls:RE_CONCL.test(b.x)?'n-action':roleOf(b.x,'n-env'),
             note:(quote?'<p><i>'+esc(b.x)+'</i></p>':'<p>'+esc(b.x)+'</p>')+srcOf(b),children:[],_kw:keywords(b.x)};
           secNode.children.push(reg(c,b.x)); last=c; return;
         }
@@ -5140,7 +5226,7 @@ dz.addEventListener('drop',e=>{
           note:srcOf(b),children:[],_kw:keywords(b.x)};
         ss.forEach(s=>{
           const q2=isQuote(s);
-          const ch={id:nid(),label:shortLabel(s,8),cls:RE_CONCL.test(s)?'n-action':'n-key',
+          const ch={id:nid(),label:shortLabel(s,8),cls:RE_CONCL.test(s)?'n-action':roleOf(s,'n-key'),
             note:(q2?'<p><i>'+esc(s)+'</i></p>':'<p>'+esc(s)+'</p>')+srcOf(b),children:[]};
           par.children.push(reg(ch,s));
         });
@@ -5703,6 +5789,71 @@ document.addEventListener('change',function(e){
   if(k&&k.trim()){ window.mmSetAIKey(k.trim()); }
   else { t.checked=false; }
 });
+/* ===== SPALVŲ LEGENDA — atvaizduoja TIKRAS temos spalvas ===== */
+(function(){
+  var ROLES=[
+    ['n-center','Centrinė tema',1],
+    ['n-tools','Potemė / skyrius',0],
+    ['n-env','Pagrindinė mintis',0],
+    ['n-verse','Rašto eilutė',0],
+    ['n-example','Pavyzdys / iliustracija',0],
+    ['n-key','Detalė / paaiškinimas',0],
+    ['n-action','Apibendrinimas / išvada',0]
+  ];
+  var GAMA_TXT={cat:'kategoriją',depth:'gylį',polar:'poliariškumą',status:'būseną',min:'minimalizmą'};
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+  window.renderLegend=function(){
+    var L=document.getElementById('legend'), B=document.getElementById('legendBody');
+    if(!L||!B) return;
+    // kiek kurio vaidmens kortelių šiame žemėlapyje
+    var cnt={}; try{ for(var id in OBJ){ var c=OBJ[id].cls; cnt[c]=(cnt[c]||0)+1; } }catch(e){}
+    // zondas — nuskaitom TIKRAS temos spalvas iš CSS
+    var probe=document.createElement('div');
+    probe.style.cssText='position:absolute;left:-9999px;top:-9999px;visibility:hidden;pointer-events:none';
+    document.body.appendChild(probe);
+    var rows='';
+    ROLES.forEach(function(r){
+      var n=cnt[r[0]]||0;
+      if(!n && r[0]!=='n-verse' && r[0]!=='n-example') { /* rodom visada pagrindinius */ }
+      var el=document.createElement('div'); el.className='node '+r[0]; probe.appendChild(el);
+      var cs=getComputedStyle(el);
+      var bgImg=cs.backgroundImage, bg=(bgImg&&bgImg!=='none')?bgImg:cs.backgroundColor;
+      var bd=cs.borderTopColor;
+      if(!bd||bd==='rgba(0, 0, 0, 0)') bd=cs.backgroundColor;
+      rows+='<div class="lgRow"><span class="lgSw'+(r[2]?' rnd':'')+'" style="background:'+bg+';border-color:'+bd+'"></span>'
+          + '<span class="lgTx">'+esc(r[1])+'</span>'
+          + (n?'<span class="lgN">'+n+'</span>':'')+'</div>';
+    });
+    probe.remove();
+    var note='';
+    try{ if(typeof curGama!=='undefined' && curGama!=='tema')
+      note='<div class="lgNote">Įjungta spalvų gama — kortelės nuspalvintos pagal '
+          +(GAMA_TXT[curGama]||'pasirinktą principą')+', todėl vaidmenų spalvos laikinai nerodomos kortelėse.</div>'; }catch(e){}
+    B.innerHTML='<div class="lgHead"><span class="lgTitle">Spalvų reikšmės</span>'
+      +'<svg class="lgChev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" '
+      +'stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>'
+      +'<div class="lgWrap">'+rows
+      +'<div class="lgSep"></div>'
+      +'<div class="lgMark"><b>📋</b> užrašinė su tekstu</div>'
+      +'<div class="lgMark"><b>N</b> suskleistų kortelių skaičius</div>'
+      +'<div class="lgMark"><b>I</b> skaitymo eilės numeris</div>'
+      +note+'</div>';
+    var hd=B.querySelector('.lgHead');
+    if(hd) hd.onclick=function(){ L.classList.toggle('lgOff');
+      try{ localStorage.setItem('mm_leg', L.classList.contains('lgOff')?'0':'1'); }catch(e){} };
+    try{ if(localStorage.getItem('mm_leg')==='0') L.classList.add('lgOff'); }catch(e){}
+  };
+  // perpiešiam po temos / gamos / žemėlapio pakeitimo
+  var boot=function(){ try{ renderLegend(); }catch(e){} };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot);
+  else setTimeout(boot,0);
+  ['applyTheme','applyGamaSel','render'].forEach(function(fn){
+    try{
+      if(typeof window[fn]==='function'){ var o=window[fn];
+        window[fn]=function(){ var r=o.apply(this,arguments); try{ renderLegend(); }catch(e){} return r; }; }
+    }catch(e){}
+  });
+})();
 </script>
 </body>
 </html>
