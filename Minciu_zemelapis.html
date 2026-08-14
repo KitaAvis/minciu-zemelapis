@@ -5774,41 +5774,156 @@ document.addEventListener('change',function(e){
   else { t.checked=false; }
 });
 
-/* ═══════════ TEKSTO ELEMENTŲ TIPAI (tik atpažinimui — filtrams) ═══════════
-   Spalvas lemia aplinkos tema ir pasirinkta spalvų gama. Šie tipai naudojami
-   TIK paieškos filtrams: leidžia išrinkti visas rašto eilutes, pavyzdžius ir t. t. */
+/* ═══════════ TEKSTO ELEMENTŲ TIPAI (atpažinimui — paieškos filtrams) ═══════════
+   Spalvas lemia aplinkos tema ir spalvų gama. Tipas atsako į vieną klausimą:
+   KĄ ŠI KORTELĖ DARO tekste? — ne „kokių žodžių joje yra".
+
+   Vaidmenys pagal argumento sandarą:
+     rašto eilutė / citata — autoritetas, kuriuo remiamasi
+     duomenys / faktai     — nepriklausomai tikrinamas pagrindas (matai, datos, radiniai)
+     pavyzdys              — konkretus atvejis ar analogija, paaiškinanti abstrakciją
+     klausimas             — nukreipia dėmesį, atveria temą
+     patarimas / veiksmas  — ką daryti (liepiamoji, skatinamoji forma)
+     apibendrinimas        — teiginys, IŠVEDAMAS iš to, kas pasakyta anksčiau     */
 var MM_ROLES = [
-  /* cls,          pavadinimas,                 —,  ženklas, atpažinimas tekste */
-  ['n-verse',     'Rašto eilutės',             268, '❝', /\b[A-ZĄČĖĮŠŲŪŽ][a-ząčėįšųūž]{2,}\s+\d+:\d+/],
-  ['n-quote',     'Citatos',                   196, '❞', /[„"“][^”"“]{12,}[”"“]\s*\(?[A-ZĄČĖĮŠŲŪŽ]/],
-  ['n-example',   'Pavyzdžiai / iliustracijos', 38, '❖', /\b(pavyzd(ys|žiui|į)|iliustrac|tarsi|panašiai kaip|įsivaizduok|palygin|analogij)/i],
-  ['n-data',      'Duomenys / faktai',          80, '#', /\d{2,}\s*(m\.|metų|km|kg|tonų|proc|%|kubinių|metrų)|\b\d{4}\s*m\./],
-  ['n-question',  'Klausimai',                 325, '?', /\?\s*$/],
-  ['n-step',      'Patarimai / veiksmai',      128, '✓', /\b(patarimas|stenkis|pasikalbėk|vesk\b|melskis|klauskime|neleiskime|iškelkime|skelbkime|darykime)/i],
-  ['n-action',    'Apibendrinimai / išvados',  168, '→', /^\s*(taigi|vadinasi|todėl|tad|apibendrin|išvada|galiausiai|visa tai moko)/i]
+  /* cls,          pavadinimas,                 tonas, ženklas */
+  ['n-verse',     'Rašto eilutės',             268, '❝'],
+  ['n-quote',     'Citatos',                   196, '❞'],
+  ['n-example',   'Pavyzdžiai / iliustracijos', 38, '❖'],
+  ['n-data',      'Duomenys / faktai',          80, '#'],
+  ['n-question',  'Klausimai',                 325, '?'],
+  ['n-step',      'Patarimai / veiksmai',      128, '✓'],
+  ['n-action',    'Apibendrinimai / išvados',  168, '→']
 ];
 var MM_BUILTIN = {'n-center':1,'n-tools':1,'n-env':1,'n-key':1,'n-action':1};
-/* kuriose kortelėse leidžiamas automatinis atpažinimas iš turinio */
-var MM_DETECTABLE = {'n-key':1,'n-keygrp':1};
-function mmIsStruct(cls){ return !!cls && MM_ROLES.some(function(r){ return r[0]===cls; }); }
-function mmDetectRole(text, fallback){
-  var t=String(text||'');
-  for(var i=0;i<MM_ROLES.length;i++){ var r=MM_ROLES[i]; if(!r[4]) continue; if(r[4].test(t)) return r[0]; }
-  return fallback;
+/* Automatinis atpažinimas taikomas TIK turinio kortelėms. Centras ir potemės
+   yra sandaros mazgai — jų „tipas" būtų nuoroda į skyrių, ne į teksto elementą. */
+var MM_DETECTABLE = {'n-key':1,'n-keygrp':1,'n-env':1};
+
+/* ── Požymiai ───────────────────────────────────────────────────────── */
+var MM_BOOKS = 'Pradžios|Išėjimo|Kunigų|Skaičių|Pakartoto\\w*|Jozuės|Teisėjų|Rūtos|Samuelio|Karalių|Metraščių|Ezros|Nehemijo|Esteros|Jobo|Psalmyno|Psalmių|Patarlių|Mokytojo|Giesmių|Izaijo|Jeremijo|Raudų|Ezechielio|Danieliaus|Ozėjo|Joelio|Amoso|Abdijo|Jonos|Michėjo|Nahumo|Habakuko|Sofonijo|Agėjo|Zacharijo|Malachijo|Mato|Morkaus|Luko|Jono|Apaštalų|Romiečiams|Korintiečiams|Galatams|Efeziečiams|Filipiečiams|Kolosiečiams|Tesalonikiečiams|Timotiejui|Titui|Filemonui|Hebrajams|Jokūbo|Petro|Judo|Apreiškimo';
+var RX_REF     = new RegExp('\\b(' + MM_BOOKS + ')\\s+\\d+[:,]\\s*\\d+');
+var RX_REF_ABR = /\b(Pr|Iš|Ps|Pat|Iz|Jer|Ez|Dan|Mt|Mk|Lk|Jn|Apd|Rom|Kor|Gal|Ef|Fil|Kol|Tes|Tim|Hbr|Jok|Pt|Apr)\s+\d+[:,]\s*\d+/;
+var RX_REF_GEN = /\b[A-ZĄČĖĮŠŲŪŽ][a-ząčėįšųūž]{3,}\s+\d+:\d+/;      /* nežinoma knyga */
+var RX_QUOTE   = /[„"“][^”"“]{15,}[”"“]/;
+/* Citatai reikia ŠALTINIO — kitaip tai tik kabutėse įrašyti žodžiai.
+   Dvi atskiros išraiškos: didžiosios raidės požymis privalo likti jautrus
+   raidžių dydžiui (su /i „[A-Z]" sutaptų ir su mažosiomis — tai jau klaidino). */
+var RX_ATTR_S  = /[”"“]\s*[–—-]\s*[A-ZĄČĖĮŠŲŪŽ]|[”"“]\s*\(\s*[A-ZĄČĖĮŠŲŪŽ][^)]{2,40}\)/;
+var RX_ATTR_I  = /\b(pasak|kaip sakė|kaip rašo|kaip teigia|rašoma leidinyje|žodžiais tariant)\b/i;
+/* skatinamoji forma: skaitykime, klauskime, neleiskime („tikime" — esamasis laikas, ne raginimas) */
+var RX_HORT_L  = /^\s*(?:ir\s+|tad\s+|todėl\s+|taigi\s+)?(?!tikime\b)[a-ząčėįšųūž]{2,}kime\b/i;
+var RX_HORT_N  = /(^|[.!?]\s+)(?:Ir\s+|Tad\s+|Todėl\s+|Taigi\s+)?(?!tikime\b)[A-ZĄČĖĮŠŲŪŽa-ząčėįšųūž][a-ząčėįšųūž]{1,}kime\b/;
+/* „Atsiverskime Hebrajams 11:7" — nurodymas atsiversti, ne patarimas ir ne eilutės kortelė */
+var RX_READCUE = /(atsiversk|perskaityk|paskaityk|pažiūrėk|pasižiūrėk)[a-ząčėįšųūž]*\s+[^.]{0,30}\d+[:,]\s*\d+/i;
+
+/* Svoriniai požymiai trims tipams, kurie tikrai persidengia.
+   [svoris, regex, 'lbl' — jei tikrinama tik pavadinime] */
+var MM_SIG = {
+  'n-action': [
+    [12, /\byra\s+(?:vienas\s+iš\s+)?pagrind(?:as|ų|ai)\s+(?:teigti|manyti|tikėti)/i],
+    [10, /^\s*(išvada|apibendrin)/i, 'lbl'],
+    [ 9, /^\s*(taigi|vadinasi|todėl|tad|štai kodėl|apibendrinant|trumpai tariant|galiausiai|visa tai)\b/i, 'pradžia'],
+    [ 8, /\b(tai\s+(reiškia|rodo|patvirtina|liudija)|iš\s+to\s+(matyti|seka|gauname|išplaukia)|leidžia\s+teigti|darytina\s+išvada|prieita\s+išvados|apsvarstėme|visa\s+tai\s+(patvirtina|moko|rodo))/i],
+    [ 6, /[—–]\s*(?:istorinis\s+|istorijos\s+|tikras\s+|aiškus\s+|svarbus\s+)?(faktas|įrodymas|pamoka|žinia|įspėjimas)\b/i, 'lbl'],
+    [ 5, /[.!?]\s+(taigi|vadinasi|todėl|tad|štai kodėl)\b/i]
+  ],
+  'n-example': [
+    [10, /\b(pavyzdžiui|iliustracij|palyginimas|analogij)/i],   /* įveda pavyzdį */
+    [ 8, /\b(pavyzdys|pavyzdį)\b/i],                            /* pateikia pavyzdį */
+    [ 5, /\b(pavyzdžio|pavyzdžiu)\b/i],                         /* dažniausiai TIK nurodo į pavyzdį */
+    [ 7, /\b(tarsi|panašiai kaip|kaip ir šiandien|įsivaizduokime|įsivaizduok|palyginkime)\b/i]
+  ],
+  'n-data': [
+    [ 9, /\b\d+(?:[.,]\d+)?\s*(m\.|m\b|metų|metai|metus|km\/h|km|kg|t\b|tonų|trilijonų|milijardų|milijonų|proc\.?|%|cm|kub\.|kubinių|litrų|kartų)/],
+    [ 9, /\b\d{3,4}\s*m\.\s*(p\.\s*m\.\s*e\.)?/],
+    [ 8, /\b(fosilij|iškasen|liekan|geolog|archeolog|paleontolog|radiokarbon|kasinėj)/i],
+    [ 7, /\b(sluoksni|nuosėd|tyrimai rodo|tyrinėjant|mokslinink|statistik)/i]
+  ]
+};
+/* Duomenys privalo turėti TIKRINAMĄ atramą: matą, datą, kiekį arba pranešimą apie radinį.
+   Vien teminė leksika („archeologiniai įrodymai") yra teiginys apie duomenis, ne duomenys. */
+var MM_DATA_ANCHOR = [
+  /\b\d+(?:[.,]\d+)?\s*(m\.|m\b|metų|metai|metus|km\/h|km|kg|t\b|tonų|trilijonų|milijardų|milijonų|proc\.?|%|cm|kub\.|kubinių|litrų|kartų)/,
+  /\b\d{3,4}\s*m\./,
+  /\b(rast[ai]|aptikt|užfiksuot|išmatuot|suskaičiuot|aprašo|tyrimai rodo)/i
+];
+/* „prieš ~4000 metų" — pasakojimo laiko nuoroda, ne matavimas. Vertinant duomenis
+   tokios frazės nuimamos: kitaip bet koks istorinis įvadas atrodytų kaip faktas. */
+var RX_AGO = /prieš\s+(?:daugiau\s+nei\s+)?(?:apie\s+)?[~≈]?\s*\d+(?:[.,]\d+)?\s*(metų|metus|m\.)/gi;
+var MM_MIN = 8;        /* lapams: žemiau šios ribos geriau be tipo, negu klaidingas */
+var MM_MIN_PARENT = 12;/* kortelėms su vaikais: jų tekstas dažnai tik ĮVARDIJA tai, kas po jomis */
+
+function mmHas(rx, s){ return !!s && rx.test(s); }
+
+/* Pagrindinė funkcija: pavadinimas + pastabos tekstas → tipas arba null.
+   hasKids — ar kortelė turi vaikų (tada vertinama griežčiau). */
+function mmClassify(label, note, hasKids){
+  var L = String(label || '').trim();
+  var N = String(note || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  var B = L + ' ' + N;
+  if(!L && !N) return null;
+
+  /* 1. Rašto eilutė — nuoroda pavadinime, arba nuorodà tekste KARTU su citata.
+        Vien „Atsiverskime Hebrajams 11:7" yra nurodymas skaityti, ne eilutės kortelė. */
+  var refL = mmHas(RX_REF, L) || mmHas(RX_REF_ABR, L) || mmHas(RX_REF_GEN, L);
+  var refN = mmHas(RX_REF, N) || mmHas(RX_REF_ABR, N);
+  if(refL) return 'n-verse';
+  if(refN && mmHas(RX_QUOTE, N) && !(mmHas(RX_READCUE, N) && !mmHas(RX_QUOTE, N))) return 'n-verse';
+
+  /* 2. Citata — kabutėse žmogaus žodžiai SU šaltiniu */
+  if(mmHas(RX_QUOTE, B) && (mmHas(RX_ATTR_S, B) || mmHas(RX_ATTR_I, B))) return 'n-quote';
+
+  /* 3. Patarimas / veiksmas — skatinamoji forma. Pavadinimas svarbesnis už tekstą;
+        „Klauskime savęs: ar elgiuosi teisingai?" yra raginimas, ne klausimas. */
+  if(mmHas(RX_HORT_L, L)) return 'n-step';
+  if(mmHas(RX_HORT_N, N) && !mmHas(RX_READCUE, N)) return 'n-step';
+
+  /* 4. Klausimas — klausia PATS pavadinimas (o ne kur nors tekste esantis sakinys) */
+  if(/\?\s*$/.test(L)) return 'n-question';
+
+  /* 5. Išvada · pavyzdys · duomenys — persidengia, todėl sveriama.
+        Pavadinime rastas požymis sveria daugiau: pavadinimas skelbia kortelės paskirtį. */
+  var best = null, bestScore = 0;
+  for(var cls in MM_SIG){
+    var isData = (cls === 'n-data');
+    var Lx = isData ? L.replace(RX_AGO, ' ') : L;
+    var Nx = isData ? N.replace(RX_AGO, ' ') : N;
+    if(isData && !MM_DATA_ANCHOR.some(function(rx){ return rx.test(Lx + ' ' + Nx); })) continue;
+    var score = 0;
+    MM_SIG[cls].forEach(function(sig){
+      var w = sig[0], rx = sig[1], scope = sig[2];
+      if(scope === 'lbl'){ if(mmHas(rx, Lx)) score += w; return; }
+      if(scope === 'pradžia'){ if(mmHas(rx, Nx) || mmHas(rx, Lx)) score += w; return; }
+      if(mmHas(rx, Lx)) score += w * 1.6;
+      else if(mmHas(rx, Nx)) score += w;
+    });
+    if(score > bestScore){ bestScore = score; best = cls; }
+  }
+  return bestScore >= (hasKids ? MM_MIN_PARENT : MM_MIN) ? best : null;
 }
-/* Kortelės teksto elemento tipas: aiški žyma arba atpažinimas iš turinio */
+
+/* Generatoriui: turimas tik teksto gabalas — pirmas sakinys elgiasi kaip pavadinimas */
+function mmDetectRole(text, fallback){
+  var t = String(text || '');
+  var first = (t.split(/(?<=[.!?])\s+/)[0] || t).slice(0, 120);
+  return mmClassify(first, t, false) || fallback;
+}
+function mmIsStruct(cls){ return !!cls && MM_ROLES.some(function(r){ return r[0] === cls; }); }
+
+/* Kortelės tipas: aiški žyma nugali atpažinimą. */
 function mmNodeRole(n){
   if(!n) return null;
+  if(n.role && mmIsStruct(n.role)) return n.role;          /* autoriaus nurodytas tipas */
   if(mmIsStruct(n.cls) && !MM_BUILTIN[n.cls]) return n.cls;
-  if(n.cls==='n-action') return 'n-action';
+  if(n.cls === 'n-action') return 'n-action';
   if(!MM_DETECTABLE[n.cls]) return null;
-  if(n._role!==undefined) return n._role;
-  var d=mmDetectRole(String(n.label||''), null);
-  if(!d){ var t=String(n.note||'').replace(/<[^>]+>/g,' '); if(t.length>3) d=mmDetectRole(t, null); }
-  n._role = d||null;
+  if(n._role !== undefined) return n._role;
+  n._role = mmClassify(n.label, n.note, !!(n.children && n.children.length)) || null;
   return n._role;
 }
-window.mmDetectRole=mmDetectRole; window.mmNodeRole=mmNodeRole; window.MM_ROLES=MM_ROLES;
+window.mmDetectRole=mmDetectRole; window.mmNodeRole=mmNodeRole;
+window.mmClassify=mmClassify; window.MM_ROLES=MM_ROLES;
 
 </script>
 </body>
