@@ -4836,11 +4836,17 @@ window.mmExitGuard=function(done){
   let pending=false;
   window.addEventListener('message',e=>{ if(e.data&&e.data.type==='mmBackAck') pending=false; });
   b.onclick=()=>{
-    window.mmExitGuard(()=>{
+    const goBack=()=>{
       pending=true;
       try{ parent.postMessage({type:'mmBack'},'*'); }catch(e){}
       setTimeout(()=>{ if(pending){ try{ location.href='Mind Map Landing.dc.html'; }catch(e){} } }, 500);
-    });
+    };
+    // „Ar išsaugoti?" TIK kai atidarytas žemėlapis (ne kūrimo ekranas) IR yra neišsaugotų pakeitimų.
+    // Kitu atveju (kūrimo puslapis arba jokių pakeitimų) — tiesiog sklandžiai grįžti, neklausiant.
+    const onCreate=document.documentElement.classList.contains('mm-show-upload');
+    const hasChanges=(typeof undoStack!=='undefined') && undoStack.length>0;
+    if(onCreate || !hasChanges){ goBack(); }
+    else { window.mmExitGuard(goBack); }
   };
 })();
 
