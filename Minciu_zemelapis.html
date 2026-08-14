@@ -72,7 +72,7 @@
   }
   body[data-theme="night"] .n-env{ background:#c23a29; color:#fff9f0 }
   body[data-theme="night"] .n-tools{ background:#3f382e; color:#f7efdc }
-  body[data-theme="night"] .n-key,body[data-theme="night"] .n-verse,body[data-theme="night"] .n-quote,body[data-theme="night"] .n-example,body[data-theme="night"] .n-data,body[data-theme="night"] .n-question,body[data-theme="night"] .n-step{ background:#f5efe0; color:#1a1410; border-color:#4a4136 }
+  body[data-theme="night"] .n-key,body[data-theme="night"] .n-verse,body[data-theme="night"] .n-quote,body[data-theme="night"] .n-example,body[data-theme="night"] .n-data,body[data-theme="night"] .n-question,body[data-theme="night"] .n-step,body[data-theme="night"] .n-def,body[data-theme="night"] .n-formula,body[data-theme="night"] .n-task,body[data-theme="night"] .n-rule,body[data-theme="night"] .n-warn,body[data-theme="night"] .n-source{ background:#f5efe0; color:#1a1410; border-color:#4a4136 }
   body[data-theme="night"] .n-action{ background:#f5c93a; color:#241a04; border-color:#2e261b }
   body[data-theme="night"] #notes, body[data-theme="night"] #editor{
     background:var(--note); border:2px solid #3b3226;
@@ -221,7 +221,7 @@
   body[data-theme="street"] .n-theme{ background:#29B6D8; color:#0E2830 }
   body[data-theme="street"] .n-tools{ background:#3A362F; color:#F5F0E6 }
   body[data-theme="street"] .n-env{ background:#D93B3B; color:#fff }
-  body[data-theme="street"] .n-key,body[data-theme="street"] .n-verse,body[data-theme="street"] .n-quote,body[data-theme="street"] .n-example,body[data-theme="street"] .n-data,body[data-theme="street"] .n-question,body[data-theme="street"] .n-step{ background:#E9E2D2; color:#221E19; border-color:#14110E }
+  body[data-theme="street"] .n-key,body[data-theme="street"] .n-verse,body[data-theme="street"] .n-quote,body[data-theme="street"] .n-example,body[data-theme="street"] .n-data,body[data-theme="street"] .n-question,body[data-theme="street"] .n-step,body[data-theme="street"] .n-def,body[data-theme="street"] .n-formula,body[data-theme="street"] .n-task,body[data-theme="street"] .n-rule,body[data-theme="street"] .n-warn,body[data-theme="street"] .n-source{ background:#E9E2D2; color:#221E19; border-color:#14110E }
   body[data-theme="street"] .n-keygrp{ background:#D8CFBB; color:#221E19; border-color:#14110E }
   body[data-theme="street"] .n-action{ background:#1F8A3D; color:#fff; border-color:#14110E }
   body[data-theme="street"] #bar #title{ background:rgba(20,17,13,.92); border:2px solid #14110E; color:#F5F0E6 }
@@ -306,7 +306,7 @@
       repeating-linear-gradient(105deg, rgba(40,16,6,.16) 0px, rgba(40,16,6,.16) 1px, transparent 1px, transparent 8px),
       repeating-linear-gradient(15deg, rgba(255,222,182,.08) 0px, rgba(255,222,182,.08) 1px, transparent 1px, transparent 11px),
       linear-gradient(160deg,#C75E2C,#9A431F); }
-  body[data-theme="paveikslas"] .n-key,body[data-theme="paveikslas"] .n-verse,body[data-theme="paveikslas"] .n-quote,body[data-theme="paveikslas"] .n-example,body[data-theme="paveikslas"] .n-data,body[data-theme="paveikslas"] .n-question,body[data-theme="paveikslas"] .n-step{ color:#241F17; border-color:#7A6B49; background-image:
+  body[data-theme="paveikslas"] .n-key,body[data-theme="paveikslas"] .n-verse,body[data-theme="paveikslas"] .n-quote,body[data-theme="paveikslas"] .n-example,body[data-theme="paveikslas"] .n-data,body[data-theme="paveikslas"] .n-question,body[data-theme="paveikslas"] .n-step,body[data-theme="paveikslas"] .n-def,body[data-theme="paveikslas"] .n-formula,body[data-theme="paveikslas"] .n-task,body[data-theme="paveikslas"] .n-rule,body[data-theme="paveikslas"] .n-warn,body[data-theme="paveikslas"] .n-source{ color:#241F17; border-color:#7A6B49; background-image:
       repeating-linear-gradient(105deg, rgba(96,78,46,.12) 0px, rgba(96,78,46,.12) 1px, transparent 1px, transparent 9px),
       repeating-linear-gradient(15deg, rgba(96,78,46,.09) 0px, rgba(96,78,46,.09) 1px, transparent 1px, transparent 12px),
       linear-gradient(160deg,#F2E4C4,#DCC89E); }
@@ -460,7 +460,7 @@
   .n-env{background:var(--env);color:#fff;font-size:14.5px}
   .n-deploy{background:#7E57C2;color:#fff;font-size:14.5px}
   .n-skill{background:#26A69A;color:#fff;font-size:14.5px}
-  .n-key,.n-verse,.n-quote,.n-example,.n-data,.n-question,.n-step{background:#eef1f6;color:#39435a;font-size:13px;border-color:#c2cbda}
+  .n-key,.n-verse,.n-quote,.n-example,.n-data,.n-question,.n-step,.n-def,.n-formula,.n-task,.n-rule,.n-warn,.n-source{background:#eef1f6;color:#39435a;font-size:13px;border-color:#c2cbda}
   .n-keygrp{background:#dfe4ec;color:#39435a;font-size:13.5px;border-color:#c2cbda}
   .n-action{background:#e3f3f0;color:var(--action);font-size:13px;border-color:var(--action)}
   /* ===== NAUJI VAIDMENYS ===== */
@@ -1609,6 +1609,22 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
   body[data-theme="night"] .sChip.on{background:#c1352b;border-color:#3b3226;color:#fff2d0}
   body[data-theme="paveikslas"] .sChip{background:#E4D5B0;border-color:#8A7A57;color:#2A2317}
   body[data-theme="paveikslas"] .sChip.on{background:#B85427;border-color:#4A4028;color:#F4EAD0}
+
+  /* teksto tipo parinkiklis paieškos skydelyje */
+  #sLens{display:flex;align-items:center;gap:8px;padding:0 2px 9px}
+  #sLens .sLensLbl{font-size:10.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;
+    color:#6b7688;white-space:nowrap}
+  #sLensSel{flex:1;min-width:0;font-family:inherit;font-size:12px;font-weight:600;padding:5px 8px;
+    border-radius:8px;border:1px solid #d5dce6;background:#f7f9fc;color:#1b2333;cursor:pointer}
+  #sLensSel:focus-visible{outline:2px solid #2E9E8F;outline-offset:1px}
+  body[data-theme="cosmos"] #sLens .sLensLbl{color:#8FA6BE}
+  body[data-theme="cosmos"] #sLensSel{background:rgba(160,190,225,.09);border-color:rgba(140,180,220,.26);color:#CBD8E6}
+  body[data-theme="street"] #sLens .sLensLbl{color:#C9BFA8}
+  body[data-theme="street"] #sLensSel{background:#2A241D;border-color:#4a4136;color:#F5F0E6}
+  body[data-theme="night"] #sLens .sLensLbl{color:#5b4d3c}
+  body[data-theme="night"] #sLensSel{background:#e8dfc8;border-color:#3b3226;color:#241c14}
+  body[data-theme="paveikslas"] #sLens .sLensLbl{color:#6E6042}
+  body[data-theme="paveikslas"] #sLensSel{background:#E4D5B0;border-color:#8A7A57;color:#2A2317}
 </style>
 </head>
 <body>
@@ -1890,6 +1906,7 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
           <span id="sCount"></span>
           <button id="sClear" aria-label="Išvalyti">✕</button>
         </div>
+        <div id="sLens"></div>
         <div id="sFilters"></div>
         <div id="sResults"></div>
       </div>
@@ -5099,6 +5116,11 @@ dz.addEventListener('drop',e=>{
     const text=String(raw||'').replace(/\r/g,'').trim();
     if(text.length<40) return false;
 
+    /* 0. Teksto sritis nustatoma PIRMIAUSIA — nuo jos priklauso, kokių elementų
+          apskritai ieškoma. Nustatinėjant vėliau, kortelės jau būtų suklasifikuotos
+          be specialiųjų tipų (uždavinys taptų paprastu patarimu). */
+    try{ window.mmSetDomainsFromText(text); }catch(e){}
+
     /* 1. Blokai (citatos NĖRA pastraipos) */
     const blocks=[]; let off=0, paraNo=0;
     text.split(/\n\s*\n+/).map(b=>b.trim()).filter(Boolean).forEach(b=>{
@@ -5463,9 +5485,27 @@ function sSnippet(n){
       (n.children||[]).forEach(walk);
     })(DATA);
   }
+  /* ── Teksto tipas: nuo jo priklauso, kokie filtrai apskritai siūlomi ──
+     Sritis atpažįstama iš viso teksto; naudotojas gali pasirinkti kitą. */
+  function buildLens(){
+    var wrap=document.getElementById('sLens'); if(!wrap||!window.MM_DOMAINS) return;
+    try{ window.mmSyncDomains(); }catch(e){}
+    var act=[]; try{ act=window.mmActiveDomains()||[]; }catch(e){}
+    var names={}; window.MM_DOMAINS.forEach(function(d){ names[d[0]]=d[1]; });
+    var autoTxt = act.length ? act.map(function(k){ return names[k]||k; }).join(' + ') : 'bendras tekstas';
+    var pick='auto'; try{ pick=window.mmLensPick(); }catch(e){}
+    function opt(v,t){ return '<option value="'+v+'"'+(pick===v?' selected':'')+'>'+t+'</option>'; }
+    var opts = opt('auto','Atpažinta: '+autoTxt) + opt('bendras','Bendras tekstas');
+    window.MM_DOMAINS.forEach(function(d){ opts += opt(d[0], d[1]); });
+    wrap.innerHTML='<span class="sLensLbl">Teksto tipas</span>'
+      + '<select id="sLensSel" title="Pagal teksto tipą parenkama, kokių elementų ieškoti">'+opts+'</select>';
+    var sel=wrap.querySelector('#sLensSel');
+    sel.onchange=function(){ try{ window.mmSetLens(sel.value); }catch(e){} SF=null; run(); };
+  }
   /* ── Filtrų juosta: rodo tik tuos tipus, kurių šiame žemėlapyje yra ── */
   function buildFilters(){
     var wrap=document.getElementById('sFilters'); if(!wrap||!window.MM_ROLES) return;
+    buildLens();
     var cnt={};
     (function walk(n){
       if(n.id!==DATA.id){ var r=null; try{ r=window.mmNodeRole(n); }catch(e){}
@@ -5778,22 +5818,28 @@ document.addEventListener('change',function(e){
    Spalvas lemia aplinkos tema ir spalvų gama. Tipas atsako į vieną klausimą:
    KĄ ŠI KORTELĖ DARO tekste? — ne „kokių žodžių joje yra".
 
-   Vaidmenys pagal argumento sandarą:
-     rašto eilutė / citata — autoritetas, kuriuo remiamasi
-     duomenys / faktai     — nepriklausomai tikrinamas pagrindas (matai, datos, radiniai)
-     pavyzdys              — konkretus atvejis ar analogija, paaiškinanti abstrakciją
-     klausimas             — nukreipia dėmesį, atveria temą
-     patarimas / veiksmas  — ką daryti (liepiamoji, skatinamoji forma)
-     apibendrinimas        — teiginys, IŠVEDAMAS iš to, kas pasakyta anksčiau     */
+   Tipų rinkinys PRISITAIKO prie įkelto teksto. Universalūs tipai (klausimas,
+   pavyzdys, duomenys, citata, patarimas, išvada) veikia visur; specialieji
+   įsijungia tik tada, kai tekstas iš tikrųjų yra tos srities — biblinėje
+   medžiagoje atsiranda rašto eilutės, mokomajame tekste — apibrėžimai ir
+   formulės, dokumentuose — nuostatos ir išimtys. Filtro juostoje rodomi tik
+   tie tipai, kurių šiame tekste RASTA.                                      */
+
 var MM_ROLES = [
-  /* cls,          pavadinimas,                 tonas, ženklas */
-  ['n-verse',     'Rašto eilutės',             268, '❝'],
-  ['n-quote',     'Citatos',                   196, '❞'],
-  ['n-example',   'Pavyzdžiai / iliustracijos', 38, '❖'],
-  ['n-data',      'Duomenys / faktai',          80, '#'],
-  ['n-question',  'Klausimai',                 325, '?'],
-  ['n-step',      'Patarimai / veiksmai',      128, '✓'],
-  ['n-action',    'Apibendrinimai / išvados',  168, '→']
+  /* cls,        pavadinimas,                  tonas, ženklas, sritys ('*' — visur) */
+  ['n-verse',    'Rašto eilutės',               268, '❝', 'biblija'],
+  ['n-quote',    'Citatos',                     196, '❞', '*'],
+  ['n-source',   'Šaltiniai / nuorodos',        240, '↗', 'mokslas'],
+  ['n-def',      'Apibrėžimai / sąvokos',       210, '≡', 'mokymas,dokumentai,mokslas'],
+  ['n-formula',  'Formulės / skaičiavimai',     300, '∑', 'mokymas'],
+  ['n-example',  'Pavyzdžiai / iliustracijos',   38, '❖', '*'],
+  ['n-data',     'Duomenys / faktai',            80, '#', '*'],
+  ['n-question', 'Klausimai',                   325, '?', '*'],
+  ['n-task',     'Užduotys / pratimai',         150, '✎', 'mokymas'],
+  ['n-rule',     'Taisyklės / nuostatos',        20, '§', 'dokumentai,instrukcija'],
+  ['n-warn',     'Įspėjimai / rizikos',          10, '⚠', 'instrukcija,dokumentai'],
+  ['n-step',     'Patarimai / veiksmai',        128, '✓', '*'],
+  ['n-action',   'Apibendrinimai / išvados',    168, '→', '*']
 ];
 var MM_BUILTIN = {'n-center':1,'n-tools':1,'n-env':1,'n-key':1,'n-action':1};
 /* Automatinis atpažinimas taikomas TIK turinio kortelėms. Centras ir potemės
@@ -5811,14 +5857,48 @@ var RX_QUOTE   = /[„"“][^”"“]{15,}[”"“]/;
    raidžių dydžiui (su /i „[A-Z]" sutaptų ir su mažosiomis — tai jau klaidino). */
 var RX_ATTR_S  = /[”"“]\s*[–—-]\s*[A-ZĄČĖĮŠŲŪŽ]|[”"“]\s*\(\s*[A-ZĄČĖĮŠŲŪŽ][^)]{2,40}\)/;
 var RX_ATTR_I  = /\b(pasak|kaip sakė|kaip rašo|kaip teigia|rašoma leidinyje|žodžiais tariant)\b/i;
-/* skatinamoji forma: skaitykime, klauskime, neleiskime („tikime" — esamasis laikas, ne raginimas) */
-var RX_HORT_L  = /^\s*(?:ir\s+|tad\s+|todėl\s+|taigi\s+)?(?!tikime\b)[a-ząčėįšųūž]{2,}kime\b/i;
-var RX_HORT_N  = /(^|[.!?]\s+)(?:Ir\s+|Tad\s+|Todėl\s+|Taigi\s+)?(?!tikime\b)[A-ZĄČĖĮŠŲŪŽa-ząčėįšųūž][a-ząčėįšųūž]{1,}kime\b/;
+/* Nurodymo formos: „-kime" (skaitykime, neleiskime) ir „-kite" (ištraukite, paspauskite).
+   Antroji — būdingiausia instrukcijoms. Išimtis: „tikime" yra esamasis laikas, ne raginimas. */
+var RX_HORT_L  = /^\s*(?:ir\s+|tad\s+|todėl\s+|taigi\s+)?(?!tikime\b)[a-ząčėįšųūž]{2,}(kime|kite|kitės)\b/i;
+var RX_HORT_N  = /(^|[.!?,]\s+)(?:Ir\s+|Tad\s+|Todėl\s+|Taigi\s+)?(?!tikime\b)[A-ZĄČĖĮŠŲŪŽa-ząčėįšųūž][a-ząčėįšųūž]{1,}(kime|kite|kitės)\b/;
 /* „Atsiverskime Hebrajams 11:7" — nurodymas atsiversti, ne patarimas ir ne eilutės kortelė */
 var RX_READCUE = /(atsiversk|perskaityk|paskaityk|pažiūrėk|pasižiūrėk)[a-ząčėįšųūž]*\s+[^.]{0,30}\d+[:,]\s*\d+/i;
+/* specialiųjų sričių paviršinės formos */
+var RX_FORMULA = /[∑∫√≤≥≠±×÷πΔθλμσ]|[A-Za-z0-9)\]]\s*=\s*[A-Za-z0-9(−\-]/;
+var RX_TASK    = /\b(uždavinys|pratimas|užduotis|apskaičiuok\w*|išspręsk\w*|raskite|nubraižyk\w*|įrodykite|pabandykite atlikti)\b/i;
+var RX_WARN    = /\b(dėmesio|įspėjimas|atsargiai|pavojinga|pavojus|neleistina|būkite atsargūs|griežtai draudžiama)\b/i;
 
-/* Svoriniai požymiai trims tipams, kurie tikrai persidengia.
-   [svoris, regex, 'lbl' — jei tikrinama tik pavadinime] */
+/* ── Teksto sritys ──────────────────────────────────────────────────── */
+var MM_DOMAINS = [
+  ['biblija', 'Biblinė medžiaga', [
+    [3, RX_REF], [3, RX_REF_ABR],
+    [2, /\b(Jehov\w*|Biblij\w*|Šventasis Raštas|Raštuose|apaštal\w*|pranaš\w*|Kristus|Jėzus|Dievo žodis)/i]
+  ]],
+  ['mokymas', 'Mokomasis / dalykinis', [
+    [3, /\b(apibrėžimas|teorema|lema|įrodymas|formulė|lygtis|uždavinys|pratimas)\b/i],
+    [2, RX_FORMULA],
+    [2, RX_TASK]
+  ]],
+  ['dokumentai', 'Taisyklės ir dokumentai', [
+    [3, /\b(straipsni\w*|nuostat\w*|įstatym\w*|reglament\w*|sutart\w*|taisyklių\s+\d)/i],
+    [2, /\b(privalo|draudžiama|neturi teisės|įsipareigoja|galioja nuo)\b/i],
+    [2, /\b(išskyrus|išimtis|netaikoma|su sąlyga)\b/i]
+  ]],
+  ['instrukcija', 'Instrukcija / eiga', [
+    /* liepiamoji daugiskaitos forma („ištraukite", „paspauskite") — būdingiausias instrukcijos požymis */
+    [3, /\b[a-ząčėįšųūž]{3,}kite\b/i],
+    [3, /\b(žingsnis|veiksmų seka|prieš prade(?:dant|dami)|naudojimo instrukcij\w*)/i],
+    [2, RX_WARN]
+  ]],
+  ['mokslas', 'Mokslinis / analitinis', [
+    [3, /\([A-ZĄČĖĮŠŲŪŽ][a-ząčėįšųūž]+,?\s*\d{4}\)|\bdoi:|\bhttps?:\/\//i],
+    [2, /\b(tyrim\w*|hipotez\w*|imtis|metodik\w*|rezultatai rodo|statistiškai|literatūros sąraš\w*)/i]
+  ]]
+];
+var MM_DOM_MIN = 5;   /* sritis įsijungia tik surinkusi tiek — kitaip filtrai prisipildytų tuščių tipų */
+
+/* Svoriniai požymiai tiems tipams, kurie tikrai persidengia.
+   [svoris, regex, 'lbl' — tik pavadinime | 'pradžia' — teksto pradžioje] */
 var MM_SIG = {
   'n-action': [
     [12, /\byra\s+(?:vienas\s+iš\s+)?pagrind(?:as|ų|ai)\s+(?:teigti|manyti|tikėti)/i],
@@ -5839,6 +5919,24 @@ var MM_SIG = {
     [ 9, /\b\d{3,4}\s*m\.\s*(p\.\s*m\.\s*e\.)?/],
     [ 8, /\b(fosilij|iškasen|liekan|geolog|archeolog|paleontolog|radiokarbon|kasinėj)/i],
     [ 7, /\b(sluoksni|nuosėd|tyrimai rodo|tyrinėjant|mokslinink|statistik)/i]
+  ],
+  'n-def': [
+    [10, /\b(apibrėžimas|apibrėžiama|sąvoka)\b/i],
+    /* „terminas" lietuviškai yra ir sąvoka, ir galutinis laikas — tinka tik apibrėžiančiame sakinyje */
+    [ 8, /\bterminas\s+[„"“]?[^”"“]{0,30}[”"“]?\s*(reiškia|apibrėžiamas|vadinamas)/i],
+    [ 9, /\b(vadinama|vadinamas|vadinami|vadiname)\b/i],
+    [ 7, /\bžodis\s+[„"“][^”"“]{2,30}[”"“]\s*reiškia|\breiškia,?\s+kad\b/i],
+    [ 7, /^[^—]{2,40}\s+—\s+tai\b/i, 'lbl']
+  ],
+  'n-rule': [
+    [10, /\b(privalo|privaloma|draudžiama|neturi teisės|turi būti\s+(atlikta|pateikta|užtikrinta|laikomasi))\b/i],
+    [ 8, /\b(taikoma|galioja|nustatoma|reikalavimas|nuostata|straipsnis|straipsnio|punktas)\b/i],
+    [ 7, /\b(išskyrus|išimtis|netaikoma|su sąlyga|nebent)\b/i]
+  ],
+  'n-source': [
+    [10, /\([A-ZĄČĖĮŠŲŪŽ][a-ząčėįšųūž]+,?\s*\d{4}\)/],
+    [ 9, /\bdoi:|\bhttps?:\/\//i],
+    [ 7, /\b(šaltinis|remiantis|literatūros sąraš\w*|žr\.)\b/i]
   ]
 };
 /* Duomenys privalo turėti TIKRINAMĄ atramą: matą, datą, kiekį arba pranešimą apie radinį.
@@ -5854,6 +5952,47 @@ var RX_AGO = /prieš\s+(?:daugiau\s+nei\s+)?(?:apie\s+)?[~≈]?\s*\d+(?:[.,]\d+)
 var MM_MIN = 8;        /* lapams: žemiau šios ribos geriau be tipo, negu klaidingas */
 var MM_MIN_PARENT = 12;/* kortelėms su vaikais: jų tekstas dažnai tik ĮVARDIJA tai, kas po jomis */
 
+/* ── Sričių būsena ──────────────────────────────────────────────────── */
+var MM_DOM = { sig:null, auto:[], pick:'auto' };
+
+function mmRoleDomains(cls){
+  for(var i=0;i<MM_ROLES.length;i++) if(MM_ROLES[i][0]===cls) return String(MM_ROLES[i][4]||'*');
+  return '*';
+}
+/* ar šis tipas dalyvauja atpažinime esant dabartinėms sritims */
+function mmRoleOn(cls){
+  var d = mmRoleDomains(cls);
+  if(d === '*') return true;
+  var act = mmActiveDomains();
+  return d.split(',').some(function(k){ return act.indexOf(k) >= 0; });
+}
+function mmActiveDomains(){
+  if(MM_DOM.pick === 'auto') return MM_DOM.auto;
+  if(MM_DOM.pick === 'bendras') return [];
+  return [MM_DOM.pick];
+}
+/* Sritis nustatoma iš VISO teksto, ne iš vienos kortelės: pavieniai žodžiai
+   apgaudinėja, o visas tekstas rodo tikrąjį pobūdį. */
+function mmDetectDomains(text){
+  var t = String(text || '');
+  if(t.length < 40) return [];
+  var out = [];
+  MM_DOMAINS.forEach(function(d){
+    var score = 0;
+    d[2].forEach(function(sig){
+      var rx = new RegExp(sig[1].source, sig[1].flags.replace('g','') + 'g');
+      var n = (t.match(rx) || []).length;
+      if(n) score += sig[0] * Math.min(n, 4);      /* pakartojimai svarbūs, bet ne begalo */
+    });
+    if(score >= MM_DOM_MIN) out.push([d[0], score]);
+  });
+  out.sort(function(a,b){ return b[1] - a[1]; });
+  /* paliekam tik tas, kurios prilygsta stipriausiajai — atsitiktinis vienas žodis srities nedaro */
+  var top = out.length ? out[0][1] : 0;
+  return out.filter(function(x){ return x[1] >= Math.max(MM_DOM_MIN, top * 0.34); })
+            .map(function(x){ return x[0]; });
+}
+
 function mmHas(rx, s){ return !!s && rx.test(s); }
 
 /* Pagrindinė funkcija: pavadinimas + pastabos tekstas → tipas arba null.
@@ -5864,28 +6003,41 @@ function mmClassify(label, note, hasKids){
   var B = L + ' ' + N;
   if(!L && !N) return null;
 
-  /* 1. Rašto eilutė — nuoroda pavadinime, arba nuorodà tekste KARTU su citata.
-        Vien „Atsiverskime Hebrajams 11:7" yra nurodymas skaityti, ne eilutės kortelė. */
-  var refL = mmHas(RX_REF, L) || mmHas(RX_REF_ABR, L) || mmHas(RX_REF_GEN, L);
-  var refN = mmHas(RX_REF, N) || mmHas(RX_REF_ABR, N);
-  if(refL) return 'n-verse';
-  if(refN && mmHas(RX_QUOTE, N) && !(mmHas(RX_READCUE, N) && !mmHas(RX_QUOTE, N))) return 'n-verse';
+  /* Tvarka: griežtesnis, mažiau dviprasmiškas požymis tikrinamas pirmiau. */
 
-  /* 2. Citata — kabutėse žmogaus žodžiai SU šaltiniu */
+  /* 1. Formulė — labai išskirtinė paviršinė forma */
+  if(mmRoleOn('n-formula') && mmHas(RX_FORMULA, B)) return 'n-formula';
+
+  /* 2. Rašto eilutė — nuoroda pavadinime, arba nuoroda tekste KARTU su citata.
+        Vien „Atsiverskime Hebrajams 11:7" yra nurodymas skaityti, ne eilutės kortelė. */
+  if(mmRoleOn('n-verse')){
+    if(mmHas(RX_REF, L) || mmHas(RX_REF_ABR, L) || mmHas(RX_REF_GEN, L)) return 'n-verse';
+    if((mmHas(RX_REF, N) || mmHas(RX_REF_ABR, N)) && mmHas(RX_QUOTE, N)) return 'n-verse';
+  }
+
+  /* 3. Citata — kabutėse žmogaus žodžiai SU šaltiniu */
   if(mmHas(RX_QUOTE, B) && (mmHas(RX_ATTR_S, B) || mmHas(RX_ATTR_I, B))) return 'n-quote';
 
-  /* 3. Patarimas / veiksmas — skatinamoji forma. Pavadinimas svarbesnis už tekstą;
+  /* 4. Įspėjimas — konkretesnis nurodymas nei patarimas.
+        Tikrinam pavadinimą ir PIRMĄ sakinį: įspėjimas skelbiamas iš karto, ne pastraipos viduryje. */
+  if(mmRoleOn('n-warn') && (mmHas(RX_WARN, L) || mmHas(RX_WARN, (N.split(/[.!?]/)[0] || '')))) return 'n-warn';
+
+  /* 5. Užduotis — konkretesnė nei patarimas */
+  if(mmRoleOn('n-task') && mmHas(RX_TASK, B)) return 'n-task';
+
+  /* 6. Patarimas / veiksmas — skatinamoji forma. Pavadinimas svarbesnis už tekstą;
         „Klauskime savęs: ar elgiuosi teisingai?" yra raginimas, ne klausimas. */
   if(mmHas(RX_HORT_L, L)) return 'n-step';
   if(mmHas(RX_HORT_N, N) && !mmHas(RX_READCUE, N)) return 'n-step';
 
-  /* 4. Klausimas — klausia PATS pavadinimas (o ne kur nors tekste esantis sakinys) */
+  /* 7. Klausimas — klausia PATS pavadinimas (o ne kur nors tekste esantis sakinys) */
   if(/\?\s*$/.test(L)) return 'n-question';
 
-  /* 5. Išvada · pavyzdys · duomenys — persidengia, todėl sveriama.
+  /* 8. Persidengiantys tipai — sveriami.
         Pavadinime rastas požymis sveria daugiau: pavadinimas skelbia kortelės paskirtį. */
   var best = null, bestScore = 0;
   for(var cls in MM_SIG){
+    if(!mmRoleOn(cls)) continue;
     var isData = (cls === 'n-data');
     var Lx = isData ? L.replace(RX_AGO, ' ') : L;
     var Nx = isData ? N.replace(RX_AGO, ' ') : N;
@@ -5922,8 +6074,36 @@ function mmNodeRole(n){
   n._role = mmClassify(n.label, n.note, !!(n.children && n.children.length)) || null;
   return n._role;
 }
+
+/* ── Sričių derinimas su įkeltu žemėlapiu ─────────────────────────────
+   DATA keičiamas vietoje (Object.assign), todėl objekto tapatybė nepasikeičia —
+   pokytį atpažįstam pagal pavadinimą ir kortelių skaičių. */
+function mmTreeSig(){ var n=0; (function w(x){ n++; (x.children||[]).forEach(w); })(DATA); return (DATA.label||'')+'#'+n; }
+function mmAllText(){
+  var out=[], n=0;
+  (function w(x){ if(n>4000) return; n++;
+    out.push(String(x.label||''));
+    if(x.note) out.push(String(x.note).replace(/<[^>]+>/g,' '));
+    (x.children||[]).forEach(w);
+  })(DATA);
+  return out.join(' ');
+}
+function mmClearRoles(){ try{ (function w(x){ delete x._role; (x.children||[]).forEach(w); })(DATA); }catch(e){} }
+function mmSyncDomains(){
+  var s; try{ s=mmTreeSig(); }catch(e){ return; }
+  if(MM_DOM.sig===s) return;
+  MM_DOM.sig=s; MM_DOM.auto=mmDetectDomains(mmAllText()); mmClearRoles();
+}
+/* Generatoriui: sritis iš dar neišskaidyto teksto, prieš kuriant korteles. */
+window.mmSetDomainsFromText=function(txt){
+  MM_DOM.auto = mmDetectDomains(String(txt||''));
+  MM_DOM.sig  = null;            /* tegul vėliau persiskaičiuoja iš sukurto medžio */
+};
+window.mmSetLens=function(v){ MM_DOM.pick=v||'auto'; mmClearRoles(); };
+window.mmLensPick=function(){ return MM_DOM.pick; };
+window.mmSyncDomains=mmSyncDomains; window.mmActiveDomains=mmActiveDomains;
 window.mmDetectRole=mmDetectRole; window.mmNodeRole=mmNodeRole;
-window.mmClassify=mmClassify; window.MM_ROLES=MM_ROLES;
+window.mmClassify=mmClassify; window.MM_ROLES=MM_ROLES; window.MM_DOMAINS=MM_DOMAINS;
 
 </script>
 </body>
