@@ -74,8 +74,6 @@
   body[data-theme="night"] .n-tools{ background:#3f382e; color:#f7efdc }
   body[data-theme="night"] .n-key{ background:#f5efe0; color:#1a1410; border-color:#4a4136 }
   body[data-theme="night"] .n-action{ background:#f5c93a; color:#241a04; border-color:#2e261b }
-  body[data-theme="night"] .n-verse{ background:#ded2ee; color:#241436; border-color:#4a4136 }
-  body[data-theme="night"] .n-example{ background:#f0e2c0; color:#3d2c08; border-color:#4a4136 }
   body[data-theme="night"] #notes, body[data-theme="night"] #editor{
     background:var(--note); border:2px solid #3b3226;
     box-shadow:6px 7px 0 rgba(30,24,16,.45);
@@ -142,10 +140,6 @@
     margin:0; order:0; font-size:.4em; min-width:2.1em; height:2.1em; padding:0 .55em; border-radius:.62em;
     background:transparent; box-shadow:inset 0 0 0 1.5px currentColor; color:#EAF2F8; opacity:.72; letter-spacing:.6px }
   body[data-theme="cosmos"] .n-action::before{ content:"" }
-  body[data-theme="cosmos"] .n-verse{ border-color:rgba(167,139,250,.85); box-shadow:0 0 14px rgba(167,139,250,.22) }
-  body[data-theme="cosmos"] .n-example{ border-color:rgba(245,197,66,.85); box-shadow:0 0 14px rgba(245,197,66,.20) }
-  body[data-theme="cosmos"] .n-verse::before{ content:"❝";margin-right:4px;opacity:.8;color:#C4B5FD }
-  body[data-theme="cosmos"] .n-example::before{ content:"❖";margin-right:4px;opacity:.85;color:#F5C542 }
   body[data-theme="cosmos"] #notes{ background:rgba(10,15,24,.92); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); box-shadow:-8px 0 30px rgba(0,0,0,.5) }
   body[data-theme="cosmos"] #nHead{ border-bottom:1px solid #223046 }
   body[data-theme="cosmos"] #nTitle{ color:#EAF2F8 }
@@ -230,8 +224,6 @@
   body[data-theme="street"] .n-key{ background:#E9E2D2; color:#221E19; border-color:#14110E }
   body[data-theme="street"] .n-keygrp{ background:#D8CFBB; color:#221E19; border-color:#14110E }
   body[data-theme="street"] .n-action{ background:#1F8A3D; color:#fff; border-color:#14110E }
-  body[data-theme="street"] .n-verse{ background:#8B5CF6; color:#fff; border-color:#14110E }
-  body[data-theme="street"] .n-example{ background:#F5C518; color:#141210; border-color:#14110E }
   body[data-theme="street"] #bar #title{ background:rgba(20,17,13,.92); border:2px solid #14110E; color:#F5F0E6 }
   body[data-theme="street"] #title small{ color:#B9AE9C }
   body[data-theme="street"] .btn{ background:rgba(20,17,13,.92); border:2px solid #14110E; color:#F5F0E6 }
@@ -324,12 +316,6 @@
   body[data-theme="paveikslas"] .n-action{ color:#F4F1E0; background-image:
       repeating-linear-gradient(105deg, rgba(14,20,8,.16) 0px, rgba(14,20,8,.16) 1px, transparent 1px, transparent 8px),
       linear-gradient(160deg,#61762F,#42541F); }
-  body[data-theme="paveikslas"] .n-verse{ color:#F1E7FF; border-color:#5B4478; background-image:
-      repeating-linear-gradient(105deg, rgba(20,10,35,.16) 0px, rgba(20,10,35,.16) 1px, transparent 1px, transparent 8px),
-      linear-gradient(160deg,#6B4E96,#452F6B); }
-  body[data-theme="paveikslas"] .n-example{ color:#2A2010; border-color:#8A6B2E; background-image:
-      repeating-linear-gradient(105deg, rgba(96,70,20,.14) 0px, rgba(96,70,20,.14) 1px, transparent 1px, transparent 9px),
-      linear-gradient(160deg,#EBCF92,#D4B063); }
   body[data-theme="paveikslas"] #bar #title, body[data-theme="paveikslas"] .btn{
     color:#2A2317; border:2px solid #4A4028;
     background-color:#E9DBB9;
@@ -5083,9 +5069,7 @@ dz.addEventListener('drop',e=>{
   /* naujų vaidmenų atpažinimas: rašto eilutė ir pavyzdys/iliustracija */
   const RE_EXAMPLE=/\b(pavyzd(ys|žiui|į)|iliustrac|tarsi|panašiai kaip|įsivaizduok|palygin|analogij)/i;
   function roleOf(text, fallback){
-    if(RE_REF.test(text)) return 'n-verse';              // Šventojo Rašto eilutė
-    if(RE_EXAMPLE.test(text)) return 'n-example';        // pavyzdys / iliustracija
-    return fallback;
+    try{ return window.mmDetectRole(text, fallback); }catch(e){ return fallback; }
   }
   function keywords(t){
     const m=String(t).toLowerCase().match(/[a-ząčėęįšųūž]{5,}/g)||[];
@@ -5789,17 +5773,75 @@ document.addEventListener('change',function(e){
   if(k&&k.trim()){ window.mmSetAIKey(k.trim()); }
   else { t.checked=false; }
 });
+
+/* ═══════════════ TEKSTO ELEMENTŲ (VAIDMENŲ) SISTEMA ═══════════════
+   Kiekvienas teksto elementas turi savo funkciją tekste ir todėl savo spalvą.
+   Spalvos NEĮRAŠYTOS kietai — jos išvedamos iš tono (hue) pagal aktyvią temą,
+   todėl automatiškai prisitaiko prie bet kurios aplinkos temos.
+   Papildyti nauju elementu = pridėti VIENĄ eilutę į MM_ROLES.                */
+var MM_ROLES = [
+  /* cls,          pavadinimas,                tonas, ženklas, atpažinimas tekste */
+  ['n-center',    'Centrinė tema',              238, '',  null],
+  ['n-tools',     'Potemė / skyrius',           210, '',  null],
+  ['n-env',       'Pagrindinė mintis',            2, '',  null],
+  ['n-verse',     'Rašto eilutė',               268, '❝', /\b[A-ZĄČĖĮŠŲŪŽ][a-ząčėįšųūž]{2,}\s+\d+:\d+/],
+  ['n-quote',     'Citata (žmogaus žodžiai)',   196, '❞', /[„"“][^”"“]{12,}[”"“]\s*\(?[A-ZĄČĖĮŠŲŪŽ]/],
+  ['n-example',   'Pavyzdys / iliustracija',     38, '❖', /\b(pavyzd(ys|žiui|į)|iliustrac|tarsi|panašiai kaip|įsivaizduok|palygin|analogij)/i],
+  ['n-data',      'Duomenys / faktas',           80, '#', /\d{2,}\s*(m\.|metų|km|kg|tonų|proc|%|kubinių|metrų)|\b\d{4}\s*m\./],
+  ['n-question',  'Klausimas',                  325, '?', /\?\s*$/],
+  ['n-key',       'Paaiškinimas / detalė',      215, '',  null],
+  ['n-step',      'Patarimas / veiksmas',       128, '✓', /\b(patarimas|stenkis|pasikalbėk|vesk\b|melskis|klauskime|neleiskime|iškelkime|skelbkime|darykime)/i],
+  ['n-action',    'Apibendrinimas / išvada',    168, '→', /^\s*(taigi|vadinasi|todėl|tad|apibendrin|išvada|galiausiai|visa tai moko)/i]
+];
+/* vaidmenys, kurių išvaizdą jau nustato temų CSS — jų negeneruojam */
+var MM_BUILTIN = {'n-center':1,'n-tools':1,'n-env':1,'n-key':1,'n-action':1};
+
+function mmHsl(hue, s, l){ return 'hsl('+hue+' '+s+'% '+l+'%)'; }
+/* Temos „charakteris" — nuo jo priklauso, kaip spalva išvedama */
+function mmThemeMode(){
+  var t=(document.body&&document.body.dataset.theme)||'standard';
+  if(t==='cosmos') return 'dark';        // tamsi, švytinti
+  if(t==='street') return 'poster';      // plakatinė, sodri
+  if(t==='night')  return 'retro';       // grunge, šiltas popierius
+  if(t==='paveikslas') return 'paint';   // tapybinė, prislopinta
+  return 'light';
+}
+/* Spalvų išvedimas pagal temos charakterį */
+function mmRoleColors(hue, mode){
+  if(mode==='dark')   return {bg:mmHsl(hue,32,13), ink:mmHsl(hue,58,86), bd:mmHsl(hue,70,62), edge:mmHsl(hue,62,58)};
+  if(mode==='poster') return {bg:mmHsl(hue,78,58), ink:'#12100D',        bd:'#14110E',        edge:mmHsl(hue,72,52)};
+  if(mode==='retro')  return {bg:mmHsl(hue,42,84), ink:mmHsl(hue,60,16), bd:'#4a4136',        edge:mmHsl(hue,45,38)};
+  if(mode==='paint')  return {bg:mmHsl(hue,34,74), ink:mmHsl(hue,55,15), bd:mmHsl(hue,30,34), edge:mmHsl(hue,35,42)};
+  return              {bg:mmHsl(hue,72,94), ink:mmHsl(hue,68,27), bd:mmHsl(hue,58,62), edge:mmHsl(hue,52,52)};
+}
+/* Sugeneruoja ir įdeda CSS visiems NE-įgimtiems vaidmenims + papildo linijų spalvas */
+function mmApplyRoleStyles(){
+  var mode=mmThemeMode(), css='';
+  MM_ROLES.forEach(function(r){
+    var cls=r[0]; if(MM_BUILTIN[cls]) return;
+    var c=mmRoleColors(r[2], mode);
+    css += 'body .'+cls+'{background:'+c.bg+';color:'+c.ink+';border-color:'+c.bd+';font-size:13px}\n';
+    if(r[3]) css += 'body .'+cls+'::before{content:"'+r[3]+'";font-weight:800;margin-right:4px;opacity:.72}\n';
+    try{ if(typeof colorOf!=='undefined' && colorOf) colorOf[cls]=c.edge; }catch(e){}
+  });
+  var el=document.getElementById('mmRoleStyles');
+  if(!el){ el=document.createElement('style'); el.id='mmRoleStyles'; document.head.appendChild(el); }
+  el.textContent=css;
+}
+/* Atpažįsta teksto elemento tipą (naudoja generatorius) */
+function mmDetectRole(text, fallback){
+  var t=String(text||'');
+  for(var i=0;i<MM_ROLES.length;i++){
+    var r=MM_ROLES[i]; if(MM_BUILTIN[r[0]]||!r[4]) continue;
+    if(r[4].test(t)) return r[0];
+  }
+  return fallback;
+}
+window.mmApplyRoleStyles=mmApplyRoleStyles; window.mmDetectRole=mmDetectRole; window.MM_ROLES=MM_ROLES;
+
 /* ===== SPALVŲ LEGENDA — atvaizduoja TIKRAS temos spalvas ===== */
 (function(){
-  var ROLES=[
-    ['n-center','Centrinė tema',1],
-    ['n-tools','Potemė / skyrius',0],
-    ['n-env','Pagrindinė mintis',0],
-    ['n-verse','Rašto eilutė',0],
-    ['n-example','Pavyzdys / iliustracija',0],
-    ['n-key','Detalė / paaiškinimas',0],
-    ['n-action','Apibendrinimas / išvada',0]
-  ];
+  function ROLES(){ return (window.MM_ROLES||[]).map(function(r,i){ return [r[0],r[1],i===0?1:0]; }); }
   var GAMA_TXT={cat:'kategoriją',depth:'gylį',polar:'poliariškumą',status:'būseną',min:'minimalizmą'};
   function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
   window.renderLegend=function(){
@@ -5812,9 +5854,10 @@ document.addEventListener('change',function(e){
     probe.style.cssText='position:absolute;left:-9999px;top:-9999px;visibility:hidden;pointer-events:none';
     document.body.appendChild(probe);
     var rows='';
-    ROLES.forEach(function(r){
+    ROLES().forEach(function(r){
       var n=cnt[r[0]]||0;
-      if(!n && r[0]!=='n-verse' && r[0]!=='n-example') { /* rodom visada pagrindinius */ }
+      var CORE={'n-center':1,'n-tools':1,'n-env':1,'n-key':1,'n-action':1};
+      if(!n && !CORE[r[0]]) return;   // nerodom vaidmenų, kurių šiame žemėlapyje nėra
       var el=document.createElement('div'); el.className='node '+r[0]; probe.appendChild(el);
       var cs=getComputedStyle(el);
       var bgImg=cs.backgroundImage, bg=(bgImg&&bgImg!=='none')?bgImg:cs.backgroundColor;
@@ -5844,13 +5887,16 @@ document.addEventListener('change',function(e){
     try{ if(localStorage.getItem('mm_leg')==='0') L.classList.add('lgOff'); }catch(e){}
   };
   // perpiešiam po temos / gamos / žemėlapio pakeitimo
-  var boot=function(){ try{ renderLegend(); }catch(e){} };
+  var boot=function(){ try{ mmApplyRoleStyles(); }catch(e){} try{ renderLegend(); }catch(e){} };
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot);
   else setTimeout(boot,0);
+  try{ mmApplyRoleStyles(); }catch(e){}
   ['applyTheme','applyGamaSel','render'].forEach(function(fn){
     try{
       if(typeof window[fn]==='function'){ var o=window[fn];
-        window[fn]=function(){ var r=o.apply(this,arguments); try{ renderLegend(); }catch(e){} return r; }; }
+        window[fn]=function(){ var r=o.apply(this,arguments);
+          try{ mmApplyRoleStyles(); }catch(e){}
+          try{ renderLegend(); }catch(e){} return r; }; }
     }catch(e){}
   });
 })();
