@@ -1770,7 +1770,7 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
           <div class="opts">
             <label class="opt"><input type="checkbox" id="optSrc" checked><span>Šaltiniai</span></label>
             <label class="opt"><input type="checkbox" id="optLinks" checked><span>Sąsajos</span></label>
-            <label class="opt"><input type="checkbox" id="optNum" checked><span>Automatinė numeracija</span></label>
+            <label class="opt"><input type="checkbox" id="optNum" checked><span>Automatinė numeracija</span></label><label class="opt" title="Pavadinimus kuria DI. Reikia tavo Claude API rakto — jis saugomas TIK tavo naršyklėje."><input type="checkbox" id="optAI"><span>DI pavadinimai</span></label>
           </div>
           <button class="go" id="go" disabled>
             <span class="goTx">Sukurti žemėlapį</span>
@@ -4954,41 +4954,51 @@ dz.addEventListener('drop',e=>{
   U$('file').dispatchEvent(new Event('change'));
 });
 
-/* ===== TEKSTAS → MINČIŲ ŽEMĖLAPIS (metodikos variklis) =====
-   Pilna semantinė dekompozicija (ne santrauka — redistribucija), semantinis grupavimas,
-   MECE, salience hierarchija (etiketė = pagrindinė propozicija, pastaba = tik papildoma),
-   radialinė koduotė. Vaidmenys→spalvos: potemė n-tools · pagrindinė mintis n-env ·
-   detalė/citata n-key · išvada n-action. Įvadas ir baigiamoji — atskiros potemės. 7±2. */
+/* ===== TEKSTAS → MINČIŲ ŽEMĖLAPIS (v2 — LOSSLESS) =====
+   DĖSNIS: nė vienas žodis neprarandamas. Kiekvienas šaltinio sakinys pažodžiui
+   atsiduria lygiai vienos kortelės užrašinėje (MECE). Kortelės pavadinimas —
+   3–8 žodžių santrauka, sudaryta PAGAL tos kortelės turinį (ne teksto nuokarpa).
+   Pastraipa = pagrindinė mintis (kortelė su vaikais); jos sakiniai = vaikinės kortelės.
+   Vaidmenys→spalvos: potemė n-tools · pagrindinė mintis n-env · detalė n-key · išvada n-action. */
 (function(){
-  const CH_PAGE=2800;                       // ~simbolių puslapyje (šaltinio nuorodai)
-  const RE_REF=/\b[A-ZĄČĖĮŠŲŪŽ][a-ząčėįšųūž]{2,}\s+\d+:\d+(?:[–\-]\d+)?/;   // Pradžios 7:11
+  const CH_PAGE=2800;
+  const RE_REF=/\b[A-ZĄČĖĮŠŲŪŽ][a-ząčėįšųūž]{2,}\s+\d+:\d+(?:[–\-]\d+)?/;
   const RE_CONCL=/^\s*(taigi|vadinasi|todėl|tad|apibendrinant|apibendrindami|išvada|galiausiai|pabaigai|matome|akivaizdu|darytina)/i;
   const RE_END=/(apibendrin|pabaigai|apsvarstėme|aptarėme|baigiam|susumuo|galiausiai|pažad)/i;
   const RE_INTRO=/(įvad|pradžioje|apsvarstysime|aptarsime|kalbėsime|pristat|šiandien)/i;
-  const STOP=new Set(('ir bet o jei kad tai yra buvo bus taip nes su be į iš už po apie nuo iki per prie kaip kai tik jau dar labai savo jų jis ji jie jos mes jūs aš tu ne nėra gali galima turi turime kuris kuri kurie kurios kurį kurią tas ta tie tos šis ši šie šios to tą tų tam tuo visi visa visos tačiau todėl taigi vadinasi tarp prieš pagal net gal turbūt ką kas kur kada kodėl arba ar nors bei pat tam kartu tada čia ten'
+  const LEAD=/^(Taigi|Tačiau|Be to|Todėl|Tad|Vadinasi|Galiausiai|Matome|Kaip|Nes|Ir|Bet|O|Tuo tarpu|Antra vertus)[,\s]+/i;
+  const SUB=/\s*,\s*(kad|kuris|kuri|kurie|kurios|kurį|kurią|nes|jei|jeigu|kai|nors|tačiau|todėl|o)\b[\s\S]*$/i;
+  const STOP=new Set(('ir bet o jei kad tai yra buvo bus taip nes su be į iš už po apie nuo iki per prie kaip kai tik jau dar labai savo jų jis ji jie jos mes jūs aš tu ne nėra gali galima turi turime kuris kuri kurie kurios tas ta tie tos šis ši šie šios to tą tų tam tuo visi visa visos tačiau todėl taigi vadinasi tarp prieš pagal net gal turbūt ką kas kur kada kodėl arba ar nors bei pat kartu tada čia ten'
     ).split(/\s+/));
   const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const norm=s=>String(s).toLowerCase().replace(/\s+/g,' ').replace(/[^a-ząčėęįšųūž0-9 ]/g,'').trim();
 
-  /* sakiniai (nekapojam ties 7:11, psl., pvz.) */
+  /* sakiniai — skirtukas \u0001, nekapojam ties 7:11 ar „psl." */
   function sentences(t){
-    return String(t).replace(/([.!?…])\s+(?=[A-ZĄČĖĮŠŲŪŽ„"])/g,'$1\u0001')
+    return String(t||'').replace(/([.!?…])\s+(?=[A-ZĄČĖĮŠŲŪŽ„"])/g,'$1\u0001')
       .split('\u0001').map(s=>s.trim()).filter(s=>s.length>1);
   }
-  /* etiketė: pagrindinė propozicija, be jungiamųjų žodžių, natūraliai nukirpta */
-  function makeLabel(s,max){
-    max=max||64;
-    const fin=v=>{ v=String(v||'').replace(/[.,;:\s]+$/,'').trim();
-      if(v&&/[a-ząčėęįšųūž]/.test(v.charAt(0))) v=v.charAt(0).toUpperCase()+v.slice(1);
-      return v; };
-    let x=String(s||'').trim().replace(/^[-–—•*·\s]+/,'').replace(/^\d+[.)]\s*/,'')
-      .replace(/^(Taigi|Tačiau|Be to|Todėl|Tad|Kaip|Nes|Ir|Bet|O|Vadinasi|Galiausiai|Matome)[,\s]+/i,'').trim();
-    if(!x) x=String(s||'').trim();
-    if(x.length<=max) return fin(x);
-    const cut=x.slice(0,max+20); let best=-1;
-    [' — ',' – ',' - ','; ',', ',': '].forEach(m=>{const i=cut.lastIndexOf(m); if(i>max*0.42&&i>best) best=i;});
-    if(best>0) return fin(cut.slice(0,best));
-    const sp=cut.lastIndexOf(' ',max);
-    return fin(sp>max*0.5?cut.slice(0,sp):cut.slice(0,max))+'…';
+  /* PAVADINIMAS: pagrindinė propozicija, 3–8 žodžiai, sudaryta pagal turinį (ne nuokarpa) */
+  function shortLabel(s,maxW){
+    maxW=maxW||8;
+    let x=String(s||'').trim()
+      .replace(/^[-–—•*·\s]+/,'').replace(/^\d+[.)]\s*/,'')
+      .replace(/^[„"“]/,'').replace(LEAD,'').trim();
+    const head=x.replace(SUB,'').trim();        // nuimam šalutinį sakinį
+    if(head.split(/\s+/).length>=3) x=head;
+    x=x.replace(/[.,;:!?…]+$/,'').trim();
+    let w=x.split(/\s+/).filter(Boolean);
+    if(w.length>maxW){
+      let cut=maxW;                              // ieškom natūralios ribos
+      for(let i=maxW;i>=Math.max(3,maxW-3);i--){ if(/[,;:–—]$/.test(w[i-1])){ cut=i-1; break; } }
+      w=w.slice(0,cut);
+    }
+    /* nepaliekam kabančio tarnybinio žodžio gale („…įrašai apie") */
+    const DANG=/^(apie|kaip|kad|su|be|į|iš|už|po|nuo|iki|per|prie|tarp|prieš|pagal|ir|ar|bei|o|bet|kai|jei|nes|tik|jau|dar|labai|savo|tas|ta|šis|ši|to|tą)$/i;
+    while(w.length>3&&DANG.test(w[w.length-1].replace(/[.,;:]/g,''))) w.pop();
+    let out=w.join(' ').replace(/[.,;:–—\s]+$/,'').trim();
+    if(out&&/[a-ząčėęįšųūž]/.test(out.charAt(0))) out=out.charAt(0).toUpperCase()+out.slice(1);
+    return out;
   }
   const isQuote=s=>/[„"“][^”"“]{8,}/.test(s)||RE_REF.test(s);
   function keywords(t){
@@ -4996,26 +5006,59 @@ dz.addEventListener('drop',e=>{
     const c={}; m.forEach(w=>{ if(!STOP.has(w)) c[w]=(c[w]||0)+1; });
     return Object.keys(c).sort((a,b)=>c[b]-c[a]).slice(0,6);
   }
-  /* Antraštė: markdown #, numeruota („1. Ar tvanas įvyko?"), DIDŽIOSIOMIS,
-     arba trumpa savarankiška eilutė BE galinio skyrybos ženklo („Įvadas“, „Baigiamoji dalis“).
-     Klausimas be numerio NĖRA antraštė — tai turinio mintis. */
   function isHeading(l){
     if(l.length>92) return false;
     if(/^#{1,4}\s/.test(l)) return true;
     if(/^(\d+|[IVXL]+)\s*[.)]\s+\S/.test(l)) return true;
-    const letters=l.replace(/[^A-Za-zĄČĖĘĮŠŲŪŽąčėęįšųūž]/g,'');
-    if(letters.length>2&&letters===letters.toUpperCase()&&l.split(/\s+/).length<=10) return true;
+    const L=l.replace(/[^A-Za-zĄČĖĘĮŠŲŪŽąčėęįšųūž]/g,'');
+    if(L.length>2&&L===L.toUpperCase()&&l.split(/\s+/).length<=10) return true;
     if(/[.!?…;:,]$/.test(l)) return false;
     return /^[A-ZĄČĖĘĮŠŲŪŽ]/.test(l)&&l.split(/\s+/).length<=8&&l.length<=60;
   }
 
-  window.mmGenerateFromText=function(raw,opt){
+  /* ---------- DI pavadinimai (vartotojo raktas, saugomas TIK jo naršyklėje) ---------- */
+  const KEY_LS='mm_ai_key';
+  window.mmGetAIKey=()=>{ try{ return localStorage.getItem(KEY_LS)||''; }catch(e){ return ''; } };
+  window.mmSetAIKey=k=>{ try{ k?localStorage.setItem(KEY_LS,k):localStorage.removeItem(KEY_LS); }catch(e){} };
+
+  async function aiLabels(items){
+    const key=window.mmGetAIKey(); if(!key||!items.length) return null;
+    const list=items.map((it,i)=>({i:i, tekstas:it.text.slice(0,600), vaikai:(it.kids||[]).slice(0,6)}));
+    const sys='Tu esi teksto struktūrizavimo specialistas. Kiekvienam elementui sukuri kortelės pavadinimą lietuvių kalba.\n'
+      +'DĖSNIAI: (1) 3–8 žodžiai; (2) pavadinimas APIBENDRINA to elemento turinį — jei yra „vaikai", pavadinimas apima VISUS vaikus; '
+      +'(3) tai ne teksto nuokarpa, o suformuluota mintis; (4) be kabučių, be galinio taško; (5) jokių naujų faktų — tik tai, kas tekste.';
+    const body={
+      model:'claude-opus-5', max_tokens:8000,
+      system:sys,
+      messages:[{role:'user',content:'Sukurk pavadinimą kiekvienam elementui:\n\n'+JSON.stringify(list,null,1)}],
+      output_config:{format:{type:'json_schema',schema:{
+        type:'object',
+        properties:{pavadinimai:{type:'array',items:{type:'object',
+          properties:{i:{type:'integer'},pavadinimas:{type:'string'}},
+          required:['i','pavadinimas'],additionalProperties:false}}},
+        required:['pavadinimai'],additionalProperties:false}}}
+    };
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+      headers:{'content-type':'application/json','x-api-key':key,
+        'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify(body)});
+    if(!r.ok) throw new Error('API '+r.status+': '+(await r.text()).slice(0,200));
+    const d=await r.json();
+    if(d.stop_reason==='refusal') throw new Error('DI atmetė užklausą');
+    const txt=(d.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
+    const out=JSON.parse(txt).pavadinimai||[];
+    const map={}; out.forEach(o=>{ if(o&&typeof o.i==='number'&&o.pavadinimas) map[o.i]=String(o.pavadinimas).trim(); });
+    return map;
+  }
+
+  /* ---------- PAGRINDINIS ---------- */
+  window.mmGenerateFromText=async function(raw,opt){
     opt=opt||{};
-    const wantSrc=opt.src!==false, wantLinks=opt.links!==false;
+    const wantSrc=opt.src!==false, wantLinks=opt.links!==false, wantAI=!!opt.ai;
     const text=String(raw||'').replace(/\r/g,'').trim();
     if(text.length<40) return false;
 
-    /* --- 1. Blokai: antraštės ir pastraipos (citatos NĖRA pastraipos) --- */
+    /* 1. Blokai (citatos NĖRA pastraipos) */
     const blocks=[]; let off=0, paraNo=0;
     text.split(/\n\s*\n+/).map(b=>b.trim()).filter(Boolean).forEach(b=>{
       const lines=b.split(/\n/).map(l=>l.trim()).filter(Boolean);
@@ -5024,24 +5067,22 @@ dz.addEventListener('drop',e=>{
       if(head) blocks.push({t:'h',x:head.replace(/^#{1,4}\s*/,''),pg:Math.floor(off/CH_PAGE)+1,pr:paraNo});
       const rest=body.join(' ').trim();
       if(rest&&rest.length>=12){
-        const quote=isQuote(rest)&&rest.length<340&&!/\.\s+\S+\s+\S+\s+\S+\s+\S+\s+\S+\./.test(rest);
-        if(!quote) paraNo++;
-        blocks.push({t:quote?'q':'p',x:rest,pg:Math.floor(off/CH_PAGE)+1,pr:quote?paraNo:paraNo});
+        const q=isQuote(rest)&&rest.length<340;
+        if(!q) paraNo++;
+        blocks.push({t:q?'q':'p',x:rest,pg:Math.floor(off/CH_PAGE)+1,pr:Math.max(1,paraNo)});
       }
       off+=b.length+2;
     });
     if(!blocks.length) return false;
 
-    /* --- 2. Centrinė tema (pirmas blokas SUVARTOJAMAS, kad nesidubliuotų) --- */
+    /* 2. Centrinė tema (blokas suvartojamas — nesidubliuoja) */
     let title='';
     if(blocks.length>1&&(blocks[0].t==='h'||(blocks[0].x.length<=95&&sentences(blocks[0].x).length<=1))){
-      title=makeLabel(blocks[0].x,62); blocks.shift();
-    } else {
-      title=makeLabel(sentences(blocks[0].x)[0]||blocks[0].x,58);
-    }
-    title=title.replace(/^#{1,4}\s*/,'').replace(/^(\d+|[IVXL]+)\s*[.)]\s*/,'').trim()||'Minčių žemėlapis';
+      title=shortLabel(blocks[0].x,10); blocks.shift();
+    } else title=shortLabel(sentences(blocks[0].x)[0]||blocks[0].x,10);
+    title=title.replace(/^(\d+|[IVXL]+)\s*[.)]\s*/,'').trim()||'Minčių žemėlapis';
 
-    /* --- 3. Potemės: pagal antraštes; be jų — semantiniai chunk'ai --- */
+    /* 3. Potemės */
     let secs=[];
     if(blocks.some(b=>b.t==='h')){
       let cur=null;
@@ -5050,101 +5091,108 @@ dz.addEventListener('drop',e=>{
         else { if(!cur){ cur={name:'Įvadas',items:[]}; secs.push(cur); } cur.items.push(b); }
       });
     } else {
-      const items=blocks.filter(b=>b.t!=='h');
-      const per=Math.max(3,Math.ceil(items.length/Math.min(6,Math.max(2,Math.round(items.length/4)))));
-      for(let i=0;i<items.length;i+=per){
-        const grp=items.slice(i,i+per);
-        secs.push({name:makeLabel(sentences(grp[0].x)[0]||grp[0].x,52),items:grp});
+      const it=blocks.filter(b=>b.t!=='h');
+      const per=Math.max(3,Math.ceil(it.length/Math.min(6,Math.max(2,Math.round(it.length/4)))));
+      for(let i=0;i<it.length;i+=per){
+        const g=it.slice(i,i+per);
+        secs.push({name:shortLabel(sentences(g[0].x)[0]||g[0].x,7),items:g});
       }
     }
     secs=secs.filter(s=>s.items.length);
     if(!secs.length) return false;
-
-    /* metodika: įvadas ir baigiamoji — atskiros, savarankiškos potemės */
     if(secs.length>1){
       const f=secs[0], l=secs[secs.length-1];
       if(!/įvad/i.test(f.name)&&RE_INTRO.test(f.items.map(i=>i.x).join(' ').slice(0,300))) f.name='Įvadas';
-      const lt=l.items.map(i=>i.x).join(' ');
-      if(!/baigiam|pabaig/i.test(l.name)&&RE_END.test(lt.slice(0,400))) l.name='Baigiamoji dalis';
+      if(!/baigiam|pabaig/i.test(l.name)&&RE_END.test(l.items.map(i=>i.x).join(' ').slice(0,400))) l.name='Baigiamoji dalis';
     }
 
-    /* --- 4. Kortelės --- */
+    /* 4. Kortelės — LOSSLESS: kiekvienas sakinys pažodžiui lygiai vienoje užrašinėje */
     let uid=0; const nid=()=>'g'+(++uid);
-    const srcLine=b=>wantSrc?'<p class="src">📄 Psl. '+b.pg+', '+Math.max(1,b.pr)+' pastr.</p>':'';
-    const noteOf=(bodyHtml,b)=>{ const s=srcLine(b); return (bodyHtml||s)?(bodyHtml||'')+s:''; };
-
-    function cardFrom(b,role){
-      const ss=sentences(b.x);
-      let label, body='';
-      if(b.t==='q'||isQuote(ss[0]||'')){
-        /* citata + jos paaiškinimas = VIENA kortelė */
-        const q=ss[0]||b.x, rest=ss.slice(1).join(' ');
-        const ref=(q.match(RE_REF)||[])[0];
-        const gist=rest?makeLabel(rest,42):makeLabel(q.replace(/[„"“”]/g,''),46);
-        label=ref?ref+' — '+gist:makeLabel(q.replace(/[„"“”]/g,''),58);
-        body='<p><i>'+esc(q)+'</i></p>'+(rest?'<p>'+esc(rest)+'</p>':'');
-        role=role||'n-key';
-      } else {
-        label=makeLabel(ss[0]||b.x,62);
-        const rest=ss.slice(1);
-        if(rest.length) body='<p>'+esc(rest.join(' '))+'</p>';
-        if(!role) role=RE_CONCL.test(b.x)?'n-action':'n-env';
-      }
-      if(!label||label.length<3) label=makeLabel(b.x,62)||b.x.slice(0,58);
-      return {id:nid(),label:label,cls:role,note:noteOf(body,b),children:[],_kw:keywords(b.x)};
-    }
+    const srcOf=b=>wantSrc?'<p class="src">📄 Psl. '+b.pg+', '+Math.max(1,b.pr)+' pastr.</p>':'';
+    const AI=[];                       // elementai DI pavadinimams
+    const reg=(node,text,kids)=>{ AI.push({node:node,text:text,kids:kids||[]}); return node; };
 
     const root={id:'root',label:title,cls:'n-center',
-      note:'<p>Žemėlapis sugeneruotas iš pateikto teksto. Kiekviena mintis — savo kortelėje, su nuoroda į šaltinį.</p>',
+      note:'<p>Žemėlapis sugeneruotas iš pateikto teksto. Visas tekstas išskaidytas į korteles — nieko neprarasta.</p>',
       children:[]};
 
     secs.forEach(sec=>{
-      const node={id:nid(),label:makeLabel(sec.name,58),cls:'n-tools',note:'',children:[],_kw:keywords(sec.items.map(i=>i.x).join(' '))};
+      const secNode={id:nid(),label:shortLabel(sec.name,8),cls:'n-tools',note:srcOf(sec.items[0]),children:[],_kw:keywords(sec.items.map(i=>i.x).join(' '))};
       let last=null;
       sec.items.forEach(b=>{
-        if(b.t==='q'&&last){ last.children.push(cardFrom(b,'n-key')); return; }  // citata → detalė prie minties
-        const c=cardFrom(b);
-        /* ilgą pastraipą skaidom: papildomos propozicijos → detalės (n-key) */
         const ss=sentences(b.x);
-        if(c.cls!=='n-key'&&ss.length>3){
-          const extra=ss.slice(1).filter(s=>s.length>45);
-          if(extra.length>=2){
-            c.note=noteOf('',b);
-            extra.slice(0,5).forEach(s=>c.children.push({id:nid(),label:makeLabel(s,58),
-              cls:RE_CONCL.test(s)?'n-action':'n-key',note:noteOf('<p>'+esc(s)+'</p>',b),children:[]}));
-          }
+        const quote=(b.t==='q');
+        if(quote&&last){                                   // citata → detalė prie ankstesnės minties
+          const ref=(b.x.match(RE_REF)||[])[0];
+          const c={id:nid(),label:ref?ref:shortLabel(b.x,8),cls:'n-key',
+            note:'<p><i>'+esc(b.x)+'</i></p>'+srcOf(b),children:[]};
+          last.children.push(reg(c,b.x)); return;
         }
-        node.children.push(c); last=c;
+        if(ss.length<=1){                                   // vienas sakinys = viena kortelė
+          const c={id:nid(),label:shortLabel(b.x,8),cls:RE_CONCL.test(b.x)?'n-action':'n-env',
+            note:(quote?'<p><i>'+esc(b.x)+'</i></p>':'<p>'+esc(b.x)+'</p>')+srcOf(b),children:[],_kw:keywords(b.x)};
+          secNode.children.push(reg(c,b.x)); last=c; return;
+        }
+        /* pastraipa = tėvinė kortelė; JOS SAKINIAI = vaikai (pažodžiui) */
+        /* tėvinės kortelės pavadinimas TRUMPESNIS (skaitosi kaip antraštė), kad
+           nedubliuotų pirmo vaiko; su DI jis pakeičiamas tikra viso turinio santrauka */
+        const par={id:nid(),label:shortLabel(ss[0],5),cls:RE_CONCL.test(b.x)?'n-action':'n-env',
+          note:srcOf(b),children:[],_kw:keywords(b.x)};
+        ss.forEach(s=>{
+          const q2=isQuote(s);
+          const ch={id:nid(),label:shortLabel(s,8),cls:RE_CONCL.test(s)?'n-action':'n-key',
+            note:(q2?'<p><i>'+esc(s)+'</i></p>':'<p>'+esc(s)+'</p>')+srcOf(b),children:[]};
+          par.children.push(reg(ch,s));
+        });
+        secNode.children.push(reg(par,b.x,ss.map(s=>shortLabel(s,8))));
+        last=par;
       });
-      /* 7±2: tik kai TIKRAI daug — grupuojam pagal bendrą temą (nė viena mintis neprarandama;
-         grupės pavadinimas kyla iš jos vaikų raktažodžių, ne iš pirmo vaiko turinio) */
-      if(node.children.length>10){
-        const out=[], per=5;
-        for(let i=0;i<node.children.length;i+=per){
-          const chunk=node.children.slice(i,i+per);
-          const kw=[]; chunk.forEach(c=>(c._kw||[]).forEach(k=>{ if(kw.indexOf(k)<0&&kw.length<2) kw.push(k); }));
-          const lab=kw.length?kw.join(', ').replace(/^./,m=>m.toUpperCase()):'Dalis '+(out.length+1);
-          out.push({id:nid(),label:lab,cls:'n-keygrp',note:'',children:chunk,_kw:kw});
+      /* 7±2 — grupuojam tik kai tikrai daug (nieko neprarandant) */
+      if(secNode.children.length>10){
+        const out=[]; const per=5;
+        for(let i=0;i<secNode.children.length;i+=per){
+          const ch=secNode.children.slice(i,i+per);
+          const kw=[]; ch.forEach(c=>(c._kw||[]).forEach(k=>{ if(kw.indexOf(k)<0&&kw.length<2) kw.push(k); }));
+          const g={id:nid(),label:kw.length?kw.join(', ').replace(/^./,m=>m.toUpperCase()):'Dalis '+(out.length+1),
+            cls:'n-keygrp',note:'',children:ch,_kw:kw};
+          out.push(reg(g,ch.map(c=>c.label).join('. '),ch.map(c=>c.label)));
         }
-        node.children=out;
+        secNode.children=out;
       }
-      root.children.push(node);
+      root.children.push(reg(secNode,sec.items.map(i=>i.x).join(' ').slice(0,600),secNode.children.map(c=>c.label)));
     });
 
-    /* --- 5. Sąsajos tarp potemių (bendri raktažodžiai) --- */
+    /* 5. Sąsajos */
     if(wantLinks&&root.children.length>1){
       root.children.forEach(a=>{
         const hit=root.children.find(b=>b!==a&&b._kw&&a._kw&&b._kw.some(k=>a._kw.indexOf(k)>=0));
-        if(hit) a.note=(a.note||'')+'<p>↳ Susiję: „'+esc(hit.label)+'"</p>';
+        if(hit) a.note=(a.note||'')+'<p>↳ Žr. „'+esc(hit.label)+'"</p>';
       });
     }
 
-    /* --- 6. Švarus pradinis vaizdas: gilesnės grupės suskleistos --- */
+    /* 6. DI pavadinimai (jei įjungta ir yra raktas) */
+    let aiNote='';
+    if(wantAI&&window.mmGetAIKey()){
+      try{
+        const map=await aiLabels(AI.map(a=>({text:a.text,kids:a.kids})));
+        if(map){ let n=0; AI.forEach((a,i)=>{ if(map[i]){ a.node.label=map[i].replace(/[."]+$/,''); n++; } });
+          aiNote=' · DI pavadinimų: '+n; }
+      }catch(e){ console.warn('DI pavadinimai nepavyko:',e); aiNote=' · DI nepavyko ('+(e.message||'').slice(0,60)+')'; }
+    }
+
+    /* 7. Aprėpties patikra — ar visi sakiniai pateko į korteles */
+    const inMap=[]; (function walk(n){ if(n.note) inMap.push(norm(n.note.replace(/<[^>]+>/g,' ')));
+      (n.children||[]).forEach(walk); })(root);
+    const hay=inMap.join(' ');
+    let total=0, miss=0;
+    blocks.forEach(b=>{ if(b.t==='h') return; sentences(b.x).forEach(s=>{ total++;
+      const k=norm(s); if(k.length>8&&hay.indexOf(k.slice(0,Math.min(60,k.length)))<0) miss++; }); });
+    const cover=total?Math.round((total-miss)/total*100):100;
+
+    /* 8. Įkeliam */
     (function collapse(n,d){ if(d>=2&&n.children&&n.children.length) n._c=true;
       (n.children||[]).forEach(c=>collapse(c,d+1)); })(root,0);
     (function clean(n){ delete n._kw; (n.children||[]).forEach(clean); })(root);
-
-    /* --- 7. Įkeliam --- */
     Object.keys(DATA).forEach(k=>delete DATA[k]); Object.assign(DATA,root);
     Object.keys(OBJ).forEach(k=>delete OBJ[k]);
     (function idx(n,p){ n._p=p; OBJ[n.id]=n; (n.children||[]).forEach(c=>idx(c,n)); })(DATA,null);
@@ -5154,7 +5202,8 @@ dz.addEventListener('drop',e=>{
     render(); center(); try{ userZoomed=false; }catch(e){}
     setTimeout(()=>{ try{ fitAll(true); }catch(e){} },80);
     try{ if(typeof refreshExpandLabel==='function') refreshExpandLabel(); }catch(e){}
-    try{ showToast('Žemėlapis sugeneruotas iš teksto'); }catch(e){}
+    try{ showToast('Kortelių: '+AI.length+' · tekstas įtrauktas '+cover+'%'+aiNote); }catch(e){}
+    window.mmLastCoverage={total:total,missing:miss,percent:cover,cards:AI.length};
     return true;
   };
 })();
@@ -5198,20 +5247,23 @@ U$('go').onclick=async()=>{
   }catch(e){}
   try{ applyNumbering(U$('optNum').checked); }catch(e){}
 
-  setTimeout(()=>{
+  setTimeout(async ()=>{
     clearInterval(timer);
-    U$('busy').classList.remove('on');
-    // GENERUOJAM žemėlapį iš pateikto teksto (pagal metodiką), o ne rodom pavyzdį
+    // GENERUOJAM žemėlapį iš pateikto teksto (lossless), o ne rodom pavyzdį
     try{
-      const ok=window.mmGenerateFromText(source,{
-        src:U$('optSrc').checked, links:U$('optLinks').checked
+      const useAI=!!(U$('optAI')&&U$('optAI').checked);
+      if(useAI) U$('busyText').textContent='Kuriu pavadinimus su DI…';
+      const ok=await window.mmGenerateFromText(source,{
+        src:U$('optSrc').checked, links:U$('optLinks').checked, ai:useAI
       });
       if(!ok) alert('Nepavyko atpažinti struktūros. Įklijuok bent kelias pastraipas teksto — geriausiai su antraštėmis ir skyriais.');
     }catch(err){
       console.error(err);
       alert('Klaida generuojant žemėlapį: '+(err&&err.message?err.message:err));
+    }finally{
+      U$('busy').classList.remove('on');
     }
-  },1600);
+  },1200);
 };
 
 const smp=U$('openSample'); if(smp) smp.onclick=()=>{ hideUpload(); };
@@ -5640,6 +5692,17 @@ function renderGloss(n){
   });
 })();
 
+</script>
+
+<script>
+/* DI pavadinimų raktas — prašomas tik pažymėjus varnelę; saugomas TIK naršyklėje (localStorage) */
+document.addEventListener('change',function(e){
+  var t=e.target; if(!t||t.id!=='optAI'||!t.checked) return;
+  if(window.mmGetAIKey&&window.mmGetAIKey()) return;
+  var k=prompt('Įklijuok savo Claude API raktą (sk-ant-...).\n\nJis saugomas TIK tavo naršyklėje ir siunčiamas tik į api.anthropic.com.\nUž naudojimą moki pagal savo Anthropic paskyrą.');
+  if(k&&k.trim()){ window.mmSetAIKey(k.trim()); }
+  else { t.checked=false; }
+});
 </script>
 </body>
 </html>
