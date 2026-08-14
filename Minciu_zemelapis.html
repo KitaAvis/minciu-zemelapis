@@ -5880,7 +5880,11 @@ var MM_DOMAINS = [
     [2, RX_TASK]
   ]],
   ['dokumentai', 'Taisyklės ir dokumentai', [
-    [3, /\b(straipsni\w*|nuostat\w*|įstatym\w*|reglament\w*|sutart\w*|taisyklių\s+\d)/i],
+    /* „straipsnis“ lietuviškai yra ir žurnalo straipsnis, ir įstatymo straipsnis —
+       teisinę reikšmę rodo šalia esantis numeris. Tas pat su „įstatymu“: „Dievo
+       įstatymas“ nedaro teksto dokumentu, todėl jo svoris mažesnis. */
+    [3, /\b(\d+\s*straipsni\w*|straipsni\w*\s+\d|nuostat\w*|reglament\w*|sutart\w*|taisyklių\s+\d)/i],
+    [1, /\bįstatym\w*/i],
     [2, /\b(privalo|draudžiama|neturi teisės|įsipareigoja|galioja nuo)\b/i],
     [2, /\b(išskyrus|išimtis|netaikoma|su sąlyga)\b/i]
   ]],
