@@ -72,7 +72,7 @@
   }
   body[data-theme="night"] .n-env{ background:#c23a29; color:#fff9f0 }
   body[data-theme="night"] .n-tools{ background:#3f382e; color:#f7efdc }
-  body[data-theme="night"] .n-key{ background:#f5efe0; color:#1a1410; border-color:#4a4136 }
+  body[data-theme="night"] .n-key,body[data-theme="night"] .n-verse,body[data-theme="night"] .n-quote,body[data-theme="night"] .n-example,body[data-theme="night"] .n-data,body[data-theme="night"] .n-question,body[data-theme="night"] .n-step{ background:#f5efe0; color:#1a1410; border-color:#4a4136 }
   body[data-theme="night"] .n-action{ background:#f5c93a; color:#241a04; border-color:#2e261b }
   body[data-theme="night"] #notes, body[data-theme="night"] #editor{
     background:var(--note); border:2px solid #3b3226;
@@ -221,7 +221,7 @@
   body[data-theme="street"] .n-theme{ background:#29B6D8; color:#0E2830 }
   body[data-theme="street"] .n-tools{ background:#3A362F; color:#F5F0E6 }
   body[data-theme="street"] .n-env{ background:#D93B3B; color:#fff }
-  body[data-theme="street"] .n-key{ background:#E9E2D2; color:#221E19; border-color:#14110E }
+  body[data-theme="street"] .n-key,body[data-theme="street"] .n-verse,body[data-theme="street"] .n-quote,body[data-theme="street"] .n-example,body[data-theme="street"] .n-data,body[data-theme="street"] .n-question,body[data-theme="street"] .n-step{ background:#E9E2D2; color:#221E19; border-color:#14110E }
   body[data-theme="street"] .n-keygrp{ background:#D8CFBB; color:#221E19; border-color:#14110E }
   body[data-theme="street"] .n-action{ background:#1F8A3D; color:#fff; border-color:#14110E }
   body[data-theme="street"] #bar #title{ background:rgba(20,17,13,.92); border:2px solid #14110E; color:#F5F0E6 }
@@ -306,7 +306,7 @@
       repeating-linear-gradient(105deg, rgba(40,16,6,.16) 0px, rgba(40,16,6,.16) 1px, transparent 1px, transparent 8px),
       repeating-linear-gradient(15deg, rgba(255,222,182,.08) 0px, rgba(255,222,182,.08) 1px, transparent 1px, transparent 11px),
       linear-gradient(160deg,#C75E2C,#9A431F); }
-  body[data-theme="paveikslas"] .n-key{ color:#241F17; border-color:#7A6B49; background-image:
+  body[data-theme="paveikslas"] .n-key,body[data-theme="paveikslas"] .n-verse,body[data-theme="paveikslas"] .n-quote,body[data-theme="paveikslas"] .n-example,body[data-theme="paveikslas"] .n-data,body[data-theme="paveikslas"] .n-question,body[data-theme="paveikslas"] .n-step{ color:#241F17; border-color:#7A6B49; background-image:
       repeating-linear-gradient(105deg, rgba(96,78,46,.12) 0px, rgba(96,78,46,.12) 1px, transparent 1px, transparent 9px),
       repeating-linear-gradient(15deg, rgba(96,78,46,.09) 0px, rgba(96,78,46,.09) 1px, transparent 1px, transparent 12px),
       linear-gradient(160deg,#F2E4C4,#DCC89E); }
@@ -460,7 +460,7 @@
   .n-env{background:var(--env);color:#fff;font-size:14.5px}
   .n-deploy{background:#7E57C2;color:#fff;font-size:14.5px}
   .n-skill{background:#26A69A;color:#fff;font-size:14.5px}
-  .n-key{background:#eef1f6;color:#39435a;font-size:13px;border-color:#c2cbda}
+  .n-key,.n-verse,.n-quote,.n-example,.n-data,.n-question,.n-step{background:#eef1f6;color:#39435a;font-size:13px;border-color:#c2cbda}
   .n-keygrp{background:#dfe4ec;color:#39435a;font-size:13.5px;border-color:#c2cbda}
   .n-action{background:#e3f3f0;color:var(--action);font-size:13px;border-color:var(--action)}
   /* ===== NAUJI VAIDMENYS ===== */
@@ -889,7 +889,7 @@
   #hint{position:fixed;right:14px;bottom:14px;z-index:15;color:var(--muted);font-size:11px;
     background:rgba(255,255,255,.8);border:1px solid #e3e8ee;border-radius:8px;padding:6px 10px}
   /* #legend nebeslepiamas — jį pakeitė nauja spalvų legenda (žr. „SPALVŲ LEGENDA (premium)") */
-  #hint,#backToUpload{display:none!important}
+  #legend,#hint,#backToUpload{display:none!important}
   @media(max-width:640px){#title small{display:none}}
   #editor{position:fixed;right:16px;bottom:16px;width:290px;z-index:60;background:#fff;
     border:1px solid #dde3ea;border-radius:12px;box-shadow:0 8px 30px rgba(20,30,55,.18);
@@ -1587,93 +1587,28 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
 .exCancel:hover{color:#EAF2F8}
 
 
-/* ===== SPALVŲ LEGENDA (premium) ===== */
-#legend{position:fixed;left:18px;bottom:18px;z-index:30;display:block;
-  min-width:212px;max-width:262px;padding:0;border-radius:16px;overflow:hidden;
-  background:rgba(255,255,255,.93);
-  -webkit-backdrop-filter:blur(18px) saturate(1.5);backdrop-filter:blur(18px) saturate(1.5);
-  border:1px solid rgba(18,28,48,.10);
-  box-shadow:0 12px 34px -10px rgba(16,24,40,.20),0 2px 6px rgba(16,24,40,.06),
-             inset 0 1px 0 rgba(255,255,255,.7);
-  font-family:"Segoe UI",system-ui,-apple-system,sans-serif;
-  transition:box-shadow .2s ease}
-#legend:hover{box-shadow:0 16px 44px -10px rgba(16,24,40,.26),0 2px 6px rgba(16,24,40,.08),
-             inset 0 1px 0 rgba(255,255,255,.7)}
-#legend .lgHead{display:flex;align-items:center;justify-content:space-between;gap:10px;
-  padding:11px 14px 9px;cursor:pointer;user-select:none;
-  border-bottom:1px solid rgba(18,28,48,.07)}
-#legend .lgTitle{font-size:10px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;
-  color:#6B7484;white-space:nowrap}
-#legend .lgChev{width:14px;height:14px;flex:none;color:#9AA3B2;transition:transform .22s ease}
-#legend.lgOff .lgChev{transform:rotate(-90deg)}
-#legend.lgOff .lgWrap{display:none}
-#legend.lgOff .lgHead{border-bottom:none}
-#legend .lgWrap{padding:9px 14px 12px}
-#legend .lgRow{display:flex;align-items:center;gap:10px;padding:4px 0;line-height:1.25}
-#legend .lgSw{width:16px;height:16px;flex:none;border-radius:5px;border:2px solid;
-  box-shadow:0 1px 3px rgba(16,24,40,.16),inset 0 1px 0 rgba(255,255,255,.25)}
-#legend .lgSw.rnd{border-radius:50%}
-#legend .lgTx{font-size:12px;font-weight:600;color:#22293A;letter-spacing:-.1px}
-#legend .lgRow.dim .lgSw{opacity:.42}
-#legend .lgRow.dim .lgTx{opacity:.55}
-#legend .lgN{margin-left:auto;font-size:10.5px;font-weight:700;color:#98A1B0;
-  font-variant-numeric:tabular-nums}
-#legend .lgSep{height:1px;background:rgba(18,28,48,.07);margin:9px 0 8px}
-#legend .lgMark{display:flex;align-items:center;gap:9px;padding:2.5px 0;font-size:11px;color:#6B7484}
-#legend .lgMark b{display:inline-flex;align-items:center;justify-content:center;
-  min-width:19px;height:19px;border-radius:6px;background:rgba(18,28,48,.06);
-  font-size:11px;font-weight:800;color:#4A5468;flex:none}
-#legend .lgNote{margin-top:9px;padding:8px 10px;border-radius:9px;font-size:11px;line-height:1.45;
-  background:rgba(46,158,143,.10);color:#1F6B60;border-left:2.5px solid #2E9E8F}
-/* tamsios temos */
-body[data-theme="cosmos"] #legend,body[data-theme="street"] #legend,body[data-theme="night"] #legend,
-body[data-theme="paveikslas"] #legend{display:block}
-body[data-theme="cosmos"] #legend{background:rgba(11,17,27,.86);border-color:rgba(140,180,220,.18);
-  box-shadow:0 14px 40px -10px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.06)}
-body[data-theme="cosmos"] #legend .lgHead{border-bottom-color:rgba(140,180,220,.14)}
-body[data-theme="cosmos"] #legend .lgTitle{color:#8FA3B8}
-body[data-theme="cosmos"] #legend .lgTx{color:#E4ECF5}
-body[data-theme="cosmos"] #legend .lgN{color:#7B8798}
-body[data-theme="cosmos"] #legend .lgSep{background:rgba(140,180,220,.14)}
-body[data-theme="cosmos"] #legend .lgMark{color:#93A3B6}
-body[data-theme="cosmos"] #legend .lgMark b{background:rgba(160,190,225,.12);color:#C6D3E2}
-body[data-theme="night"] #legend{background:rgba(232,223,200,.95);border-color:#3b3226;border-radius:8px;
-  box-shadow:5px 6px 0 rgba(30,24,16,.45)}
-body[data-theme="night"] #legend .lgTitle{color:#5a4d3c}
-body[data-theme="night"] #legend .lgTx{color:#241c14}
-body[data-theme="street"] #legend{background:rgba(20,17,13,.94);border:2px solid #14110E;border-radius:10px}
-body[data-theme="street"] #legend .lgTitle{color:#B9AE9C}
-body[data-theme="street"] #legend .lgTx{color:#F5F0E6}
-body[data-theme="street"] #legend .lgN{color:#8E8474}
-body[data-theme="street"] #legend .lgSep{background:rgba(245,240,230,.16)}
-body[data-theme="street"] #legend .lgMark{color:#B9AE9C}
-body[data-theme="street"] #legend .lgMark b{background:rgba(245,240,230,.12);color:#F5F0E6}
-body[data-theme="paveikslas"] #legend{background:#E9DBB9;border:2px solid #4A4028;border-radius:10px}
-body[data-theme="paveikslas"] #legend .lgTitle{color:#6E5F3F}
-body[data-theme="paveikslas"] #legend .lgTx{color:#2A2317}
-body[data-theme="paveikslas"] #legend .lgSep{background:rgba(74,64,40,.20)}
-body[data-theme="paveikslas"] #legend .lgMark{color:#6E5F3F}
-@media(max-width:760px){#legend{display:none!important}}
-body.presenting #legend{opacity:0;pointer-events:none}
 
-/* jungiklis legendoje */
-#legend .lgToggle{display:flex;align-items:center;gap:9px;cursor:pointer;user-select:none;padding:2px 0}
-#legend .lgToggle input{position:absolute;opacity:0;width:0;height:0}
-#legend .lgTrack{position:relative;width:32px;height:18px;flex:none;border-radius:999px;
-  background:rgba(18,28,48,.16);transition:background .2s ease;
-  box-shadow:inset 0 1px 2px rgba(16,24,40,.14)}
-#legend .lgKnob{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;
-  background:#fff;box-shadow:0 1px 3px rgba(16,24,40,.35);transition:transform .2s cubic-bezier(.3,1.3,.5,1)}
-#legend .lgToggle input:checked + .lgTrack{background:#2E9E8F}
-#legend .lgToggle input:checked + .lgTrack .lgKnob{transform:translateX(14px)}
-#legend .lgToggle input:focus-visible + .lgTrack{outline:2px solid #2E9E8F;outline-offset:2px}
-#legend .lgToggleTx{font-size:11.5px;font-weight:700;color:#3A4356;letter-spacing:-.1px}
-body[data-theme="cosmos"] #legend .lgTrack{background:rgba(160,190,225,.20)}
-body[data-theme="cosmos"] #legend .lgToggleTx{color:#D4DEEA}
-body[data-theme="street"] #legend .lgToggleTx{color:#F5F0E6}
-body[data-theme="street"] #legend .lgTrack{background:rgba(245,240,230,.22)}
-body[data-theme="night"] #legend .lgToggleTx{color:#241c14}
-body[data-theme="paveikslas"] #legend .lgToggleTx{color:#2A2317}
+  /* ===== PAIEŠKOS FILTRAI pagal teksto elemento tipą ===== */
+  #sFilters{display:flex;flex-wrap:wrap;gap:5px;padding:8px 10px;border-bottom:1px solid #eef1f5}
+  #sFilters:empty{display:none}
+  .sChip{display:inline-flex;align-items:center;gap:5px;cursor:pointer;font-family:inherit;
+    border:1px solid #dde3ea;background:#f7f9fc;color:#3d4759;border-radius:999px;
+    padding:4px 9px;font-size:11px;font-weight:600;line-height:1.4;transition:all .15s}
+  .sChip:hover{background:#eef2f7;border-color:#c3cddb}
+  .sChip b{font-size:10px;font-weight:800;opacity:.6}
+  .sChip.on{background:#1b2333;border-color:#1b2333;color:#fff}
+  .sChip.on b{opacity:.75}
+  body[data-theme="cosmos"] #sFilters{border-bottom-color:rgba(140,180,220,.18)}
+  body[data-theme="cosmos"] .sChip{background:rgba(160,190,225,.09);border-color:rgba(140,180,220,.26);color:#CBD8E6}
+  body[data-theme="cosmos"] .sChip:hover{background:rgba(160,190,225,.17)}
+  body[data-theme="cosmos"] .sChip.on{background:#2FD8FF;border-color:#2FD8FF;color:#04222E}
+  body[data-theme="street"] #sFilters{border-bottom-color:rgba(245,240,230,.16)}
+  body[data-theme="street"] .sChip{background:#2A241D;border-color:#4a4136;color:#F5F0E6}
+  body[data-theme="street"] .sChip.on{background:#F5C518;border-color:#14110E;color:#141210}
+  body[data-theme="night"] .sChip{background:#e8dfc8;border-color:#3b3226;color:#241c14}
+  body[data-theme="night"] .sChip.on{background:#c1352b;border-color:#3b3226;color:#fff2d0}
+  body[data-theme="paveikslas"] .sChip{background:#E4D5B0;border-color:#8A7A57;color:#2A2317}
+  body[data-theme="paveikslas"] .sChip.on{background:#B85427;border-color:#4A4028;color:#F4EAD0}
 </style>
 </head>
 <body>
@@ -1955,6 +1890,7 @@ body[data-theme="paveikslas"] #legend .lgToggleTx{color:#2A2317}
           <span id="sCount"></span>
           <button id="sClear" aria-label="Išvalyti">✕</button>
         </div>
+        <div id="sFilters"></div>
         <div id="sResults"></div>
       </div>
     </div>
@@ -2172,7 +2108,6 @@ body[data-theme="paveikslas"] #legend .lgToggleTx{color:#2A2317}
   </div>
 </div>
 
-<div id="legend"><div id="legendBody"></div></div>
 <div id="hint">Tempk = perkelti · dešinys paspaudimas = keisti spalvą/tekstą · ratukas = mastelis</div>
 
 <!-- ===== PERŽIŪROS REŽIMAS ===== -->
@@ -3935,33 +3870,48 @@ function highlightNodes(ids){
   // atskleidžiam visų tikslinių kortelių tėvus, kad jos būtų matomos
   ids.forEach(id=>{ const n=OBJ[id]; if(!n) return; let p=n._p; while(p){ if(p._c) p._c=false; p=p._p; } });
   render();
-  setTimeout(()=>{
-    const els=[];
-    ids.forEach(id=>{ const el=document.querySelector('.node[data-id="'+id+'"]'); if(el) els.push(el); });
-    if(!els.length) return;
-    // centruojam vaizdą ties visų kortelių viduriu (kad matytųsi visos)
-    let minX=9e9,minY=9e9,maxX=-9e9,maxY=-9e9;
-    els.forEach(el=>{ const r=el.getBoundingClientRect();
-      minX=Math.min(minX,r.x); minY=Math.min(minY,r.y);
-      maxX=Math.max(maxX,r.x+r.width); maxY=Math.max(maxY,r.y+r.height); });
-    // jei kortelės netelpa ekrane — sumažinam mastelį, kad visos matytųsi
-    const spanX=maxX-minX, spanY=maxY-minY;
-    if(spanX > innerWidth*0.85 || spanY > innerHeight*0.85){
-      const need=Math.min(innerWidth*0.8/Math.max(spanX,1), innerHeight*0.8/Math.max(spanY,1));
-      scale = Math.max(0.15, scale*need);
+  /* Kortelių matmenys stabilizuojasi ne per vieną piešimą (žr. _passes), todėl
+     rėmą matuojam ir centruojam kelis kartus — kitaip nucentruojama ties dar
+     nenusistovėjusiu išdėstymu ir kortelės lieka už ekrano ribų. */
+  const boxOf=()=>{
+    let x0=9e9,y0=9e9,x1=-9e9,y1=-9e9,n=0;
+    ids.forEach(id=>{ const el=document.querySelector('.node[data-id="'+id+'"]'); if(!el) return;
+      const r=el.getBoundingClientRect(); n++;
+      x0=Math.min(x0,r.x); y0=Math.min(y0,r.y); x1=Math.max(x1,r.x+r.width); y1=Math.max(y1,r.y+r.height); });
+    return n?{x0,y0,x1,y1}:null;
+  };
+  // render() ištrina ir perpiešia korteles, todėl švytėjimą kaskart uždedam iš naujo
+  const lampOn=()=>{ ids.forEach(id=>{ const el=document.querySelector('.node[data-id="'+id+'"]'); if(el) el.classList.add('lamp'); }); };
+  // laisvas plotas: atviras paieškos skydelis uždengia kairę pusę — į jį necentruojam
+  const freeArea=()=>{
+    let L=0; const sp=document.getElementById('sPanel');
+    if(sp && sp.classList.contains('open')){ const r=sp.getBoundingClientRect();
+      if(r.width && r.left<innerWidth*0.6) L=Math.min(r.right+16, innerWidth*0.55); }
+    return {L, W:Math.max(innerWidth-L,200), T:66, H:Math.max(innerHeight-66,200)};
+  };
+  const scale0=scale;              // pradinis mastelis — labiau nepriartinam
+  const fit=()=>{
+    let b=boxOf(); if(!b) return;
+    const a=freeArea();
+    // parenkam mastelį, kad visos rastos kortelės tilptų į laisvą plotą.
+    // Tikslinam abiem kryptim: išdėstymas nusistovi palaipsniui, todėl per
+    // stipriai sumažintą mastelį vėlesnis praėjimas turi grąžinti atgal.
+    const spanX=Math.max(b.x1-b.x0,1), spanY=Math.max(b.y1-b.y0,1);
+    if(ids.length>1){
+      const need=Math.min(a.W*0.86/spanX, a.H*0.86/spanY);
+      const ns=Math.min(scale0, Math.max(0.15, scale*need));
+      if(Math.abs(ns-scale)>0.004){ scale=ns; render(); b=boxOf(); if(!b) return; }
     }
-    // po galimo mastelio keitimo — perskaičiuojam centrą
-    render();
-    setTimeout(()=>{
-      const els2=ids.map(id=>document.querySelector('.node[data-id="'+id+'"]')).filter(Boolean);
-      els2.forEach(el=>{ el.classList.remove('lamp'); void el.offsetWidth; el.classList.add('lamp'); });
-      let x0=9e9,y0=9e9,x1=-9e9,y1=-9e9;
-      els2.forEach(el=>{const r=el.getBoundingClientRect();x0=Math.min(x0,r.x);y0=Math.min(y0,r.y);x1=Math.max(x1,r.x+r.width);y1=Math.max(y1,r.y+r.height);});
-      tx += innerWidth/2 - (x0+x1)/2;
-      ty += innerHeight/2 - (y0+y1)/2;
-      apply();
-      setTimeout(()=>els2.forEach(el=>el.classList.remove('lamp')),3400);
-    },30);
+    tx += a.L + a.W/2 - (b.x0+b.x1)/2;
+    ty += a.T + a.H/2 - (b.y0+b.y1)/2;
+    apply(); lampOn();
+  };
+  setTimeout(()=>{
+    if(!boxOf()) return;
+    lampOn(); fit();
+    setTimeout(fit,220);          // po matmenų perskaičiavimo
+    setTimeout(fit,560);          // galutinis tikslinimas
+    setTimeout(()=>document.querySelectorAll('.node.lamp').forEach(el=>el.classList.remove('lamp')),3400);
   },60);
 }
 // deleguotas paspaudimas ant sąsajų — uždega dabartinę kortelę + visas susijusias
@@ -4437,7 +4387,7 @@ function gamaCounts(){
 }
 function applyGama(){
   document.querySelectorAll('.stPip').forEach(p=>p.remove());
-  if(curGama==='tema'){ try{ mmStructOverride(); }catch(e){} return; }
+  if(curGama==='tema') return;
   document.querySelectorAll('.node').forEach(el=>{
     const n=OBJ[el.dataset.id]; if(!n) return;
     const g=GC[n.id];
@@ -4456,7 +4406,6 @@ function applyGama(){
       el.insertBefore(pip, el.firstChild);
     }
   });
-  try{ mmStructOverride(); }catch(e){}   /* struktūrų spalvos nugali gamą */
 }
 function edgeCol(n){ return n.customColor || (GC[n.id]&&GC[n.id].edge)
   || (curTheme==='cosmos'?cosmosTint(n):(colorOf[n.cls]||'#8892a3')); }
@@ -5494,7 +5443,7 @@ function sSnippet(n){
   const btn=document.getElementById('tbSearch'), panel=document.getElementById('sPanel');
   const inp=document.getElementById('sInput'), out=document.getElementById('sResults'), cnt=document.getElementById('sCount');
   if(!btn||!panel) return;
-  let hits=[], cur=-1, tmr=null;
+  let hits=[], cur=-1, tmr=null, SF=null;   /* SF — aktyvus tipo filtras */
 
   function setQuery(q){
     q=(q||'').trim();
@@ -5505,14 +5454,43 @@ function sSnippet(n){
   }
   function collect(){
     hits=[];
-    if(!SQ) return;
+    if(!SQ && !SF) return;
     (function walk(n){
-      if(sNodeHit(n)) hits.push(n);
+      var okQ = !SQ || sNodeHit(n);
+      var okF = true;
+      if(SF){ try{ okF = (window.mmNodeRole(n)===SF); }catch(e){ okF=false; } }
+      if(okQ && okF && n.id!==DATA.id) hits.push(n);
       (n.children||[]).forEach(walk);
     })(DATA);
   }
+  /* ── Filtrų juosta: rodo tik tuos tipus, kurių šiame žemėlapyje yra ── */
+  function buildFilters(){
+    var wrap=document.getElementById('sFilters'); if(!wrap||!window.MM_ROLES) return;
+    var cnt={};
+    (function walk(n){
+      if(n.id!==DATA.id){ var r=null; try{ r=window.mmNodeRole(n); }catch(e){}
+        if(r) cnt[r]=(cnt[r]||0)+1; }
+      (n.children||[]).forEach(walk);
+    })(DATA);
+    var chips='';
+    window.MM_ROLES.forEach(function(r){
+      var c=cnt[r[0]]||0; if(!c) return;
+      chips+='<button class="sChip'+(SF===r[0]?' on':'')+'" data-f="'+r[0]+'" title="Rodyti tik šio tipo korteles">'
+           + (r[3]?r[3]+' ':'') + r[1] + ' <b>'+c+'</b></button>';
+    });
+    if(!chips){ wrap.innerHTML=''; return; }
+    wrap.innerHTML='<button class="sChip'+(SF?'':' on')+'" data-f="">Visi</button>'+chips;
+    wrap.querySelectorAll('.sChip').forEach(function(b){
+      b.onclick=function(){
+        SF = b.dataset.f || null;
+        run();
+        if(SF && hits.length){ highlightNodes(hits.map(function(n){ return n.id; })); }  /* visi vienu metu užsidega */
+      };
+    });
+  }
   function paint(){
-    if(!SQ){ out.innerHTML='<div class="sEmpty">Įrašykite žodį ar frazę — parodysiu visas korteles, kuriose ji yra.</div>'; cnt.textContent=''; return; }
+    buildFilters();
+    if(!SQ && !SF){ out.innerHTML='<div class="sEmpty">Įrašykite žodį ar frazę arba pasirinkite teksto elemento tipą viršuje.</div>'; cnt.textContent=''; return; }
     if(!hits.length){ out.innerHTML='<div class="sEmpty">Nieko nerasta.</div>'; cnt.textContent='0'; return; }
     cnt.textContent=hits.length+(hits.length<10?' vt.':'');
     out.innerHTML=hits.map((n,i)=>{
@@ -5540,7 +5518,7 @@ function sSnippet(n){
     panel.classList.add('open'); btn.classList.add('tbActive');
     document.body.classList.add('searching');   // pakelia juostą virš užrašinės
     document.querySelectorAll('.tbMenu.open,.themeMenu.open').forEach(m=>m.classList.remove('open'));
-    if(!out.innerHTML) paint();
+    paint();
     setTimeout(()=>inp.focus(),20);
   }
   function close(clear){
@@ -5796,222 +5774,42 @@ document.addEventListener('change',function(e){
   else { t.checked=false; }
 });
 
-/* ═══════════════ TEKSTO ELEMENTŲ (VAIDMENŲ) SISTEMA ═══════════════
-   Kiekvienas teksto elementas turi savo funkciją tekste ir todėl savo spalvą.
-   Spalvos NEĮRAŠYTOS kietai — jos išvedamos iš tono (hue) pagal aktyvią temą,
-   todėl automatiškai prisitaiko prie bet kurios aplinkos temos.
-   Papildyti nauju elementu = pridėti VIENĄ eilutę į MM_ROLES.                */
+/* ═══════════ TEKSTO ELEMENTŲ TIPAI (tik atpažinimui — filtrams) ═══════════
+   Spalvas lemia aplinkos tema ir pasirinkta spalvų gama. Šie tipai naudojami
+   TIK paieškos filtrams: leidžia išrinkti visas rašto eilutes, pavyzdžius ir t. t. */
 var MM_ROLES = [
-  /* cls,          pavadinimas,                tonas, ženklas, atpažinimas tekste */
-  ['n-center',    'Centrinė tema',              238, '',  null],
-  ['n-tools',     'Potemė / skyrius',           210, '',  null],
-  ['n-env',       'Pagrindinė mintis',            2, '',  null],
-  ['n-verse',     'Rašto eilutė',               268, '❝', /\b[A-ZĄČĖĮŠŲŪŽ][a-ząčėįšųūž]{2,}\s+\d+:\d+/],
-  ['n-quote',     'Citata (žmogaus žodžiai)',   196, '❞', /[„"“][^”"“]{12,}[”"“]\s*\(?[A-ZĄČĖĮŠŲŪŽ]/],
-  ['n-example',   'Pavyzdys / iliustracija',     38, '❖', /\b(pavyzd(ys|žiui|į)|iliustrac|tarsi|panašiai kaip|įsivaizduok|palygin|analogij)/i],
-  ['n-data',      'Duomenys / faktas',           80, '#', /\d{2,}\s*(m\.|metų|km|kg|tonų|proc|%|kubinių|metrų)|\b\d{4}\s*m\./],
-  ['n-question',  'Klausimas',                  325, '?', /\?\s*$/],
-  ['n-key',       'Paaiškinimas / detalė',      215, '',  null],
-  ['n-step',      'Patarimas / veiksmas',       128, '✓', /\b(patarimas|stenkis|pasikalbėk|vesk\b|melskis|klauskime|neleiskime|iškelkime|skelbkime|darykime)/i],
-  ['n-action',    'Apibendrinimas / išvada',    168, '→', /^\s*(taigi|vadinasi|todėl|tad|apibendrin|išvada|galiausiai|visa tai moko)/i]
+  /* cls,          pavadinimas,                 —,  ženklas, atpažinimas tekste */
+  ['n-verse',     'Rašto eilutės',             268, '❝', /\b[A-ZĄČĖĮŠŲŪŽ][a-ząčėįšųūž]{2,}\s+\d+:\d+/],
+  ['n-quote',     'Citatos',                   196, '❞', /[„"“][^”"“]{12,}[”"“]\s*\(?[A-ZĄČĖĮŠŲŪŽ]/],
+  ['n-example',   'Pavyzdžiai / iliustracijos', 38, '❖', /\b(pavyzd(ys|žiui|į)|iliustrac|tarsi|panašiai kaip|įsivaizduok|palygin|analogij)/i],
+  ['n-data',      'Duomenys / faktai',          80, '#', /\d{2,}\s*(m\.|metų|km|kg|tonų|proc|%|kubinių|metrų)|\b\d{4}\s*m\./],
+  ['n-question',  'Klausimai',                 325, '?', /\?\s*$/],
+  ['n-step',      'Patarimai / veiksmai',      128, '✓', /\b(patarimas|stenkis|pasikalbėk|vesk\b|melskis|klauskime|neleiskime|iškelkime|skelbkime|darykime)/i],
+  ['n-action',    'Apibendrinimai / išvados',  168, '→', /^\s*(taigi|vadinasi|todėl|tad|apibendrin|išvada|galiausiai|visa tai moko)/i]
 ];
-/* vaidmenys, kurių išvaizdą jau nustato temų CSS — jų negeneruojam */
 var MM_BUILTIN = {'n-center':1,'n-tools':1,'n-env':1,'n-key':1,'n-action':1};
-
-function mmHsl(hue, s, l){ return 'hsl('+hue+' '+s+'% '+l+'%)'; }
-/* Temos „charakteris" — nuo jo priklauso, kaip spalva išvedama */
-function mmThemeMode(){
-  var t=(document.body&&document.body.dataset.theme)||'standard';
-  if(t==='cosmos') return 'dark';        // tamsi, švytinti
-  if(t==='street') return 'poster';      // plakatinė, sodri
-  if(t==='night')  return 'retro';       // grunge, šiltas popierius
-  if(t==='paveikslas') return 'paint';   // tapybinė, prislopinta
-  return 'light';
-}
-/* Spalvų išvedimas pagal temos charakterį */
-function mmRoleColors(hue, mode){
-  if(mode==='dark')   return {bg:mmHsl(hue,32,13), ink:mmHsl(hue,58,86), bd:mmHsl(hue,70,62), edge:mmHsl(hue,62,58)};
-  if(mode==='poster') return {bg:mmHsl(hue,78,58), ink:'#12100D',        bd:'#14110E',        edge:mmHsl(hue,72,52)};
-  if(mode==='retro')  return {bg:mmHsl(hue,42,84), ink:mmHsl(hue,60,16), bd:'#4a4136',        edge:mmHsl(hue,45,38)};
-  if(mode==='paint')  return {bg:mmHsl(hue,34,74), ink:mmHsl(hue,55,15), bd:mmHsl(hue,30,34), edge:mmHsl(hue,35,42)};
-  return              {bg:mmHsl(hue,72,94), ink:mmHsl(hue,68,27), bd:mmHsl(hue,58,62), edge:mmHsl(hue,52,52)};
-}
-/* Sugeneruoja ir įdeda CSS visiems NE-įgimtiems vaidmenims + papildo linijų spalvas */
-function mmApplyRoleStyles(){
-  var mode=mmThemeMode(), css='';
-  MM_ROLES.forEach(function(r){
-    var cls=r[0]; if(MM_BUILTIN[cls]) return;
-    /* jungiklis išjungtas → struktūros atrodo kaip įprastos „detalės" kortelės */
-    var c = mmStructOn ? mmRoleColors(r[2], mode) : mmRoleColors(215, mode);
-    css += 'body[data-theme] .node.'+cls+', body .'+cls+'{background:'+c.bg+';color:'+c.ink+';border-color:'+c.bd+';font-size:13px}\n';
-    if(r[3] && mmStructOn) css += 'body[data-theme] .node.'+cls+'::before, body .'+cls+'::before{content:"'+r[3]+'";font-weight:800;margin-right:4px;opacity:.72}\n';
-    try{ if(typeof colorOf!=='undefined' && colorOf) colorOf[cls]=c.edge; }catch(e){}
-  });
-  var el=document.getElementById('mmRoleStyles');
-  if(!el){ el=document.createElement('style'); el.id='mmRoleStyles'; document.head.appendChild(el); }
-  el.textContent=css;
-}
-/* Atpažįsta teksto elemento tipą (naudoja generatorius) */
+/* kuriose kortelėse leidžiamas automatinis atpažinimas iš turinio */
+var MM_DETECTABLE = {'n-key':1,'n-keygrp':1};
+function mmIsStruct(cls){ return !!cls && MM_ROLES.some(function(r){ return r[0]===cls; }); }
 function mmDetectRole(text, fallback){
   var t=String(text||'');
-  for(var i=0;i<MM_ROLES.length;i++){
-    var r=MM_ROLES[i]; if(MM_BUILTIN[r[0]]||!r[4]) continue;
-    if(r[4].test(t)) return r[0];
-  }
+  for(var i=0;i<MM_ROLES.length;i++){ var r=MM_ROLES[i]; if(!r[4]) continue; if(r[4].test(t)) return r[0]; }
   return fallback;
 }
-
-/* ── Jungiklis: teksto struktūrų spalvos ───────────────────────────────
-   Įjungus, struktūriniai teksto elementai išlaiko savo spalvą net ir tada,
-   kai įjungta spalvų gama (gama nudažo korteles pagal kitą principą).      */
-window.MM_BUILD='v31.3';
-var mmStructOn = true;
-try{ var _s=localStorage.getItem('mm_struct'); if(_s!==null) mmStructOn = (_s==='1'); }catch(e){}
-window.mmStructIsOn=function(){ return mmStructOn===true; };
-window.mmSetStruct=function(v){
-  mmStructOn=!!v; try{ localStorage.setItem('mm_struct', v?'1':'0'); }catch(e){}
-  try{ for(var id in OBJ) delete OBJ[id]._eff; }catch(e){}
-  try{ mmApplyRoleStyles(); }catch(e){}
-  try{ render(); }catch(e){}          // perpiešiam — gama ir struktūros iš naujo
-  try{ renderLegend(); }catch(e){}
-};
-/* ar ši klasė yra struktūrinis (ne įgimtas) teksto elementas */
-function mmIsStruct(cls){ return !!cls && !MM_BUILTIN[cls] && MM_ROLES.some(function(r){ return r[0]===cls; }); }
-/* po gamos perdažymo grąžinam struktūrinių elementų spalvas */
-/* Kuriose įgimtose klasėse leidžiamas AUTOMATINIS struktūros atpažinimas.
-   Tik detalės — potemių/pagrindinių minčių lygmens kortelės paliekamos savo vaidmeniui. */
-var MM_DETECTABLE={'n-key':1,'n-keygrp':1};
-/* Efektyvus kortelės vaidmuo: aiški žyma arba (jei leidžiama) atpažinimas iš turinio */
-function mmEffRole(n){
+/* Kortelės teksto elemento tipas: aiški žyma arba atpažinimas iš turinio */
+function mmNodeRole(n){
   if(!n) return null;
-  if(mmIsStruct(n.cls)) return n.cls;
-  if(!mmStructOn || !MM_DETECTABLE[n.cls]) return null;
-  if(n._eff!==undefined) return n._eff;                 /* kešuojam — regex nebrangus, bet kam kartoti */
-  var det=mmDetectRole(String(n.label||''), null);
-  if(!det){
-    var txt=String(n.note||'').replace(/<[^>]+>/g,' ');
-    if(txt.length>3) det=mmDetectRole(txt, null);
-  }
-  n._eff=det||null;
-  return n._eff;
+  if(mmIsStruct(n.cls) && !MM_BUILTIN[n.cls]) return n.cls;
+  if(n.cls==='n-action') return 'n-action';
+  if(!MM_DETECTABLE[n.cls]) return null;
+  if(n._role!==undefined) return n._role;
+  var d=mmDetectRole(String(n.label||''), null);
+  if(!d){ var t=String(n.note||'').replace(/<[^>]+>/g,' '); if(t.length>3) d=mmDetectRole(t, null); }
+  n._role = d||null;
+  return n._role;
 }
-window.mmEffRole=mmEffRole;
-function mmStructOverride(){
-  if(!mmStructOn) return;
-  var mode=mmThemeMode();
-  document.querySelectorAll('.node').forEach(function(el){
-    var n=(typeof OBJ!=='undefined')&&OBJ[el.dataset.id]; if(!n||n.customColor) return;
-    var eff=mmEffRole(n); if(!eff) return;
-    var r=null; for(var i=0;i<MM_ROLES.length;i++){ if(MM_ROLES[i][0]===eff){ r=MM_ROLES[i]; break; } }
-    if(!r) return;
-    el.classList.add(eff);                               /* kad veiktų ir ženklas (::before) */
-    var c=mmRoleColors(r[2], mode);
-    el.style.background=c.bg; el.style.color=c.ink; el.style.borderColor=c.bd;
-  });
-}
-window.mmStructOverride=mmStructOverride;
+window.mmDetectRole=mmDetectRole; window.mmNodeRole=mmNodeRole; window.MM_ROLES=MM_ROLES;
 
-
-/* Vaidmens SEMANTINĖ spalva legendai — nepriklauso nuo to, kaip kortelė
-   atrodo tą akimirką (gama gali ją perdažyti, tamsi tema — suvienodinti). */
-function mmRoleSwatch(cls, hue){
-  var mode=mmThemeMode();
-  if(!MM_BUILTIN[cls]){
-    var c=mmRoleColors(hue, mode);
-    return {bg:c.bg, bd:c.bd};
-  }
-  /* įgimtiems imam temos linijų spalvą — ji kiekvienoje temoje sava ir visada skirtinga */
-  var col=null;
-  try{ col = (typeof colorOf!=='undefined' && colorOf) ? colorOf[cls] : null; }catch(e){}
-  if(!col) col = mmRoleColors(hue, mode).bd;
-  var dark = (mode==='dark');
-  return {bg: col, bd: dark ? 'rgba(255,255,255,.34)' : 'rgba(10,16,26,.28)'};
-}
-window.mmRoleSwatch=mmRoleSwatch;
-
-window.mmApplyRoleStyles=mmApplyRoleStyles; window.mmDetectRole=mmDetectRole; window.MM_ROLES=MM_ROLES;
-
-/* ===== SPALVŲ LEGENDA — atvaizduoja TIKRAS temos spalvas ===== */
-(function(){
-  function ROLES(){ return (window.MM_ROLES||[]).map(function(r,i){ return [r[0],r[1],i===0?1:0,r[2]]; }); }
-  var GAMA_TXT={cat:'kategoriją',depth:'gylį',polar:'poliariškumą',status:'būseną',min:'minimalizmą'};
-  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
-  window.renderLegend=function(){
-    var L=document.getElementById('legend'), B=document.getElementById('legendBody');
-    if(!L||!B) return;
-    // kiek kurio vaidmens kortelių šiame žemėlapyje
-    var cnt={}; try{ for(var id in OBJ){ var _n=OBJ[id];
-      var c=null; try{ c=window.mmEffRole(_n); }catch(e){}
-      if(!c) c=_n.cls;
-      cnt[c]=(cnt[c]||0)+1; } }catch(e){}
-    // zondas — nuskaitom TIKRAS temos spalvas iš CSS
-    var probe=document.createElement('div');
-    probe.style.cssText='position:absolute;left:-9999px;top:-9999px;visibility:hidden;pointer-events:none';
-    document.body.appendChild(probe);
-    var rows='';
-    ROLES().forEach(function(r){
-      var n=cnt[r[0]]||0;
-      var CORE={'n-center':1,'n-tools':1,'n-env':1,'n-key':1,'n-action':1};
-      if(!n && !CORE[r[0]]) return;   // nerodom vaidmenų, kurių šiame žemėlapyje nėra
-      /* semantinė vaidmens spalva — visada prasminga ir visada skirtinga */
-      var sw=window.mmRoleSwatch(r[0], r[3]);
-      var bg=sw.bg, bd=sw.bd;
-      var applied = true;
-      try{
-        var _g=(typeof curGama!=='undefined' && curGama!=='tema');
-        var _s=window.mmStructIsOn();
-        if(_g){ applied = (!MM_BUILTIN[r[0]] && _s); }   /* su gama vaidmens spalva matoma tik struktūroms su jungikliu */
-        else if(!_s && !MM_BUILTIN[r[0]]){ applied=false; } /* jungiklis išjungtas → struktūrų eilutės gęsta */
-      }catch(e){}
-      rows+='<div class="lgRow'+(applied?'':' dim')+'"><span class="lgSw'+(r[2]?' rnd':'')+'" style="background:'+bg+';border-color:'+bd+'"></span>'
-          + '<span class="lgTx">'+esc(r[1])+'</span>'
-          + (n?'<span class="lgN">'+n+'</span>':'')+'</div>';
-    });
-    probe.remove();
-    var on=true; try{ on=window.mmStructIsOn(); }catch(e){}
-    var gamaOn=false; try{ gamaOn=(typeof curGama!=='undefined' && curGama!=='tema'); }catch(e){}
-    var note='';
-    if(gamaOn && on) note='<div class="lgNote">Struktūrų spalvos nugali spalvų gamą: struktūriniai elementai '
-        +'išlaiko savo spalvą, likusios kortelės nuspalvintos pagal '+(GAMA_TXT[curGama]||'pasirinktą principą')+'.</div>';
-    else if(gamaOn) note='<div class="lgNote">Įjungta spalvų gama — kortelės nuspalvintos pagal '
-        +(GAMA_TXT[curGama]||'pasirinktą principą')+'. Įjunk jungiklį viršuje, kad teksto struktūros gautų savo spalvas.</div>';
-    else if(!on) note='<div class="lgNote">Teksto struktūrų spalvos išjungtos — visos kortelės rodomos vienodai.</div>';
-    var toggle='<label class="lgToggle"><input type="checkbox" id="lgStruct"'+(on?' checked':'')+'>'
-      +'<span class="lgTrack"><span class="lgKnob"></span></span>'
-      +'<span class="lgToggleTx">Teksto struktūrų spalvos</span></label>';
-    B.innerHTML='<div class="lgHead"><span class="lgTitle">Spalvų reikšmės</span>'
-      +'<svg class="lgChev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" '
-      +'stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>'
-      +'<div class="lgWrap">'+toggle+'<div class="lgSep" style="margin:9px 0 7px"></div>'+rows
-      +'<div class="lgSep"></div>'
-      +'<div class="lgMark"><b>📋</b> užrašinė su tekstu</div>'
-      +'<div class="lgMark"><b>N</b> suskleistų kortelių skaičius</div>'
-      +'<div class="lgMark"><b>I</b> skaitymo eilės numeris</div>'
-      +'<div class="lgMark" style="opacity:.55;font-size:10px">versija '+(window.MM_BUILD||'?')+'</div>'
-      +note+'</div>';
-    var sw=B.querySelector('#lgStruct');
-    if(sw) sw.onchange=function(){ try{ window.mmSetStruct(sw.checked); }catch(e){} };
-    var hd=B.querySelector('.lgHead');
-    if(hd) hd.onclick=function(){ L.classList.toggle('lgOff');
-      try{ localStorage.setItem('mm_leg', L.classList.contains('lgOff')?'0':'1'); }catch(e){} };
-    try{ if(localStorage.getItem('mm_leg')==='0') L.classList.add('lgOff'); }catch(e){}
-  };
-  // perpiešiam po temos / gamos / žemėlapio pakeitimo
-  var boot=function(){ try{ mmApplyRoleStyles(); }catch(e){} try{ window.mmStructOverride(); }catch(e){} try{ renderLegend(); }catch(e){} };
-  setTimeout(function(){ try{ window.mmStructOverride(); renderLegend(); }catch(e){} }, 600);
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot);
-  else setTimeout(boot,0);
-  try{ mmApplyRoleStyles(); }catch(e){}
-  ['applyTheme','applyGamaSel','render'].forEach(function(fn){
-    try{
-      if(typeof window[fn]==='function'){ var o=window[fn];
-        window[fn]=function(){ var r=o.apply(this,arguments);
-          try{ mmApplyRoleStyles(); }catch(e){}
-          try{ window.mmStructOverride(); }catch(e){}
-          try{ renderLegend(); }catch(e){} return r; }; }
-    }catch(e){}
-  });
-})();
 </script>
 </body>
 </html>
