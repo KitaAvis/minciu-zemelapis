@@ -5109,6 +5109,96 @@ dz.addEventListener('drop',e=>{
     return map;
   }
 
+  /* ═══════════ TEKSTO SANDARA ═══════════
+     Sritis pasako, KOKIŲ elementų tekste ieškoti; sandara — KAIP juos sudėlioti.
+     Studijiniame straipsnyje klausimas ir pastraipa nėra lygiaverčiai: klausimas
+     nurodo, ko ieškoti, o pastraipa yra ATSAKYMAS į jį. Sudėjus juos greta
+     prarandama pati teksto logika, todėl sandara atpažįstama atskirai. */
+  function mmParseStudy(text){
+    var secs=[], pars=[], qs=[], pre=[], cur=null, curSec=null, no=0, gap=false;
+    function flush(){ if(cur && cur.x.trim()){ (cur.no ? pars : pre).push(cur); } cur=null; }
+    String(text||'').split(/\n/).forEach(function(rawLine){
+      var l=rawLine.trim();
+      /* tuščia eilutė užbaigia pastraipą tik tada, kai sakinys jau baigtas —
+         iš PDF įklijuotas tekstas dažnai laužomas eilutėmis pastraipos viduryje */
+      if(!l){ gap=true; return; }
+      if(gap){ gap=false; if(cur && /[.!?…][”"“]?$/.test(cur.x.trim())) flush(); }
+      /* skyriaus antraštė — didžiosiomis raidėmis (patikimiausias studijinio teksto požymis) */
+      if(l.length>=6 && l===l.toUpperCase() && /[A-ZĄČĖĮŠŲŪŽ]/.test(l) && !/^\d/.test(l)){
+        flush(); curSec={name:l}; secs.push(curSec); return;
+      }
+      /* studijų klausimas: „1–2. Kodėl…?“ arba „8. a) … b) …?“ */
+      var mq=l.match(/^(\d+)(?:\s*[–—-]\s*(\d+))?\.\s+(.+)$/);
+      if(mq && /\?/.test(mq[3])){ flush(); qs.push({a:+mq[1], b:+(mq[2]||mq[1]), x:mq[3].trim()}); return; }
+      /* numeruota pastraipa: „2 Ne visais klausimais…“ */
+      var mp=l.match(/^(\d+)\s+([A-ZĄČĖĮŠŲŪŽ„(].*)$/);
+      if(mp){ flush(); no=+mp[1]; cur={no:no, x:mp[2].trim(), sec:curSec}; return; }
+      if(cur) cur.x+=' '+l;
+      else cur={no:0, x:l, sec:curSec};     /* dar nenumeruota — pavadinimas, teminė eilutė ar 1 pastraipa */
+    });
+    flush();
+    /* Studijiniame straipsnyje 1 pastraipa numerio neturi — ja tampa PASKUTINIS
+       nenumeruotas blokas prieš 2 pastraipą. Ankstesni (pavadinimas, teminė
+       eilutė, „TRUMPAI“) lieka įžangoje ir keliauja į centrinę kortelę. */
+    if(pre.length && pars.some(function(x){ return x.no===2; })){
+      var first=pre.pop(); first.no=1; pars.unshift(first);
+      pars.sort(function(a,b){ return a.no-b.no; });
+    }
+    return {secs:secs, pars:pars, qs:qs, pre:pre};
+  }
+  function mmDetectStructure(text){
+    var p=mmParseStudy(text);
+    if(p.qs.length>=3 && p.pars.length>=4) return {kind:'studijinis', name:'studijinis straipsnis (klausimas → pastraipa)', data:p};
+    return {kind:'antrastinis', name:'antraštės ir pastraipos', data:null};
+  }
+  /* Sudėlioja medį pagal studijinio straipsnio sandarą. Grąžina true, jei pavyko. */
+  function mmStudyTree(p, root, H){
+    var byNo={}; p.pars.forEach(function(x){ byNo[x.no]=x; });
+    var groups=[], last;
+    p.pars.forEach(function(x){
+      if(!groups.length || x.sec!==last){ groups.push({name:(x.sec&&x.sec.name)||'Įvadas', pars:[]}); last=x.sec; }
+      groups[groups.length-1].pars.push(x);
+    });
+    if(!groups.length) return false;
+    /* įžanga (pavadinimas, teminė eilutė, „TRUMPAI“) — į centrinę kortelę, kad niekas nedingtų */
+    (p.pre||[]).forEach(function(b){ root.note+='<p>'+H.esc(b.x)+'</p>'; });
+    var srcPar=function(x){ return H.wantSrc?'<p class="src">📄 '+x.no+' pastr.</p>':''; };
+    function mkPar(x){
+      var ss=H.sentences(x.x);
+      var node={id:H.nid(), label:x.no+' pastr. '+H.shortLabel(ss[0]||x.x,6), cls:'n-key', note:'', children:[]};
+      if(ss.length>=3){                       /* ilga pastraipa — sakiniai atskiromis kortelėmis */
+        node.note='<p>Atsakymo pastraipa. Sakiniai — kortelėse žemiau.</p>'+srcPar(x);
+        ss.forEach(function(s){
+          node.children.push(H.reg({id:H.nid(), label:H.shortLabel(s,8), cls:H.roleOf(s,'n-key'),
+            note:'<p>'+H.esc(s)+'</p>'+srcPar(x), children:[]}, s));
+        });
+      } else node.note='<p>'+H.esc(x.x)+'</p>'+srcPar(x);
+      return H.reg(node, x.x, ss.map(function(s){ return H.shortLabel(s,8); }));
+    }
+    groups.forEach(function(g){
+      var nums=g.pars.map(function(x){ return x.no; });
+      var lo=Math.min.apply(null,nums), hi=Math.max.apply(null,nums);
+      var sec={id:H.nid(), label:H.shortLabel(g.name,8), cls:'n-tools',
+        note:'<p>'+H.esc(g.name)+'</p><p class="src">📄 '+lo+'–'+hi+' pastr.</p>', children:[]};
+      var taken={};
+      p.qs.filter(function(q){ return q.b>=lo && q.a<=hi; }).forEach(function(q){
+        var kids=[];
+        for(var i=q.a;i<=q.b;i++) if(byNo[i] && nums.indexOf(i)>=0){ kids.push(byNo[i]); taken[i]=1; }
+        if(!kids.length) return;
+        var rng=(q.a===q.b) ? (q.a+' kl.') : (q.a+'–'+q.b+' kl.');
+        var qt=(q.x.length<=95) ? q.x : H.shortLabel(q.x,12)+'…';
+        var qn={id:H.nid(), label:rng+' '+qt, cls:'n-env', icon:'❓', role:'n-question',
+          note:'<p><b>Studijų klausimas prie '+(q.a===q.b?(q.a+' pastraipos'):(q.a+'–'+q.b+' pastraipų'))+'.</b></p>'
+             + '<p>'+H.esc(q.x)+'</p><p>Atsakymas — pastraipoje (-ose) žemiau.</p>', children:[]};
+        kids.forEach(function(x){ qn.children.push(mkPar(x)); });
+        sec.children.push(qn);
+      });
+      g.pars.forEach(function(x){ if(!taken[x.no]) sec.children.push(mkPar(x)); });
+      if(sec.children.length) root.children.push(sec);
+    });
+    return root.children.length>0;
+  }
+
   /* ---------- PAGRINDINIS ---------- */
   window.mmGenerateFromText=async function(raw,opt){
     opt=opt||{};
@@ -5120,6 +5210,8 @@ dz.addEventListener('drop',e=>{
           apskritai ieškoma. Nustatinėjant vėliau, kortelės jau būtų suklasifikuotos
           be specialiųjų tipų (uždavinys taptų paprastu patarimu). */
     try{ window.mmSetDomainsFromText(text); }catch(e){}
+    /* 0b. Teksto SANDARA — nuo jos priklauso, kaip elementai sudėliojami vienas po kitu */
+    const STRUCT = mmDetectStructure(text);
 
     /* 1. Blokai (citatos NĖRA pastraipos) */
     const blocks=[]; let off=0, paraNo=0;
@@ -5179,7 +5271,16 @@ dz.addEventListener('drop',e=>{
       note:'<p>Žemėlapis sugeneruotas iš pateikto teksto. Visas tekstas išskaidytas į korteles — nieko neprarasta.</p>',
       children:[]};
 
-    secs.forEach(sec=>{
+    /* 4a. Sandara nugali numatytąjį skaidymą: studijiniame straipsnyje klausimas
+           yra atskiras elementas, o pastraipa — atsakymas į jį. */
+    let built=false;
+    if(STRUCT.kind==='studijinis'){
+      try{ built=mmStudyTree(STRUCT.data, root,
+        {nid:nid, reg:reg, esc:esc, shortLabel:shortLabel, sentences:sentences, roleOf:roleOf, wantSrc:wantSrc}); }
+      catch(e){ console.warn('studijinė sandara nepavyko:',e); built=false; }
+    }
+
+    if(!built) secs.forEach(sec=>{
       const secNode={id:nid(),label:shortLabel(sec.name,8),cls:'n-tools',note:srcOf(sec.items[0]),children:[],_kw:keywords(sec.items.map(i=>i.x).join(' '))};
       let last=null;
       sec.items.forEach(b=>{
@@ -5249,8 +5350,12 @@ dz.addEventListener('drop',e=>{
     const hay=inMap.join(' ');
     let total=0, miss=0;
     blocks.forEach(b=>{ if(b.t==='h') return; sentences(b.x).forEach(s=>{ total++;
-      const k=norm(s); if(k.length>8&&hay.indexOf(k.slice(0,Math.min(60,k.length)))<0) miss++; }); });
+      /* studijinėje sandaroje pastraipos numeris nuimamas nuo teksto, todėl
+         ieškant jį reikia nuimti ir čia — kitaip aprėptis rodoma per maža */
+      const k=norm(s).replace(/^\d+\s*(?:[–—-]\s*\d+)?\.?\s*/,'');
+      if(k.length>8&&hay.indexOf(k.slice(0,Math.min(60,k.length)))<0) miss++; }); });
     const cover=total?Math.round((total-miss)/total*100):100;
+    let cards=0; (function c(n){ cards++; (n.children||[]).forEach(c); })(root);
 
     /* 8. Įkeliam */
     (function collapse(n,d){ if(d>=2&&n.children&&n.children.length) n._c=true;
@@ -5265,7 +5370,8 @@ dz.addEventListener('drop',e=>{
     render(); center(); try{ userZoomed=false; }catch(e){}
     setTimeout(()=>{ try{ fitAll(true); }catch(e){} },80);
     try{ if(typeof refreshExpandLabel==='function') refreshExpandLabel(); }catch(e){}
-    try{ showToast('Kortelių: '+AI.length+' · tekstas įtrauktas '+cover+'%'+aiNote); }catch(e){}
+    /* naudotojas turi matyti, KAIP tekstas buvo perskaitytas, o ne tik kiek kortelių gauta */
+    try{ showToast('Sandara: '+STRUCT.name+' · kortelių: '+cards+' · tekstas įtrauktas '+cover+'%'+aiNote); }catch(e){}
     window.mmLastCoverage={total:total,missing:miss,percent:cover,cards:AI.length};
     return true;
   };
