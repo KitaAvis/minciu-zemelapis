@@ -1625,6 +1625,57 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
   body[data-theme="night"] #sLensSel{background:#e8dfc8;border-color:#3b3226;color:#241c14}
   body[data-theme="paveikslas"] #sLens .sLensLbl{color:#6E6042}
   body[data-theme="paveikslas"] #sLensSel{background:#E4D5B0;border-color:#8A7A57;color:#2A2317}
+
+  /* ── Šakos tęsimas iš užrašinės ───────────────────────────────────────
+     Rodoma tik tada, kai kortelė yra paskutinė (be vaikų) ir jos užrašinėje
+     dar yra ką skaidyti. Tylus, neįkyrus blokas — pasiūlymas, ne raginimas. */
+  #nGrow{margin:14px 0 2px}
+  #nGrow:empty{display:none}
+  #nGrow .grCard{border:1px solid rgba(20,32,54,.10);border-radius:14px;overflow:hidden;
+    background:linear-gradient(180deg,rgba(255,255,255,.85),rgba(246,248,252,.92));
+    box-shadow:0 1px 2px rgba(16,24,40,.05),0 8px 24px -14px rgba(16,24,40,.28)}
+  #nGrow .grHead{display:flex;align-items:center;gap:11px;padding:12px 13px}
+  #nGrow .grIco{width:30px;height:30px;flex:none;border-radius:9px;display:grid;place-items:center;
+    background:linear-gradient(145deg,#2E9E8F,#1F7F73);color:#fff;font-size:15px;font-weight:800;
+    box-shadow:0 2px 8px -2px rgba(31,127,115,.55)}
+  #nGrow .grTx{flex:1;min-width:0;line-height:1.32}
+  #nGrow .grTx b{display:block;font-size:12.5px;font-weight:750;color:#1B2333;letter-spacing:-.1px}
+  #nGrow .grTx span{display:block;font-size:11px;color:#68748A;margin-top:1px}
+  #nGrow .grBtn{flex:none;font-family:inherit;font-size:11.5px;font-weight:750;cursor:pointer;
+    padding:7px 13px;border-radius:9px;border:1px solid rgba(20,32,54,.13);background:#fff;color:#1B2333;
+    transition:transform .16s cubic-bezier(.3,1.2,.5,1),box-shadow .16s,border-color .16s}
+  #nGrow .grBtn:hover{transform:translateY(-1px);border-color:rgba(46,158,143,.5);
+    box-shadow:0 4px 12px -4px rgba(31,127,115,.4)}
+  #nGrow .grList{border-top:1px solid rgba(20,32,54,.08);padding:6px 7px 10px}
+  #nGrow .grItem{display:flex;gap:9px;align-items:flex-start;padding:8px 7px;border-radius:9px;cursor:pointer;
+    transition:background .14s}
+  #nGrow .grItem:hover{background:rgba(46,158,143,.07)}
+  #nGrow .grItem input{margin:2px 0 0;accent-color:#2E9E8F;width:15px;height:15px;flex:none;cursor:pointer}
+  #nGrow .grItem .gi{min-width:0}
+  #nGrow .grLbl{display:block;font-size:12px;font-weight:700;color:#1B2333;letter-spacing:-.1px}
+  #nGrow .grSnip{display:block;font-size:11px;color:#6C7A90;margin-top:2px;
+    overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+  #nGrow .grOpt{display:flex;align-items:center;gap:8px;padding:8px 7px 4px;font-size:11px;color:#68748A;cursor:pointer}
+  #nGrow .grOpt input{accent-color:#2E9E8F;width:14px;height:14px;cursor:pointer}
+  #nGrow .grFoot{display:flex;gap:8px;padding:9px 7px 2px}
+  #nGrow .grGo{flex:1;font-family:inherit;font-size:12px;font-weight:800;cursor:pointer;color:#fff;
+    padding:9px 12px;border-radius:10px;border:0;background:linear-gradient(145deg,#2E9E8F,#1F7F73);
+    box-shadow:0 3px 12px -4px rgba(31,127,115,.65);transition:transform .16s cubic-bezier(.3,1.2,.5,1),box-shadow .16s}
+  #nGrow .grGo:hover{transform:translateY(-1px);box-shadow:0 6px 18px -5px rgba(31,127,115,.75)}
+  #nGrow .grGo:disabled{opacity:.45;cursor:default;transform:none;box-shadow:none}
+  #nGrow .grNo{font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;color:#68748A;
+    padding:9px 12px;border-radius:10px;border:1px solid rgba(20,32,54,.12);background:#fff}
+  /* tamsios ir spalvotos aplinkos temos */
+  body[data-theme="cosmos"] #nGrow .grCard{background:linear-gradient(180deg,rgba(22,34,52,.75),rgba(14,24,40,.85));border-color:rgba(140,180,220,.20)}
+  body[data-theme="cosmos"] #nGrow .grTx b,body[data-theme="cosmos"] #nGrow .grLbl{color:#E6EEF7}
+  body[data-theme="cosmos"] #nGrow .grTx span,body[data-theme="cosmos"] #nGrow .grSnip,body[data-theme="cosmos"] #nGrow .grOpt{color:#9AAFC6}
+  body[data-theme="cosmos"] #nGrow .grBtn,body[data-theme="cosmos"] #nGrow .grNo{background:rgba(160,190,225,.10);border-color:rgba(140,180,220,.26);color:#CBD8E6}
+  body[data-theme="street"] #nGrow .grCard{background:#241F19;border-color:#4a4136}
+  body[data-theme="street"] #nGrow .grTx b,body[data-theme="street"] #nGrow .grLbl{color:#F5F0E6}
+  body[data-theme="street"] #nGrow .grTx span,body[data-theme="street"] #nGrow .grSnip,body[data-theme="street"] #nGrow .grOpt{color:#C9BFA8}
+  body[data-theme="street"] #nGrow .grBtn,body[data-theme="street"] #nGrow .grNo{background:#2A241D;border-color:#4a4136;color:#F5F0E6}
+  body[data-theme="night"] #nGrow .grCard{background:#efe7d3;border-color:#3b3226}
+  body[data-theme="paveikslas"] #nGrow .grCard{background:#EFE3C4;border-color:#8A7A57}
 </style>
 </head>
 <body>
@@ -2172,6 +2223,7 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
     <button id="nClose">✕</button>
   </div>
   <div id="nBody"></div>
+  <div id="nGrow"></div>
   <div id="nGloss"></div>
   <div id="nEditArea">
     <label class="edLbl">Pastabos tekstas</label>
@@ -4028,8 +4080,92 @@ function openNote(n){
   document.getElementById('nEditArea').classList.remove('open');
   document.getElementById('nBody').style.display='block';
   notes.classList.add('open');
+  renderGrow(n);
   renderGloss(n);
   decorateGloss(n);
+}
+
+/* ═══ ŠAKOS TĘSIMAS IŠ UŽRAŠINĖS ═══════════════════════════════════════
+   Kai kortelė yra paskutinė (be vaikų), o jos užrašinėje dar yra ką skaidyti,
+   siūloma iš to teksto sukurti tolesnę šaką. Naudotojas pats pasirenka, kurios
+   mintys taps kortelėmis, ir ar tekstas lieka ir šioje kortelėje. */
+function mmEsc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+/* iš užrašinės imam tik turinį — šaltinio nuorodos ir sąsajos (↳) nėra mintys */
+function mmNoteParts(html){
+  const d=document.createElement('div'); d.innerHTML=String(html||'');
+  const src=[...d.querySelectorAll('.src')].map(x=>x.outerHTML).join('');
+  d.querySelectorAll('.src').forEach(x=>x.remove());
+  [...d.querySelectorAll('p,li')].forEach(p=>{ if(/^\s*↳/.test(p.textContent||'')) p.remove(); });
+  /* pastraipas jungiam TARPU — kitaip „…sprendimą?“Tikriausiai…“ lieka vienu sakiniu */
+  const blocks=[...d.children].map(x=>(x.textContent||'').trim()).filter(Boolean);
+  const text = blocks.length ? blocks.join(' ') : (d.textContent||'');
+  return {src:src, text:text.replace(/\s+/g,' ').trim()};
+}
+function mmNewId(){ let i=0,id; do{ id='c'+Date.now().toString(36)+(i++?i:''); }while(OBJ[id]); return id; }
+let mmGrowList=[];
+function renderGrow(n){
+  const box=document.getElementById('nGrow'); if(!box) return;
+  box.innerHTML=''; mmGrowList=[];
+  if(!n || n.cls==='n-center') return;
+  if(n.children && n.children.length) return;              // ne paskutinė — nesiūlom
+  const parts=mmNoteParts(n.note);
+  if(parts.text.length<90) return;
+  let props=[];
+  try{ props=window.mmProposeCards(parts.text)||[]; }catch(e){ props=[]; }
+  if(props.length<2) return;
+  mmGrowList=props;
+  box.innerHTML =
+    '<div class="grCard"><div class="grHead">'
+    + '<span class="grIco">⌥</span>'
+    + '<div class="grTx"><b>Tęsti šaką iš šios užrašinės</b>'
+    + '<span>Tekste įžvelgtos '+props.length+' mintys, kurias galima paversti kortelėmis</span></div>'
+    + '<button class="grBtn" id="grOpen">Skaidyti ›</button></div>'
+    + '<div class="grList" id="grList" hidden></div></div>';
+  document.getElementById('grOpen').onclick=function(){ mmGrowOpen(n, parts); };
+}
+function mmGrowOpen(n, parts){
+  const list=document.getElementById('grList'), btn=document.getElementById('grOpen');
+  if(!list) return;
+  if(!list.hidden){ list.hidden=true; btn.textContent='Skaidyti ›'; return; }
+  list.innerHTML = mmGrowList.map((p,i)=>
+      '<label class="grItem"><input type="checkbox" checked data-i="'+i+'">'
+    + '<span class="gi"><span class="grLbl">'+mmEsc(p.label)+'</span>'
+    + '<span class="grSnip">'+mmEsc(p.text)+'</span></span></label>').join('')
+    + '<label class="grOpt"><input type="checkbox" id="grKeep" checked>'
+    + 'Tekstą palikti ir šioje kortelėje</label>'
+    + '<div class="grFoot"><button class="grGo" id="grGo"></button>'
+    + '<button class="grNo" id="grNo">Atsisakyti</button></div>';
+  list.hidden=false; btn.textContent='Slėpti ‹';
+  const go=document.getElementById('grGo');
+  /* lietuvių daugiskaita: 1 kortelę · 2–9 korteles · 0, 10–20 kortelių */
+  const kort=k=>{ const d=k%10, dd=k%100;
+    if(d===1 && dd!==11) return 'kortelę';
+    if(d>=2 && d<=9 && (dd<10||dd>20)) return 'korteles';
+    return 'kortelių'; };
+  const sync=()=>{ const k=list.querySelectorAll('input[data-i]:checked').length;
+    go.textContent = k ? ('Sukurti '+k+' '+kort(k)) : 'Nepasirinkta nė viena';
+    go.disabled=!k; };
+  list.querySelectorAll('input[data-i]').forEach(c=>c.onchange=sync); sync();
+  document.getElementById('grNo').onclick=()=>{ list.hidden=true; btn.textContent='Skaidyti ›'; };
+  go.onclick=()=>{
+    const picked=[...list.querySelectorAll('input[data-i]:checked')].map(c=>mmGrowList[+c.dataset.i]);
+    if(!picked.length) return;
+    const keep=document.getElementById('grKeep').checked;
+    pushUndo();
+    n.children=n.children||[];
+    picked.forEach(p=>{
+      const kid={id:mmNewId(), label:p.label, cls:p.cls||'n-key',
+        note:'<p>'+mmEsc(p.text)+'</p>'+(parts.src||''), children:[]};
+      n.children.push(kid); OBJ[kid.id]=kid; kid._p=n;
+    });
+    if(!keep) n.note=(parts.src||'<p>—</p>');
+    n._c=false;
+    try{ renumberAll(); }catch(e){}
+    render();
+    try{ saveMap(); }catch(e){}
+    showToast('Šaka pratęsta — sukurta '+picked.length+' '+kort(picked.length));
+    openNote(n);
+  };
 }
 document.getElementById('nClose').onclick=()=>notes.classList.remove('open');
 
@@ -4310,6 +4446,13 @@ function restoreStruct(s){
   let changed=false;
   for(const id in s){ const n=OBJ[id]; if(!n||s[id].p===undefined) continue;
     if((n._p?n._p.id:null)!==s[id].p){ changed=true; break; } }
+  /* pasikeitimu laikom ir PRIDĖTAS ar PAŠALINTAS korteles — kitaip „šakos tęsimo“
+     ar kortelės sukūrimo atšaukti nepavyktų (tėvai juk nepasikeitė) */
+  if(!changed){ (function w(n){ if(!(n.id in s)) changed=true; (n.children||[]).forEach(w); })(DATA); }
+  if(!changed){ const live={}; (function w(n){ live[n.id]=1; (n.children||[]).forEach(w); })(DATA);
+    for(const id in s){ let cur=id, g=0, reach=false;
+      while(cur && g++<400){ if(cur===DATA.id){ reach=true; break; } cur=s[cur]?s[cur].p:null; }
+      if(reach && !live[id]){ changed=true; break; } } }
   if(!changed) return false;
   const rootId=DATA.id, keep={};
   for(const id in s){
@@ -5108,7 +5251,9 @@ dz.addEventListener('drop',e=>{
 
   /* sakiniai — skirtukas \u0001, nekapojam ties 7:11 ar „psl." */
   function sentences(t){
-    return String(t||'').replace(/([.!?…])\s+(?=[A-ZĄČĖĮŠŲŪŽ„"])/g,'$1\u0001')
+    /* Po sakinio galo gali eiti uždaromoji kabutė ar skliaustas — be jų sakiniai
+       „…sprendimą?“ Tikriausiai…“ liktų sulipę į vieną. */
+    return String(t||'').replace(/([.!?…][”“"'»)\]]?)\s+(?=[A-ZĄČĖĮŠŲŪŽ„"(])/g,'$1\u0001')
       .split('\u0001').map(s=>s.trim()).filter(s=>s.length>1);
   }
   /* PAVADINIMAS: pagrindinė propozicija, 3–8 žodžiai, sudaryta pagal turinį (ne nuokarpa) */
@@ -5278,6 +5423,21 @@ dz.addEventListener('drop',e=>{
     });
     return root.children.length>0;
   }
+
+  /* Užrašinės tekstą paverčia siūlomomis kortelėmis — ta pačia logika kaip generatorius,
+     kad rankinis šakos tęsimas duotų tokį patį rezultatą kaip automatinis skaidymas. */
+  window.mmProposeCards=function(text){
+    const t=String(text||'').replace(/\s+/g,' ').trim();
+    if(t.length<40) return [];
+    const tidy=s=>String(s).replace(/^[„“”"'\s]+/,'')
+                           .replace(/[„“”"'\s]+$/,'')
+                           .replace(/[.,;:!?…\s]+$/,'').trim();
+    return sentences(t)
+      .map(s=>s.trim())
+      .filter(s=>s.length>=18)
+      .map(s=>({label:tidy(shortLabel(s,8)), text:s, cls:roleOf(s,'n-key')}))
+      .filter(p=>p.label.length>=3);
+  };
 
   /* ---------- PAGRINDINIS ---------- */
   window.mmGenerateFromText=async function(raw,opt){
