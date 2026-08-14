@@ -1610,10 +1610,12 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
 #legend.lgOff .lgHead{border-bottom:none}
 #legend .lgWrap{padding:9px 14px 12px}
 #legend .lgRow{display:flex;align-items:center;gap:10px;padding:4px 0;line-height:1.25}
-#legend .lgSw{width:15px;height:15px;flex:none;border-radius:5px;border:1.6px solid;
-  box-shadow:0 1px 2px rgba(16,24,40,.10)}
+#legend .lgSw{width:16px;height:16px;flex:none;border-radius:5px;border:2px solid;
+  box-shadow:0 1px 3px rgba(16,24,40,.16),inset 0 1px 0 rgba(255,255,255,.25)}
 #legend .lgSw.rnd{border-radius:50%}
 #legend .lgTx{font-size:12px;font-weight:600;color:#22293A;letter-spacing:-.1px}
+#legend .lgRow.dim .lgSw{opacity:.42}
+#legend .lgRow.dim .lgTx{opacity:.55}
 #legend .lgN{margin-left:auto;font-size:10.5px;font-weight:700;color:#98A1B0;
   font-variant-numeric:tabular-nums}
 #legend .lgSep{height:1px;background:rgba(18,28,48,.07);margin:9px 0 8px}
@@ -5888,11 +5890,29 @@ function mmStructOverride(){
 }
 window.mmStructOverride=mmStructOverride;
 
+
+/* Vaidmens SEMANTINĖ spalva legendai — nepriklauso nuo to, kaip kortelė
+   atrodo tą akimirką (gama gali ją perdažyti, tamsi tema — suvienodinti). */
+function mmRoleSwatch(cls, hue){
+  var mode=mmThemeMode();
+  if(!MM_BUILTIN[cls]){
+    var c=mmRoleColors(hue, mode);
+    return {bg:c.bg, bd:c.bd};
+  }
+  /* įgimtiems imam temos linijų spalvą — ji kiekvienoje temoje sava ir visada skirtinga */
+  var col=null;
+  try{ col = (typeof colorOf!=='undefined' && colorOf) ? colorOf[cls] : null; }catch(e){}
+  if(!col) col = mmRoleColors(hue, mode).bd;
+  var dark = (mode==='dark');
+  return {bg: col, bd: dark ? 'rgba(255,255,255,.34)' : 'rgba(10,16,26,.28)'};
+}
+window.mmRoleSwatch=mmRoleSwatch;
+
 window.mmApplyRoleStyles=mmApplyRoleStyles; window.mmDetectRole=mmDetectRole; window.MM_ROLES=MM_ROLES;
 
 /* ===== SPALVŲ LEGENDA — atvaizduoja TIKRAS temos spalvas ===== */
 (function(){
-  function ROLES(){ return (window.MM_ROLES||[]).map(function(r,i){ return [r[0],r[1],i===0?1:0]; }); }
+  function ROLES(){ return (window.MM_ROLES||[]).map(function(r,i){ return [r[0],r[1],i===0?1:0,r[2]]; }); }
   var GAMA_TXT={cat:'kategoriją',depth:'gylį',polar:'poliariškumą',status:'būseną',min:'minimalizmą'};
   function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
   window.renderLegend=function(){
@@ -5909,16 +5929,16 @@ window.mmApplyRoleStyles=mmApplyRoleStyles; window.mmDetectRole=mmDetectRole; wi
       var n=cnt[r[0]]||0;
       var CORE={'n-center':1,'n-tools':1,'n-env':1,'n-key':1,'n-action':1};
       if(!n && !CORE[r[0]]) return;   // nerodom vaidmenų, kurių šiame žemėlapyje nėra
-      /* spalvą imam iš TIKROS žemėlapio kortelės — tada langelis visada sutampa su vaizdu */
-      var real=document.querySelector('.node.'+r[0]), el, tmp=null;
-      if(real){ el=real; }
-      else { tmp=document.createElement('div'); tmp.className='node '+r[0]; probe.appendChild(tmp); el=tmp; }
-      var cs=getComputedStyle(el);
-      var bgImg=cs.backgroundImage, bg=(bgImg&&bgImg!=='none')?bgImg:cs.backgroundColor;
-      var bd=cs.borderTopColor;
-      if(!bd||bd==='rgba(0, 0, 0, 0)'||bd==='transparent') bd=cs.backgroundColor;
-      if(!bg||bg==='rgba(0, 0, 0, 0)') bg='transparent';
-      rows+='<div class="lgRow"><span class="lgSw'+(r[2]?' rnd':'')+'" style="background:'+bg+';border-color:'+bd+'"></span>'
+      /* semantinė vaidmens spalva — visada prasminga ir visada skirtinga */
+      var sw=window.mmRoleSwatch(r[0], r[3]);
+      var bg=sw.bg, bd=sw.bd;
+      var applied = true;
+      try{
+        var _g=(typeof curGama!=='undefined' && curGama!=='tema');
+        var _s=window.mmStructOn();
+        if(_g){ applied = (!MM_BUILTIN[r[0]] && _s); }   /* su gama vaidmens spalva matoma tik struktūroms su jungikliu */
+      }catch(e){}
+      rows+='<div class="lgRow'+(applied?'':' dim')+'"><span class="lgSw'+(r[2]?' rnd':'')+'" style="background:'+bg+';border-color:'+bd+'"></span>'
           + '<span class="lgTx">'+esc(r[1])+'</span>'
           + (n?'<span class="lgN">'+n+'</span>':'')+'</div>';
     });
