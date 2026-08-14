@@ -5843,8 +5843,8 @@ function mmApplyRoleStyles(){
     var cls=r[0]; if(MM_BUILTIN[cls]) return;
     /* jungiklis išjungtas → struktūros atrodo kaip įprastos „detalės" kortelės */
     var c = mmStructOn ? mmRoleColors(r[2], mode) : mmRoleColors(215, mode);
-    css += 'body .'+cls+'{background:'+c.bg+';color:'+c.ink+';border-color:'+c.bd+';font-size:13px}\n';
-    if(r[3] && mmStructOn) css += 'body .'+cls+'::before{content:"'+r[3]+'";font-weight:800;margin-right:4px;opacity:.72}\n';
+    css += 'body[data-theme] .node.'+cls+', body .'+cls+'{background:'+c.bg+';color:'+c.ink+';border-color:'+c.bd+';font-size:13px}\n';
+    if(r[3] && mmStructOn) css += 'body[data-theme] .node.'+cls+'::before, body .'+cls+'::before{content:"'+r[3]+'";font-weight:800;margin-right:4px;opacity:.72}\n';
     try{ if(typeof colorOf!=='undefined' && colorOf) colorOf[cls]=c.edge; }catch(e){}
   });
   var el=document.getElementById('mmRoleStyles');
@@ -5869,6 +5869,7 @@ try{ var _s=localStorage.getItem('mm_struct'); if(_s!==null) mmStructOn = (_s===
 window.mmStructOn=function(){ return mmStructOn; };
 window.mmSetStruct=function(v){
   mmStructOn=!!v; try{ localStorage.setItem('mm_struct', v?'1':'0'); }catch(e){}
+  try{ for(var id in OBJ) delete OBJ[id]._eff; }catch(e){}
   try{ mmApplyRoleStyles(); }catch(e){}
   try{ render(); }catch(e){}          // perpiešiam — gama ir struktūros iš naujo
   try{ renderLegend(); }catch(e){}
@@ -5876,14 +5877,33 @@ window.mmSetStruct=function(v){
 /* ar ši klasė yra struktūrinis (ne įgimtas) teksto elementas */
 function mmIsStruct(cls){ return !!cls && !MM_BUILTIN[cls] && MM_ROLES.some(function(r){ return r[0]===cls; }); }
 /* po gamos perdažymo grąžinam struktūrinių elementų spalvas */
+/* Kuriose įgimtose klasėse leidžiamas AUTOMATINIS struktūros atpažinimas.
+   Tik detalės — potemių/pagrindinių minčių lygmens kortelės paliekamos savo vaidmeniui. */
+var MM_DETECTABLE={'n-key':1,'n-keygrp':1};
+/* Efektyvus kortelės vaidmuo: aiški žyma arba (jei leidžiama) atpažinimas iš turinio */
+function mmEffRole(n){
+  if(!n) return null;
+  if(mmIsStruct(n.cls)) return n.cls;
+  if(!mmStructOn || !MM_DETECTABLE[n.cls]) return null;
+  if(n._eff!==undefined) return n._eff;                 /* kešuojam — regex nebrangus, bet kam kartoti */
+  var det=mmDetectRole(String(n.label||''), null);
+  if(!det){
+    var txt=String(n.note||'').replace(/<[^>]+>/g,' ');
+    if(txt.length>3) det=mmDetectRole(txt, null);
+  }
+  n._eff=det||null;
+  return n._eff;
+}
+window.mmEffRole=mmEffRole;
 function mmStructOverride(){
   if(!mmStructOn) return;
   var mode=mmThemeMode();
   document.querySelectorAll('.node').forEach(function(el){
     var n=(typeof OBJ!=='undefined')&&OBJ[el.dataset.id]; if(!n||n.customColor) return;
-    if(!mmIsStruct(n.cls)) return;
-    var r=null; for(var i=0;i<MM_ROLES.length;i++){ if(MM_ROLES[i][0]===n.cls){ r=MM_ROLES[i]; break; } }
+    var eff=mmEffRole(n); if(!eff) return;
+    var r=null; for(var i=0;i<MM_ROLES.length;i++){ if(MM_ROLES[i][0]===eff){ r=MM_ROLES[i]; break; } }
     if(!r) return;
+    el.classList.add(eff);                               /* kad veiktų ir ženklas (::before) */
     var c=mmRoleColors(r[2], mode);
     el.style.background=c.bg; el.style.color=c.ink; el.style.borderColor=c.bd;
   });
@@ -5919,7 +5939,10 @@ window.mmApplyRoleStyles=mmApplyRoleStyles; window.mmDetectRole=mmDetectRole; wi
     var L=document.getElementById('legend'), B=document.getElementById('legendBody');
     if(!L||!B) return;
     // kiek kurio vaidmens kortelių šiame žemėlapyje
-    var cnt={}; try{ for(var id in OBJ){ var c=OBJ[id].cls; cnt[c]=(cnt[c]||0)+1; } }catch(e){}
+    var cnt={}; try{ for(var id in OBJ){ var _n=OBJ[id];
+      var c=null; try{ c=window.mmEffRole(_n); }catch(e){}
+      if(!c) c=_n.cls;
+      cnt[c]=(cnt[c]||0)+1; } }catch(e){}
     // zondas — nuskaitom TIKRAS temos spalvas iš CSS
     var probe=document.createElement('div');
     probe.style.cssText='position:absolute;left:-9999px;top:-9999px;visibility:hidden;pointer-events:none';
@@ -5937,6 +5960,7 @@ window.mmApplyRoleStyles=mmApplyRoleStyles; window.mmDetectRole=mmDetectRole; wi
         var _g=(typeof curGama!=='undefined' && curGama!=='tema');
         var _s=window.mmStructOn();
         if(_g){ applied = (!MM_BUILTIN[r[0]] && _s); }   /* su gama vaidmens spalva matoma tik struktūroms su jungikliu */
+        else if(!_s && !MM_BUILTIN[r[0]]){ applied=false; } /* jungiklis išjungtas → struktūrų eilutės gęsta */
       }catch(e){}
       rows+='<div class="lgRow'+(applied?'':' dim')+'"><span class="lgSw'+(r[2]?' rnd':'')+'" style="background:'+bg+';border-color:'+bd+'"></span>'
           + '<span class="lgTx">'+esc(r[1])+'</span>'
@@ -5971,7 +5995,7 @@ window.mmApplyRoleStyles=mmApplyRoleStyles; window.mmDetectRole=mmDetectRole; wi
     try{ if(localStorage.getItem('mm_leg')==='0') L.classList.add('lgOff'); }catch(e){}
   };
   // perpiešiam po temos / gamos / žemėlapio pakeitimo
-  var boot=function(){ try{ mmApplyRoleStyles(); }catch(e){} try{ renderLegend(); }catch(e){} };
+  var boot=function(){ try{ mmApplyRoleStyles(); }catch(e){} try{ window.mmStructOverride(); }catch(e){} try{ renderLegend(); }catch(e){} };
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot);
   else setTimeout(boot,0);
   try{ mmApplyRoleStyles(); }catch(e){}
@@ -5980,6 +6004,7 @@ window.mmApplyRoleStyles=mmApplyRoleStyles; window.mmDetectRole=mmDetectRole; wi
       if(typeof window[fn]==='function'){ var o=window[fn];
         window[fn]=function(){ var r=o.apply(this,arguments);
           try{ mmApplyRoleStyles(); }catch(e){}
+          try{ window.mmStructOverride(); }catch(e){}
           try{ renderLegend(); }catch(e){} return r; }; }
     }catch(e){}
   });
