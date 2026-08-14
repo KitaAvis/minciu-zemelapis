@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+html, body { margin: 0; padding: 0; min-height: 100%; background: #05060A; }
+a { color: #dfe6ee; text-decoration: none; }
+a:hover { color: #7de3ff; }
+.sm-card .sm-del { opacity: 0; transform: scale(0.8); transition: opacity 0.16s ease, transform 0.16s ease, background 0.14s ease; }
+.sm-card:hover .sm-del { opacity: 1; transform: scale(1); }
+.sm-del:hover { background: #e5484d !important; box-shadow: 0 0 16px rgba(229,72,77,0.6) !important; }
+</style>
+</helmet>
+<div style="min-height: 100vh; background: radial-gradient(900px 600px at 50% 0%, #101a2c, #05060A 70%); font-family: 'Archivo', 'Helvetica Neue', sans-serif; padding: 48px 32px 64px; box-sizing: border-box;">
+  <div style="max-width: 1080px; margin: 0 auto;">
+    <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 8px;">
+      <div style="width: 54px; height: 54px; border-radius: 50%; background: #0FA5BC; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 30px rgba(63,232,255,0.35); flex-shrink: 0;">
+        <svg width="24" height="24" viewBox="0 0 18 18"><rect x="3" y="3" width="9" height="9" rx="1.5" fill="none" stroke="#fff" stroke-width="2"></rect><rect x="7" y="7" width="9" height="9" rx="1.5" fill="none" stroke="#fff" stroke-width="2"></rect></svg>
+      </div>
+      <h1 style="margin: 0; font-weight: 900; font-size: 34px; text-transform: uppercase; letter-spacing: 0.04em; color: #EAF2F8;">Saved Maps</h1>
+    </div>
+    <p style="margin: 0 0 30px; color: #9FB3C8; font-size: 15px;">Jūsų išsaugoti minčių žemėlapiai. Paspauskite, kad atidarytumėte.</p>
+
+    <sc-if value="{{ hasItems }}" hint-placeholder-val="{{ true }}">
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
+        <sc-for list="{{ items }}" as="m" hint-placeholder-count="3">
+          <div class="sm-card" style="position: relative; background: rgba(12,18,28,0.75); border: 1px solid rgba(140,180,220,0.18); border-radius: 16px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.4);">
+            <a href="{{ m.href }}" style="display: flex; flex-direction: column; transition: transform 0.2s ease;" style-hover="transform: translateY(-2px);">
+              <img src="{{ m.thumb }}" alt="Žemėlapio miniatiūra" style="display: block; width: 100%; height: 168px; object-fit: cover; background: #0A0E16; border-bottom: 1px solid rgba(140,180,220,0.14);">
+              <div style="padding: 14px 16px 16px;">
+                <div style="color: #EAF2F8; font-weight: 800; font-size: 15px; line-height: 1.3;">{{ m.title }}</div>
+                <div style="color: #7F94A8; font-weight: 600; font-size: 12.5px; margin-top: 5px; display: flex; align-items: center; gap: 8px;">
+                  <span style="text-transform: capitalize;">{{ m.theme }}</span><span>·</span><span>{{ m.when }}</span>
+                </div>
+              </div>
+            </a>
+            <button class="sm-del sm-dl" onClick="{{ m.askDl }}" aria-label="Atsisiųsti žemėlapį" title="Atsisiųsti"
+              style="position: absolute; top: 10px; right: 50px; z-index: 3; width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(140,200,235,0.45); background: rgba(12,30,44,0.85); color: #BFE6F5; font-family: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); box-shadow: 0 3px 10px rgba(0,0,0,0.5);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0l-4-4m4 4l4-4"></path><path d="M5 19h14"></path></svg></button>
+            <sc-if value="{{ m.dlOpen }}" hint-placeholder-val="{{ false }}">
+              <div onClick="{{ m.closeDl }}" style="position: absolute; inset: 0; z-index: 6; background: rgba(6,10,16,0.86); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: flex; flex-direction: column; justify-content: center; gap: 10px; padding: 20px; box-sizing: border-box;">
+                <div style="color: #7F94A8; font-weight: 800; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase;">Atsisiųsti kaip</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                  <button onClick="{{ m.dlPng }}" style="border: 1px solid rgba(140,180,220,0.24); border-radius: 10px; padding: 10px 12px; background: rgba(255,255,255,0.05); color: #EAF2F8; font-family: inherit; font-weight: 800; font-size: 12.5px; text-align: left; cursor: pointer; transition: background 0.16s ease, border-color 0.16s ease;" style-hover="background: rgba(63,232,255,0.12); border-color: #3FE8FF;">PNG<span style="display: block; color: #7F94A8; font-weight: 600; font-size: 10.5px; margin-top: 2px;">Paveikslėlis</span></button>
+                  <button onClick="{{ m.dlMd }}" style="border: 1px solid rgba(140,180,220,0.24); border-radius: 10px; padding: 10px 12px; background: rgba(255,255,255,0.05); color: #EAF2F8; font-family: inherit; font-weight: 800; font-size: 12.5px; text-align: left; cursor: pointer; transition: background 0.16s ease, border-color 0.16s ease;" style-hover="background: rgba(63,232,255,0.12); border-color: #3FE8FF;">Markdown<span style="display: block; color: #7F94A8; font-weight: 600; font-size: 10.5px; margin-top: 2px;">.md</span></button>
+                  <button onClick="{{ m.dlOpml }}" style="border: 1px solid rgba(140,180,220,0.24); border-radius: 10px; padding: 10px 12px; background: rgba(255,255,255,0.05); color: #EAF2F8; font-family: inherit; font-weight: 800; font-size: 12.5px; text-align: left; cursor: pointer; transition: background 0.16s ease, border-color 0.16s ease;" style-hover="background: rgba(63,232,255,0.12); border-color: #3FE8FF;">OPML<span style="display: block; color: #7F94A8; font-weight: 600; font-size: 10.5px; margin-top: 2px;">XMind · MindNode</span></button>
+                  <button onClick="{{ m.dlSmmx }}" style="border: 1px solid rgba(140,180,220,0.24); border-radius: 10px; padding: 10px 12px; background: rgba(255,255,255,0.05); color: #EAF2F8; font-family: inherit; font-weight: 800; font-size: 12.5px; text-align: left; cursor: pointer; transition: background 0.16s ease, border-color 0.16s ease;" style-hover="background: rgba(63,232,255,0.12); border-color: #3FE8FF;">SimpleMind<span style="display: block; color: #7F94A8; font-weight: 600; font-size: 10.5px; margin-top: 2px;">.smmx</span></button>
+                </div>
+                <button onClick="{{ m.closeDl }}" style="align-self: flex-start; margin-top: 2px; border: none; background: none; color: #7F94A8; font-family: inherit; font-weight: 700; font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;" style-hover="color: #EAF2F8;">Atšaukti</button>
+              </div>
+            </sc-if>
+            <button class="sm-del" onClick="{{ m.askDel }}" aria-label="Ištrinti žemėlapį" title="Ištrinti"
+              style="position: absolute; top: 10px; right: 10px; z-index: 3; width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(255,150,150,0.5); background: rgba(180,40,45,0.82); color: #fff; font-family: inherit; font-weight: 800; font-size: 15px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); box-shadow: 0 3px 10px rgba(0,0,0,0.5);">✕</button>
+            <sc-if value="{{ m.confirming }}" hint-placeholder-val="{{ false }}">
+              <div style="position: absolute; inset: 0; z-index: 5; background: rgba(6,10,16,0.82); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 20px; box-sizing: border-box; text-align: center;">
+                <div style="color: #EAF2F8; font-weight: 800; font-size: 15px; line-height: 1.4;">Ištrinti šį žemėlapį?</div>
+                <div style="display: flex; gap: 10px;">
+                  <button onClick="{{ m.doDel }}" style="border: none; border-radius: 999px; padding: 9px 20px; font-family: inherit; font-weight: 800; font-size: 13px; cursor: pointer; background: #e5484d; color: #fff; box-shadow: 0 0 16px rgba(229,72,77,0.45);" style-hover="background: #f2565b;">Taip, ištrinti</button>
+                  <button onClick="{{ m.cancelDel }}" style="border: 1px solid rgba(200,225,245,0.32); border-radius: 999px; padding: 9px 20px; font-family: inherit; font-weight: 800; font-size: 13px; cursor: pointer; background: transparent; color: #C9D6E4;" style-hover="background: rgba(255,255,255,0.08);">Ne</button>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+    <sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}">
+      <div style="border: 1px dashed rgba(140,180,220,0.28); border-radius: 16px; padding: 56px 24px; text-align: center; color: #8FA3B8;">
+        <div style="font-size: 15px; line-height: 1.6;">Dar nėra išsaugotų žemėlapių.<br>Atidarykite žemėlapį ir spauskite <b style="color:#EAF2F8;">💾 Išsaugoti</b>.</div>
+      </div>
+    </sc-if>
+
+    <div style="margin-top: 36px;">
+      <a href="Mind Map Landing.dc.html" style="font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 0.08em; border-bottom: 2px solid #0FA5BC; padding-bottom: 3px;" style-focus="outline: 3px solid #7de3ff; outline-offset: 4px;">← Back to map</a>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { items: [], loaded: false, confirmId: null, dlId: null };
+
+  esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  plain(html) { const d = document.createElement('div'); d.innerHTML = html || ''; return (d.textContent || '').replace(/\s+/g, ' ').trim(); }
+  slug(s) { return (s || 'zemelapis').toLowerCase().replace(/[^a-z0-9ąčęėįšųūž]+/gi, '-').replace(/^-|-$/g, '').slice(0, 60) || 'zemelapis'; }
+
+  walk(node, depth, fn) { (node.children || []).forEach(c => { fn(c, depth); this.walk(c, depth + 1, fn); }); }
+
+  asMarkdown(rec) {
+    let out = '# ' + (rec.data.label || rec.title) + '\n\n';
+    const note = this.plain(rec.data.note); if (note) out += note + '\n\n';
+    this.walk(rec.data, 0, (n, d) => {
+      out += (d < 2 ? '\n' + '#'.repeat(Math.min(d + 2, 6)) + ' ' + n.label + '\n' : '  '.repeat(d - 2) + '- ' + n.label + '\n');
+      const t = this.plain(n.note); if (t) out += '\n' + t + '\n';
+    });
+    return out;
+  }
+
+  asText(rec) {
+    let out = (rec.data.label || rec.title) + '\n';
+    this.walk(rec.data, 0, (n, d) => { out += '  '.repeat(d + 1) + '• ' + n.label + '\n'; });
+    return out;
+  }
+
+  asOpml(rec) {
+    const line = (n, d) => '  '.repeat(d + 2) + '<outline text="' + this.esc(n.label) + '"' +
+      (this.plain(n.note) ? ' _note="' + this.esc(this.plain(n.note)) + '"' : '') +
+      ((n.children || []).length ? '>\n' + (n.children || []).map(c => line(c, d + 1)).join('\n') + '\n' + '  '.repeat(d + 2) + '</outline>' : '/>');
+    return '<?xml version="1.0" encoding="UTF-8"?>\n<opml version="2.0">\n  <head><title>' + this.esc(rec.title) + '</title></head>\n  <body>\n' + line(rec.data, 0) + '\n  </body>\n</opml>\n';
+  }
+
+  crc32(buf) {
+    let t = this._crcT;
+    if (!t) { t = this._crcT = new Uint32Array(256); for (let i = 0; i < 256; i++) { let c = i; for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1); t[i] = c >>> 0; } }
+    let c = 0xFFFFFFFF;
+    for (let i = 0; i < buf.length; i++) c = t[(c ^ buf[i]) & 0xFF] ^ (c >>> 8);
+    return (c ^ 0xFFFFFFFF) >>> 0;
+  }
+
+  zip(files) {
+    const enc = new TextEncoder(), chunks = [], central = [];
+    let off = 0;
+    const u16 = n => [n & 255, (n >>> 8) & 255];
+    const u32 = n => [n & 255, (n >>> 8) & 255, (n >>> 16) & 255, (n >>> 24) & 255];
+    files.forEach(f => {
+      const name = enc.encode(f.name), data = enc.encode(f.data), crc = this.crc32(data);
+      const local = new Uint8Array([...u32(0x04034b50), ...u16(20), ...u16(0), ...u16(0), ...u16(0), ...u16(0),
+        ...u32(crc), ...u32(data.length), ...u32(data.length), ...u16(name.length), ...u16(0)]);
+      chunks.push(local, name, data);
+      central.push(new Uint8Array([...u32(0x02014b50), ...u16(20), ...u16(20), ...u16(0), ...u16(0), ...u16(0), ...u16(0),
+        ...u32(crc), ...u32(data.length), ...u32(data.length), ...u16(name.length), ...u16(0), ...u16(0), ...u16(0), ...u16(0), ...u32(0), ...u32(off)]), name);
+      off += local.length + name.length + data.length;
+    });
+    const cSize = central.reduce((a, c) => a + c.length, 0);
+    const end = new Uint8Array([...u32(0x06054b50), ...u16(0), ...u16(0), ...u16(files.length), ...u16(files.length), ...u32(cSize), ...u32(off), ...u16(0)]);
+    return new Blob([...chunks, ...central, end], { type: 'application/zip' });
+  }
+
+  asSmmx(rec) {
+    let id = 0, rows = [];
+    const emit = (n, parent, depth, angle) => {
+      const my = id++;
+      rows.push('      <topic id="' + my + '" parenttopicid="' + parent + '" x="' + Math.round(Math.cos(angle) * depth * 220) +
+        '" y="' + Math.round(Math.sin(angle) * depth * 150) + '" text="' + this.esc(n.label) + '"' +
+        (this.plain(n.note) ? ' note="' + this.esc(this.plain(n.note)) + '"' : '') + '/>');
+      const kids = n.children || [];
+      kids.forEach((c, i) => emit(c, my, depth + 1, depth === 0 ? (i / Math.max(kids.length, 1)) * Math.PI * 2 : angle + (i - (kids.length - 1) / 2) * 0.35));
+    };
+    emit(rec.data, -1, 0, 0);
+    const xml = '<?xml version="1.0" encoding="UTF-8"?>\n<simplemind-mindmaps doc-version="2">\n  <mindmap>\n' +
+      '    <meta><guid guid="' + (rec.id || 'mm') + '"/><title text="' + this.esc(rec.title) + '"/></meta>\n' +
+      '    <topics>\n' + rows.join('\n') + '\n    </topics>\n    <relations/>\n  </mindmap>\n</simplemind-mindmaps>\n';
+    return this.zip([{ name: 'document/mindmap.xml', data: xml }]);
+  }
+
+  asFreemind(rec) {
+    const line = (n, d) => '  '.repeat(d + 1) + '<node TEXT="' + this.esc(n.label) + '"' +
+      ((n.children || []).length ? '>\n' + (n.children || []).map(c => line(c, d + 1)).join('\n') + '\n' + '  '.repeat(d + 1) + '</node>' : '/>');
+    return '<map version="1.0.1">\n' + line(rec.data, 0) + '\n</map>\n';
+  }
+
+  download(name, content, mime) {
+    const url = typeof content === 'string' && content.startsWith('data:') ? content
+      : URL.createObjectURL(content instanceof Blob ? content : new Blob([content], { type: mime + ';charset=utf-8' }));
+    const a = document.createElement('a');
+    a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+    if (!url.startsWith('data:')) setTimeout(() => URL.revokeObjectURL(url), 4000);
+  }
+
+  exportAs(rec, kind) {
+    const base = this.slug(rec.title);
+    if (kind === 'png') return this.download(base + '.png', rec.thumb || '', 'image/png');
+    if (kind === 'md') return this.download(base + '.md', this.asMarkdown(rec), 'text/markdown');
+    if (kind === 'opml') return this.download(base + '.opml', this.asOpml(rec), 'text/x-opml');
+    if (kind === 'smmx') return this.download(base + '.smmx', this.asSmmx(rec), 'application/zip');
+    if (kind === 'mm') return this.download(base + '.mm', this.asFreemind(rec), 'application/x-freemind');
+    if (kind === 'txt') return this.download(base + '.txt', this.asText(rec), 'text/plain');
+    return this.download(base + '.json', JSON.stringify(rec, null, 2), 'application/json');
+  }
+
+  load() {
+    let arr = [];
+    try { arr = JSON.parse(localStorage.getItem('mm_saved_maps') || '[]'); } catch (e) {}
+    return arr;
+  }
+
+  componentDidMount() {
+    this.setState({ items: this.load(), loaded: true });
+  }
+
+  del(id) {
+    const arr = this.load().filter(m => m.id !== id);
+    try { localStorage.setItem('mm_saved_maps', JSON.stringify(arr)); } catch (e) {}
+    this.setState({ items: arr, confirmId: null });
+  }
+
+  renderVals() {
+    const fmt = (ts) => { try { return new Date(ts).toLocaleString('lt-LT', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }); } catch (e) { return ''; } };
+    const items = this.state.items.map(m => ({
+      ...m,
+      when: fmt(m.ts),
+      href: 'Minciu_zemelapis.html#map=' + encodeURIComponent(m.id),
+      confirming: this.state.confirmId === m.id,
+      dlOpen: this.state.dlId === m.id,
+      askDl: (e) => { e.preventDefault(); e.stopPropagation(); this.setState({ dlId: this.state.dlId === m.id ? null : m.id, confirmId: null }); },
+      closeDl: (e) => { e.preventDefault(); e.stopPropagation(); this.setState({ dlId: null }); },
+      dlPng: (e) => { e.preventDefault(); e.stopPropagation(); this.exportAs(m, 'png'); this.setState({ dlId: null }); },
+      dlMd: (e) => { e.preventDefault(); e.stopPropagation(); this.exportAs(m, 'md'); this.setState({ dlId: null }); },
+      dlOpml: (e) => { e.preventDefault(); e.stopPropagation(); this.exportAs(m, 'opml'); this.setState({ dlId: null }); },
+      dlSmmx: (e) => { e.preventDefault(); e.stopPropagation(); this.exportAs(m, 'smmx'); this.setState({ dlId: null }); },
+      askDel: (e) => { e.preventDefault(); e.stopPropagation(); this.setState({ confirmId: m.id }); },
+      doDel: (e) => { e.preventDefault(); e.stopPropagation(); this.del(m.id); },
+      cancelDel: (e) => { e.preventDefault(); e.stopPropagation(); this.setState({ confirmId: null }); }
+    }));
+    return {
+      items,
+      hasItems: items.length > 0,
+      empty: this.state.loaded && items.length === 0
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800;900&display=swap" rel="stylesheet">
+<style>
+html, body { margin: 0; padding: 0; height: 100%; background: #f7f7f4; }
+a { color: #26282b; text-decoration: none; }
+a:hover { color: #1FA9B8; }
+@keyframes hubPulse {
+  0% { box-shadow: 0 0 0 0 rgba(38,40,43,0.30), 0 14px 40px rgba(0,0,0,0.20); }
+  70% { box-shadow: 0 0 0 26px rgba(38,40,43,0), 0 14px 40px rgba(0,0,0,0.20); }
+  100% { box-shadow: 0 0 0 0 rgba(38,40,43,0), 0 14px 40px rgba(0,0,0,0.20); }
+}
+</style>
+</helmet>
+<div style="position: fixed; inset: 0; background: #f7f7f4; overflow: hidden; font-family: 'Archivo', 'Helvetica Neue', sans-serif;">
+  <canvas ref="{{ setCanvas }}" style="position: absolute; inset: 0; width: 100%; height: 100%; display: block;"></canvas>
+
+  <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+    <div style="position: absolute; left: 50%; top: 50%; width: 1280px; height: 860px; margin-left: -640px; margin-top: -430px; transform: scale({{ stageScale }}); transform-origin: center;">
+    <svg style="position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none;" aria-hidden="true">
+      <line x1="50%" y1="50%" x2="72%" y2="26%" stroke="#c8c8c4" stroke-width="2" style="stroke: {{ how.ls }}; stroke-width: {{ how.lw }}px; opacity: {{ how.lo }}; transition: all 0.35s ease;"></line>
+      <line x1="50%" y1="50%" x2="72%" y2="74%" stroke="#c8c8c4" stroke-width="2" style="stroke: {{ saved.ls }}; stroke-width: {{ saved.lw }}px; opacity: {{ saved.lo }}; transition: all 0.35s ease;"></line>
+      <line x1="50%" y1="50%" x2="28%" y2="26%" stroke="#c8c8c4" stroke-width="2" style="stroke: {{ blog.ls }}; stroke-width: {{ blog.lw }}px; opacity: {{ blog.lo }}; transition: all 0.35s ease;"></line>
+      <line x1="50%" y1="50%" x2="28%" y2="74%" stroke="#c8c8c4" stroke-width="2" style="stroke: {{ about.ls }}; stroke-width: {{ about.lw }}px; opacity: {{ about.lo }}; transition: all 0.35s ease;"></line>
+      <line x1="50%" y1="50%" x2="50%" y2="13%" stroke="#c8c8c4" stroke-width="2" style="stroke: {{ sub.ls }}; stroke-width: {{ sub.lw }}px; opacity: {{ sub.lo }}; transition: all 0.35s ease;"></line>
+      <line x1="50%" y1="50%" x2="50%" y2="87%" stroke="#c8c8c4" stroke-width="2" style="stroke: {{ ex.ls }}; stroke-width: {{ ex.lw }}px; opacity: {{ ex.lo }}; transition: all 0.35s ease;"></line>
+      <line x1="72%" y1="26%" x2="84%" y2="14%" stroke="#d2d2ce" stroke-width="1.5" style="opacity: {{ how.lo }}; transition: opacity 0.35s ease;"></line>
+      <line x1="72%" y1="26%" x2="63%" y2="11%" stroke="#d2d2ce" stroke-width="1.5" style="opacity: {{ how.lo }}; transition: opacity 0.35s ease;"></line>
+      <line x1="72%" y1="74%" x2="84%" y2="86%" stroke="#d2d2ce" stroke-width="1.5" style="opacity: {{ saved.lo }}; transition: opacity 0.35s ease;"></line>
+      <line x1="72%" y1="74%" x2="61%" y2="90%" stroke="#d2d2ce" stroke-width="1.5" style="opacity: {{ saved.lo }}; transition: opacity 0.35s ease;"></line>
+      <line x1="28%" y1="26%" x2="16%" y2="14%" stroke="#d2d2ce" stroke-width="1.5" style="opacity: {{ blog.lo }}; transition: opacity 0.35s ease;"></line>
+      <line x1="28%" y1="26%" x2="37%" y2="12%" stroke="#d2d2ce" stroke-width="1.5" style="opacity: {{ blog.lo }}; transition: opacity 0.35s ease;"></line>
+      <line x1="28%" y1="74%" x2="16%" y2="86%" stroke="#d2d2ce" stroke-width="1.5" style="opacity: {{ about.lo }}; transition: opacity 0.35s ease;"></line>
+      <line x1="28%" y1="74%" x2="39%" y2="89%" stroke="#d2d2ce" stroke-width="1.5" style="opacity: {{ about.lo }}; transition: opacity 0.35s ease;"></line>
+      <line x1="28%" y1="74%" x2="13%" y2="66%" stroke="#d2d2ce" stroke-width="1.5" style="opacity: {{ about.lo }}; transition: opacity 0.35s ease;"></line>
+    </svg>
+
+    <a href="Minciu_zemelapis.html#naujas" aria-label="Create mind map" onMouseEnter="{{ enterCenter }}" onMouseLeave="{{ leave }}" onFocus="{{ enterCenter }}" onBlur="{{ leave }}"
+       style="position: absolute; left: calc(50% - 150px); top: calc(50% - 150px); width: 300px; height: 300px; border-radius: 50%; background: #26282b; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; box-shadow: 0 14px 40px rgba(0,0,0,0.20); transform: {{ center.t }}; opacity: {{ center.o }}; animation: {{ center.anim }}; transition: transform 0.4s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease; z-index: 3;"
+       style-focus="outline: none; boxShadow: 0 0 0 6px rgba(31,169,184,0.18);">
+      <span style="color: #ffffff; font-weight: 900; font-size: 36px; letter-spacing: 0.04em; line-height: 1.12; text-align: center; text-transform: uppercase;">Create<br>Mind<br>Map</span>
+      <span style="display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.75); font-weight: 700; font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; border: 1.5px solid rgba(255,255,255,0.35); border-radius: 999px; padding: 7px 16px;">Start here <svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6 H10 M6.5 2.5 L10 6 L6.5 9.5" fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+    </a>
+
+    <a href="How-It-Works.dc.html" onMouseEnter="{{ enterHow }}" onMouseLeave="{{ leave }}" onFocus="{{ enterHow }}" onBlur="{{ leave }}"
+       style="position: absolute; left: calc(72% - 92px); top: calc(26% - 92px); width: 184px; height: 184px; border-radius: 50%; background: #7CB92C; display: flex; align-items: center; justify-content: center; box-shadow: {{ how.sh }}; transform: {{ how.t }}; opacity: {{ how.o }}; transition: transform 0.4s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease, box-shadow 0.35s ease; z-index: 3;"
+       style-focus="outline: 3px solid #26282b; outline-offset: 6px;">
+      <span style="color: #ffffff; font-weight: 900; font-size: 21px; letter-spacing: 0.05em; line-height: 1.2; text-align: center; text-transform: uppercase; padding: 0 24px;">How It Works</span>
+    </a>
+    <div style="position: absolute; left: calc(84% - 28px); top: calc(14% - 28px); width: 56px; height: 56px; border-radius: 50%; background: #7CB92C; display: flex; align-items: center; justify-content: center; transform: {{ how.st }}; opacity: {{ how.o }}; transition: transform 0.45s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease; z-index: 2;" aria-hidden="true">
+      <svg width="18" height="18" viewBox="0 0 18 18"><polygon points="5,3 15,9 5,15" fill="#ffffff"></polygon></svg>
+    </div>
+    <div style="position: absolute; left: calc(63% - 15px); top: calc(11% - 15px); width: 30px; height: 30px; border-radius: 50%; border: 2px solid #7CB92C; background: transparent; transform: {{ how.st }}; opacity: {{ how.o }}; transition: transform 0.45s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease; z-index: 2;" aria-hidden="true"></div>
+
+    <a href="Saved-Maps.dc.html" onMouseEnter="{{ enterSaved }}" onMouseLeave="{{ leave }}" onFocus="{{ enterSaved }}" onBlur="{{ leave }}"
+       style="position: absolute; left: calc(72% - 92px); top: calc(74% - 92px); width: 184px; height: 184px; border-radius: 50%; background: #1FA9B8; display: flex; align-items: center; justify-content: center; box-shadow: {{ saved.sh }}; transform: {{ saved.t }}; opacity: {{ saved.o }}; transition: transform 0.4s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease, box-shadow 0.35s ease; z-index: 3;"
+       style-focus="outline: 3px solid #26282b; outline-offset: 6px;">
+      <span style="color: #ffffff; font-weight: 900; font-size: 21px; letter-spacing: 0.05em; line-height: 1.2; text-align: center; text-transform: uppercase; padding: 0 26px;">Saved Maps</span>
+    </a>
+    <div style="position: absolute; left: calc(84% - 26px); top: calc(86% - 26px); width: 52px; height: 52px; border-radius: 50%; background: #1FA9B8; display: flex; align-items: center; justify-content: center; transform: {{ saved.st }}; opacity: {{ saved.o }}; transition: transform 0.45s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease; z-index: 2;" aria-hidden="true">
+      <svg width="18" height="18" viewBox="0 0 18 18"><rect x="3" y="3" width="9" height="9" rx="1.5" fill="none" stroke="#ffffff" stroke-width="2"></rect><rect x="7" y="7" width="9" height="9" rx="1.5" fill="none" stroke="#ffffff" stroke-width="2"></rect></svg>
+    </div>
+    <div style="position: absolute; left: calc(61% - 13px); top: calc(90% - 13px); width: 26px; height: 26px; border-radius: 50%; border: 2px solid #1FA9B8; background: transparent; transform: {{ saved.st }}; opacity: {{ saved.o }}; transition: transform 0.45s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease; z-index: 2;" aria-hidden="true"></div>
+
+    <a href="Blog.dc.html" onMouseEnter="{{ enterBlog }}" onMouseLeave="{{ leave }}" onFocus="{{ enterBlog }}" onBlur="{{ leave }}"
+       style="position: absolute; left: calc(28% - 92px); top: calc(26% - 92px); width: 184px; height: 184px; border-radius: 50%; background: #F28C1E; display: flex; align-items: center; justify-content: center; box-shadow: {{ blog.sh }}; transform: {{ blog.t }}; opacity: {{ blog.o }}; transition: transform 0.4s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease, box-shadow 0.35s ease; z-index: 3;"
+       style-focus="outline: 3px solid #26282b; outline-offset: 6px;">
+      <span style="color: #ffffff; font-weight: 900; font-size: 23px; letter-spacing: 0.06em; text-transform: uppercase;">Blog</span>
+    </a>
+    <div style="position: absolute; left: calc(16% - 28px); top: calc(14% - 28px); width: 56px; height: 56px; border-radius: 50%; background: #F28C1E; display: flex; align-items: center; justify-content: center; transform: {{ blog.st }}; opacity: {{ blog.o }}; transition: transform 0.45s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease; z-index: 2;" aria-hidden="true">
+      <svg width="18" height="18" viewBox="0 0 18 18"><line x1="3" y1="5" x2="15" y2="5" stroke="#ffffff" stroke-width="2"></line><line x1="3" y1="9" x2="15" y2="9" stroke="#ffffff" stroke-width="2"></line><line x1="3" y1="13" x2="11" y2="13" stroke="#ffffff" stroke-width="2"></line></svg>
+    </div>
+    <div style="position: absolute; left: calc(37% - 14px); top: calc(12% - 14px); width: 28px; height: 28px; border-radius: 50%; border: 2px solid #F28C1E; background: transparent; transform: {{ blog.st }}; opacity: {{ blog.o }}; transition: transform 0.45s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease; z-index: 2;" aria-hidden="true"></div>
+
+    <a href="About-Us.dc.html" onMouseEnter="{{ enterAbout }}" onMouseLeave="{{ leave }}" onFocus="{{ enterAbout }}" onBlur="{{ leave }}"
+       style="position: absolute; left: calc(28% - 92px); top: calc(74% - 92px); width: 184px; height: 184px; border-radius: 50%; background: #7C5BC0; display: flex; align-items: center; justify-content: center; box-shadow: {{ about.sh }}; transform: {{ about.t }}; opacity: {{ about.o }}; transition: transform 0.4s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease, box-shadow 0.35s ease; z-index: 3;"
+       style-focus="outline: 3px solid #26282b; outline-offset: 6px;">
+      <span style="color: #ffffff; font-weight: 900; font-size: 21px; letter-spacing: 0.05em; line-height: 1.2; text-align: center; text-transform: uppercase; padding: 0 26px;">About Us</span>
+    </a>
+    <div style="position: absolute; left: calc(16% - 27px); top: calc(86% - 27px); width: 54px; height: 54px; border-radius: 50%; background: #7C5BC0; display: flex; align-items: center; justify-content: center; transform: {{ about.st }}; opacity: {{ about.o }}; transition: transform 0.45s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease; z-index: 2;" aria-hidden="true">
+      <svg width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="6" r="3" fill="none" stroke="#ffffff" stroke-width="2"></circle><path d="M3.5 15 C3.5 11.5 14.5 11.5 14.5 15" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round"></path></svg>
+    </div>
+    <div style="position: absolute; left: calc(39% - 14px); top: calc(89% - 14px); width: 28px; height: 28px; border-radius: 50%; border: 2px solid #7C5BC0; background: transparent; transform: {{ about.st }}; opacity: {{ about.o }}; transition: transform 0.45s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease; z-index: 2;" aria-hidden="true"></div>
+    <div style="position: absolute; left: calc(13% - 10px); top: calc(66% - 10px); width: 20px; height: 20px; border-radius: 50%; background: #7C5BC0; transform: {{ about.st }}; opacity: {{ about.o }}; transition: transform 0.45s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease; z-index: 2;" aria-hidden="true"></div>
+
+    <a href="Subscribe.dc.html" onMouseEnter="{{ enterSub }}" onMouseLeave="{{ leave }}" onFocus="{{ enterSub }}" onBlur="{{ leave }}"
+       style="position: absolute; left: calc(50% - 70px); top: calc(13% - 70px); width: 140px; height: 140px; border-radius: 50%; background: #E0457B; display: flex; align-items: center; justify-content: center; box-shadow: {{ sub.sh }}; transform: {{ sub.t }}; opacity: {{ sub.o }}; transition: transform 0.4s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease, box-shadow 0.35s ease; z-index: 3;"
+       style-focus="outline: 3px solid #26282b; outline-offset: 6px;">
+      <span style="color: #ffffff; font-weight: 900; font-size: 18px; letter-spacing: 0.05em; line-height: 1.2; text-align: center; text-transform: uppercase; padding: 0 18px;">Subscribe</span>
+    </a>
+    <div style="position: absolute; left: calc(59% - 13px); top: calc(6% - 13px); width: 26px; height: 26px; border-radius: 50%; border: 2px solid #E0457B; background: transparent; transform: {{ sub.st }}; opacity: {{ sub.o }}; transition: transform 0.45s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease; z-index: 2;" aria-hidden="true"></div>
+
+    <a href="Example.dc.html" onMouseEnter="{{ enterEx }}" onMouseLeave="{{ leave }}" onFocus="{{ enterEx }}" onBlur="{{ leave }}"
+       style="position: absolute; left: calc(50% - 70px); top: calc(87% - 70px); width: 140px; height: 140px; border-radius: 50%; background: #3B6FE0; display: flex; align-items: center; justify-content: center; box-shadow: {{ ex.sh }}; transform: {{ ex.t }}; opacity: {{ ex.o }}; transition: transform 0.4s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease, box-shadow 0.35s ease; z-index: 3;"
+       style-focus="outline: 3px solid #26282b; outline-offset: 6px;">
+      <span style="color: #ffffff; font-weight: 900; font-size: 16px; letter-spacing: 0.05em; line-height: 1.2; text-align: center; text-transform: uppercase; padding: 0 16px;">Open Example</span>
+    </a>
+    <div style="position: absolute; left: calc(41% - 13px); top: calc(94% - 13px); width: 26px; height: 26px; border-radius: 50%; border: 2px solid #3B6FE0; background: transparent; transform: {{ ex.st }}; opacity: {{ ex.o }}; transition: transform 0.45s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease; z-index: 2;" aria-hidden="true"></div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+    <div style="position: absolute; inset: 0; overflow-y: auto; display: flex; flex-direction: column; align-items: center; gap: 30px; padding: 48px 24px 64px 24px; box-sizing: border-box;">
+      <a href="Minciu_zemelapis.html#naujas" style="width: 220px; height: 220px; flex-shrink: 0; border-radius: 50%; background: #26282b; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 12px 32px rgba(0,0,0,0.18);" style-focus="outline: 3px solid #1FA9B8; outline-offset: 5px;">
+        <span style="color: #ffffff; font-weight: 900; font-size: 26px; letter-spacing: 0.04em; line-height: 1.15; text-align: center; text-transform: uppercase;">Create<br>Mind<br>Map</span>
+        <span style="color: rgba(255,255,255,0.75); font-weight: 700; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; border: 1.5px solid rgba(255,255,255,0.35); border-radius: 999px; padding: 5px 12px;">Start here →</span>
+      </a>
+      <div style="width: 2px; height: 34px; background: #c8c8c4; flex-shrink: 0;" aria-hidden="true"></div>
+      <a href="How-It-Works.dc.html" style="width: 160px; height: 160px; flex-shrink: 0; border-radius: 50%; background: #7CB92C; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 22px rgba(0,0,0,0.12);" style-focus="outline: 3px solid #26282b; outline-offset: 5px;">
+        <span style="color: #ffffff; font-weight: 900; font-size: 19px; letter-spacing: 0.05em; line-height: 1.2; text-align: center; text-transform: uppercase; padding: 0 18px;">How It Works</span>
+      </a>
+      <div style="width: 2px; height: 34px; background: #c8c8c4; flex-shrink: 0;" aria-hidden="true"></div>
+      <a href="Saved-Maps.dc.html" style="width: 160px; height: 160px; flex-shrink: 0; border-radius: 50%; background: #1FA9B8; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 22px rgba(0,0,0,0.12);" style-focus="outline: 3px solid #26282b; outline-offset: 5px;">
+        <span style="color: #ffffff; font-weight: 900; font-size: 19px; letter-spacing: 0.05em; line-height: 1.2; text-align: center; text-transform: uppercase; padding: 0 18px;">Saved Maps</span>
+      </a>
+      <div style="width: 2px; height: 34px; background: #c8c8c4; flex-shrink: 0;" aria-hidden="true"></div>
+      <a href="Blog.dc.html" style="width: 160px; height: 160px; flex-shrink: 0; border-radius: 50%; background: #F28C1E; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 22px rgba(0,0,0,0.12);" style-focus="outline: 3px solid #26282b; outline-offset: 5px;">
+        <span style="color: #ffffff; font-weight: 900; font-size: 20px; letter-spacing: 0.06em; text-transform: uppercase;">Blog</span>
+      </a>
+      <div style="width: 2px; height: 34px; background: #c8c8c4; flex-shrink: 0;" aria-hidden="true"></div>
+      <a href="About-Us.dc.html" style="width: 160px; height: 160px; flex-shrink: 0; border-radius: 50%; background: #7C5BC0; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 22px rgba(0,0,0,0.12);" style-focus="outline: 3px solid #26282b; outline-offset: 5px;">
+        <span style="color: #ffffff; font-weight: 900; font-size: 19px; letter-spacing: 0.05em; line-height: 1.2; text-align: center; text-transform: uppercase; padding: 0 18px;">About Us</span>
+      </a>
+      <div style="width: 2px; height: 34px; background: #c8c8c4; flex-shrink: 0;" aria-hidden="true"></div>
+      <a href="Subscribe.dc.html" style="width: 140px; height: 140px; flex-shrink: 0; border-radius: 50%; background: #E0457B; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 22px rgba(0,0,0,0.12);" style-focus="outline: 3px solid #26282b; outline-offset: 5px;">
+        <span style="color: #ffffff; font-weight: 900; font-size: 17px; letter-spacing: 0.05em; line-height: 1.2; text-align: center; text-transform: uppercase; padding: 0 16px;">Subscribe</span>
+      </a>
+      <div style="width: 2px; height: 34px; background: #c8c8c4; flex-shrink: 0;" aria-hidden="true"></div>
+      <a href="Example.dc.html" style="width: 140px; height: 140px; flex-shrink: 0; border-radius: 50%; background: #3B6FE0; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 22px rgba(0,0,0,0.12);" style-focus="outline: 3px solid #26282b; outline-offset: 5px;">
+        <span style="color: #ffffff; font-weight: 900; font-size: 16px; letter-spacing: 0.05em; line-height: 1.2; text-align: center; text-transform: uppercase; padding: 0 16px;">Open Example</span>
+      </a>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;parallaxStrength&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:26,&quot;min&quot;:0,&quot;max&quot;:200,&quot;step&quot;:2,&quot;unit&quot;:&quot;px&quot;,&quot;section&quot;:&quot;Background&quot;},&quot;patternDensity&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:1,&quot;min&quot;:0.4,&quot;max&quot;:10,&quot;step&quot;:0.2,&quot;section&quot;:&quot;Background&quot;},&quot;showPattern&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;section&quot;:&quot;Background&quot;},&quot;glowRadius&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:200,&quot;min&quot;:80,&quot;max&quot;:400,&quot;step&quot;:10,&quot;unit&quot;:&quot;px&quot;,&quot;section&quot;:&quot;Glow&quot;}}">
+class Component extends DCLogic {
+  state = { hovered: null, isDesktop: true, stageScale: 1 };
+
+  updateScale = () => {
+    const s = Math.min((window.innerWidth - 32) / 1280, (window.innerHeight - 24) / 860, 1);
+    if (Math.abs(s - this.state.stageScale) > 0.005) this.setState({ stageScale: s });
+  };
+
+  setCanvas = (el) => {
+    if (el && el !== this.canvas) { this.canvas = el; this.initCanvas(); }
+  };
+
+  componentDidMount() {
+    this.mq = window.matchMedia('(min-width: 820px)');
+    this.reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    this.onMq = () => this.setState({ isDesktop: this.mq.matches });
+    this.mq.addEventListener('change', this.onMq);
+    this.onMq();
+    this.onMove = (e) => {
+      this.setPointer(e.clientX, e.clientY);
+      if (!this.mq.matches || this.reduced.matches) return;
+      const s = Number(this.props.parallaxStrength ?? 26);
+      const w = window.innerWidth, h = window.innerHeight;
+      this.tx = -((e.clientX - w / 2) / (w / 2)) * s;
+      this.ty = -((e.clientY - h / 2) / (h / 2)) * s;
+    };
+    this.onTouch = (e) => {
+      if (e.touches && e.touches.length) this.setPointer(e.touches[0].clientX, e.touches[0].clientY);
+    };
+    this.onResize = () => { this.generate(); this.updateScale(); };
+    this.updateScale();
+    window.addEventListener('mousemove', this.onMove);
+    window.addEventListener('touchstart', this.onTouch, { passive: true });
+    window.addEventListener('touchmove', this.onTouch, { passive: true });
+    window.addEventListener('resize', this.onResize);
+    this.initCanvas();
+  }
+
+  setPointer(x, y) {
+    if (this.px !== undefined) {
+      // advance hue with pointer travel for a gentle spectrum shift
+      this.hue = (this.hue + Math.min(Math.hypot(x - this.px, y - this.py) * 0.08, 4)) % 360;
+    }
+    this.px = x; this.py = y;
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('mousemove', this.onMove);
+    window.removeEventListener('touchstart', this.onTouch);
+    window.removeEventListener('touchmove', this.onTouch);
+    window.removeEventListener('resize', this.onResize);
+    this.mq && this.mq.removeEventListener('change', this.onMq);
+    cancelAnimationFrame(this.raf);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.patternDensity !== this.props.patternDensity || prevProps.showPattern !== this.props.showPattern) this.generate();
+  }
+
+  initCanvas() {
+    if (!this.canvas || this.started) return;
+    this.started = true;
+    this.tx = 0; this.ty = 0; this.ox = 0; this.oy = 0;
+    this.px = -9999; this.py = -9999; this.hue = 190;
+    this.generate();
+    const loop = () => {
+      this.ox += (this.tx - this.ox) * 0.045;
+      this.oy += (this.ty - this.oy) * 0.045;
+      this.hue = (this.hue + 0.12) % 360; // slow ambient cycle
+      this.draw();
+      this.raf = requestAnimationFrame(loop);
+    };
+    loop();
+  }
+
+  generate() {
+    if (!this.canvas) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const w = window.innerWidth, h = window.innerHeight;
+    this.canvas.width = w * dpr; this.canvas.height = h * dpr;
+    this.w = w; this.h = h; this.dpr = dpr;
+    const density = Number(this.props.patternDensity ?? 1);
+    const count = Math.round((w * h) / 8500 * density);
+    // jittered grid for even full-viewport coverage (no bare corners)
+    const cols = Math.ceil(Math.sqrt(count * w / h));
+    const rows = Math.ceil(count / cols);
+    const cw = (w + 80) / cols, ch = (h + 80) / rows;
+    this.pts = [];
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+      if (this.pts.length >= count) break;
+      this.pts.push({
+        x: -40 + c * cw + (0.15 + Math.random() * 0.7) * cw,
+        y: -40 + r * ch + (0.15 + Math.random() * 0.7) * ch,
+        r: 1 + Math.random() * 1.7,
+        d: 0.45 + Math.random() * 0.55,
+        g: 0
+      });
+    }
+    this.edges = [];
+    const max = Math.min(120, Math.sqrt((w * h) / count) * 1.5);
+    for (let i = 0; i < this.pts.length; i++) for (let j = i + 1; j < this.pts.length; j++) {
+      const a = this.pts[i], b = this.pts[j];
+      const dx = a.x - b.x, dy = a.y - b.y;
+      if (dx * dx + dy * dy < max * max) this.edges.push([a, b]);
+    }
+  }
+
+  draw() {
+    if (!this.canvas || !this.pts) return;
+    const ctx = this.canvas.getContext('2d');
+    ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+    ctx.clearRect(0, 0, this.w, this.h);
+    if (this.props.showPattern === false) return;
+    const R = Number(this.props.glowRadius ?? 200);
+    const hue = this.hue;
+    // per-point glow: fast attack, slow decay = trailing wake
+    for (const p of this.pts) {
+      const x = p.x + this.ox * p.d, y = p.y + this.oy * p.d;
+      const dist = Math.hypot(x - this.px, y - this.py);
+      let target = 0;
+      if (dist < R) { const t = 1 - dist / R; target = t * t * (3 - 2 * t); } // smoothstep falloff
+      p.g += (target - p.g) * (target > p.g ? 0.22 : 0.045);
+      if (p.g < 0.004) p.g = 0;
+      p._x = x; p._y = y;
+    }
+    // base grey lines
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(60,62,65,0.07)';
+    ctx.beginPath();
+    for (const [a, b] of this.edges) { ctx.moveTo(a._x, a._y); ctx.lineTo(b._x, b._y); }
+    ctx.stroke();
+    // glowing lines
+    ctx.lineCap = 'round';
+    for (const [a, b] of this.edges) {
+      const g = (a.g + b.g) / 2;
+      if (g < 0.02) continue;
+      ctx.lineWidth = 1 + g * 0.9;
+      ctx.strokeStyle = `hsla(${hue}, 75%, 52%, ${g * 0.55})`;
+      ctx.beginPath(); ctx.moveTo(a._x, a._y); ctx.lineTo(b._x, b._y); ctx.stroke();
+    }
+    // points: grey base + glow overlay, slight scale-up
+    for (const p of this.pts) {
+      const rad = p.r * (1 + p.g * 0.45);
+      ctx.beginPath();
+      ctx.arc(p._x, p._y, rad, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(60,62,65,0.15)';
+      ctx.fill();
+      if (p.g > 0.02) {
+        ctx.beginPath();
+        ctx.arc(p._x, p._y, rad, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${hue}, 78%, 50%, ${p.g * 0.85})`;
+        ctx.fill();
+      }
+    }
+  }
+
+  renderVals() {
+    const h = this.state.hovered;
+    const mk = (key, dark, dx, dy) => ({
+      t: h === key ? 'scale(1.08)' : 'scale(1)',
+      o: h && h !== key ? 0.35 : 1,
+      sh: h === key ? '0 20px 48px rgba(0,0,0,0.24)' : '0 6px 18px rgba(0,0,0,0.10)',
+      lw: h === key ? 3 : 2,
+      lo: h ? (h === key ? 1 : 0.25) : 0.85,
+      ls: h === key ? dark : '#c8c8c4',
+      st: h === key ? `translate(${dx}px, ${dy}px)` : 'translate(0px, 0px)'
+    });
+    return {
+      isDesktop: this.state.isDesktop,
+      isMobile: !this.state.isDesktop,
+      stageScale: this.state.stageScale,
+      setCanvas: this.setCanvas,
+      how: mk('how', '#5f9418', -8, 9),
+      saved: mk('saved', '#15818d', -9, -9),
+      blog: mk('blog', '#c96f0e', 9, 10),
+      about: mk('about', '#6243a3', 9, -9),
+      sub: mk('sub', '#b52f5e', -6, 10),
+      ex: mk('ex', '#2a55b8', 6, -10),
+      center: {
+        t: h === 'center' ? 'scale(1.04)' : 'scale(1)',
+        o: h && h !== 'center' ? 0.45 : 1,
+        anim: h === 'center' ? 'hubPulse 1.7s ease-out infinite' : 'none'
+      },
+      enterHow: () => this.setState({ hovered: 'how' }),
+      enterSaved: () => this.setState({ hovered: 'saved' }),
+      enterBlog: () => this.setState({ hovered: 'blog' }),
+      enterAbout: () => this.setState({ hovered: 'about' }),
+      enterSub: () => this.setState({ hovered: 'sub' }),
+      enterEx: () => this.setState({ hovered: 'ex' }),
+      enterCenter: () => this.setState({ hovered: 'center' }),
+      leave: () => this.setState({ hovered: null })
+    };
+  }
+}
+</script>
+</body>
+</html>
