@@ -5012,7 +5012,12 @@ const smp=U$('openSample'); if(smp) smp.onclick=()=>{ hideUpload(); };
   document.addEventListener('click',e=>{
     const t=e.target && e.target.closest ? e.target.closest('#uBack') : null;
     if(t){ e.preventDefault(); e.stopPropagation();
-      if(window.mmExitGuard) window.mmExitGuard(go); else go(); }
+      // Kūrimo/generavimo ekrane nėra ko saugoti → klausiam TIK jei realiai atidarytas žemėlapis su pakeitimais.
+      const onCreate=document.documentElement.classList.contains('mm-show-upload');
+      const hasChanges=(typeof undoStack!=='undefined') && undoStack.length>0;
+      if(!onCreate && hasChanges && window.mmExitGuard){ window.mmExitGuard(go); }
+      else { go(); }
+    }
   },true);
 })();
 
