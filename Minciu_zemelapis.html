@@ -3564,6 +3564,48 @@ function applyBranchSel(){
   if(window.fmtStateRefresh) window.fmtStateRefresh();
 }
 function clearBranchSel(){ if(!branchSelIds.size) return; branchSelIds.clear(); document.querySelectorAll('.node.branchSel').forEach(x=>x.classList.remove('branchSel')); if(window.fmtStateRefresh) window.fmtStateRefresh(); }
+
+/* ═══ KORTELĖS PERKĖLIMAS VILKIMU ═══════════════════════════════════════
+   Užvedus tempiamą kortelę ant kitos, ta apačioje esanti užsidega įprastu
+   pažymėjimu; atleidus — tempiamoji tampa jos dalimi (kartu su savo vaikais). */
+let mmDropT=null;
+function mmNodeElem(id){ return document.querySelector('.node[data-id="'+id+'"]'); }
+function mmIsInside(root,node){ let hit=false; (function w(n){ if(n===node) hit=true; (n.children||[]).forEach(w); })(root); return hit; }
+function mmDropTargetAt(cx,cy,dragged){
+  if(!dragged || dragged===DATA) return null;
+  const dEl=mmNodeElem(dragged.id);
+  const keep=dEl?dEl.style.pointerEvents:null;
+  if(dEl) dEl.style.pointerEvents='none';          // kad po ja esanti kortelė būtų pasiekiama
+  let hit=document.elementFromPoint(cx,cy);
+  if(dEl) dEl.style.pointerEvents=keep||'';
+  hit=(hit&&hit.closest)?hit.closest('.node'):null;
+  if(!hit) return null;
+  const t=OBJ[hit.dataset.id];
+  if(!t||t===dragged) return null;
+  if(mmIsInside(dragged,t)) return null;           // į savo palikuonį — susidarytų ciklas
+  if(dragged._p===t) return null;                  // jau yra jo dalis
+  return t;
+}
+function mmSetDropT(t){
+  if(mmDropT===t) return;
+  if(mmDropT && !branchSelIds.has(mmDropT.id)){ const e0=mmNodeElem(mmDropT.id); if(e0) e0.classList.remove('branchSel'); }
+  mmDropT=t;
+  if(t){ const e1=mmNodeElem(t.id); if(e1) e1.classList.add('branchSel'); }
+}
+function mmReparent(child,parent){
+  if(!child||!parent||child===parent||child===DATA) return false;
+  const old=child._p;
+  if(!old||!old.children) return false;
+  const i=old.children.indexOf(child); if(i<0) return false;
+  old.children.splice(i,1);
+  parent.children=parent.children||[];
+  parent.children.push(child);
+  parent._c=false;                                  // naujas vaikas turi iš karto matytis
+  /* rankinės pozicijos nuimam — perkelta šaka išsidėsto pagal naują tėvą */
+  (function w(n){ delete manual[n.id]; (n.children||[]).forEach(w); })(child);
+  (function idx(n,p){ n._p=p; (n.children||[]).forEach(c=>idx(c,n)); })(DATA,null);
+  return true;
+}
 /* VISOMS TEMOMS: hierarchinis šriftų dėsnis ir kortelės geometrija (kaip Cosmos temoje) */
 function applyCardSizes(){
   document.querySelectorAll('.node').forEach(el=>{
@@ -3753,6 +3795,7 @@ function render(){
         manual[n.id]={x:nx,y:ny}; pos[n.id].x=nx; pos[n.id].y=ny;
         el.style.left=nx+'px'; el.style.top=ny+'px';
         redrawEdges();               // linijos juda kartu
+        if(moved) mmSetDropT(mmDropTargetAt(e.clientX,e.clientY,n));   // kortelė po apačia užsidega
       }
     });
     el.addEventListener('pointerup',e=>{
@@ -3769,7 +3812,18 @@ function render(){
         picking=false; edPick.classList.remove('active'); document.body.classList.remove('picking');
         return;
       }
-      if(lpSelected){ lpSelected=false; return; }   // ilgas paspaudimas tik pažymėjo — nieko daugiau
+      if(lpSelected){ lpSelected=false; mmSetDropT(null); return; }   // ilgas paspaudimas tik pažymėjo
+      /* Atleista ant kitos kortelės → tempiamoji tampa jos dalimi (su savo vaikais) */
+      if(moved && mmDropT){
+        const t=mmDropT; mmSetDropT(null);
+        if(mmReparent(n,t)){
+          renumberAll(); render();
+          try{ saveMap(); }catch(_){}
+          showToast('„'+n.label+'“ dabar yra kortelės „'+t.label+'“ dalis');
+        }
+        return;
+      }
+      mmSetDropT(null);
       if(!moved){                   // buvo paprastas paspaudimas
         // ar paspausta ant pastabos ikonėlės (📋)? (elementFromPoint dėl pointer capture)
         const tgt = document.elementFromPoint(e.clientX, e.clientY);
@@ -4243,9 +4297,32 @@ function snapshot(){
   const s={};
   for(const id in OBJ){ const n=OBJ[id];
     s[id]={label:n.label,customColor:n.customColor,icon:n.icon,img:n.img,_c:n._c,w:n.w,sc:n.sc,st:n.st,rel:n.rel,fmt:(n.fmt?JSON.stringify(n.fmt):undefined),
-           mx:(manual[id]?manual[id].x:undefined),my:(manual[id]?manual[id].y:undefined)};
+           mx:(manual[id]?manual[id].x:undefined),my:(manual[id]?manual[id].y:undefined),
+           /* SANDARA — kad būtų galima atšaukti ir kortelės perkėlimą į kitą tėvinę kortelę */
+           p:(n._p?n._p.id:null), i:(n._p?(n._p.children||[]).indexOf(n):-1)};
   }
   return s;
+}
+/* Grąžina sandarą (tėvas + vieta tarp brolių) pagal momentinę nuotrauką.
+   Atstatoma tik tai, kas nuotraukoje pasiekiama nuo šaknies — taip stale
+   įrašai iš OBJ negali netyčia atgyti. */
+function restoreStruct(s){
+  let changed=false;
+  for(const id in s){ const n=OBJ[id]; if(!n||s[id].p===undefined) continue;
+    if((n._p?n._p.id:null)!==s[id].p){ changed=true; break; } }
+  if(!changed) return false;
+  const rootId=DATA.id, keep={};
+  for(const id in s){
+    let cur=id, guard=0;
+    while(cur && guard++<400){ if(cur===rootId){ keep[id]=1; break; } cur=s[cur]?s[cur].p:null; }
+  }
+  Object.keys(keep).forEach(id=>{ const n=OBJ[id]; if(n) n.children=[]; });
+  Object.keys(keep).filter(id=>id!==rootId).sort((a,b)=>(s[a].i||0)-(s[b].i||0))
+    .forEach(id=>{ const n=OBJ[id], p=OBJ[s[id].p];
+      if(n&&p&&keep[s[id].p]) (p.children=p.children||[]).push(n); });
+  (function idx(n,p){ n._p=p; (n.children||[]).forEach(c=>idx(c,n)); })(DATA,null);
+  try{ renumberAll(); }catch(e){}
+  return true;
 }
 let redoStack=[];
 function pushUndo(){ undoStack.push(snapshot()); redoStack.length=0; if(undoStack.length>40) undoStack.shift(); syncHist(); }
@@ -4257,6 +4334,7 @@ function restoreSnap(s){
     n.fmt = s[id].fmt ? JSON.parse(s[id].fmt) : undefined;
     if(s[id].mx===undefined) delete manual[id]; else manual[id]={x:s[id].mx,y:s[id].my};
   }
+  try{ restoreStruct(s); }catch(e){ console.warn('sandaros atstatymas nepavyko:',e); }
   render();
 }
 function doRedo(){ if(!redoStack.length) return; const s=redoStack.pop(); undoStack.push(snapshot()); restoreSnap(s); syncHist(); }
@@ -4276,7 +4354,9 @@ function doUndo(){
     n.fmt = s[id].fmt ? JSON.parse(s[id].fmt) : undefined;
     if(s[id].mx!==undefined) manual[id]={x:s[id].mx,y:s[id].my}; else delete manual[id];
   }
+  try{ restoreStruct(s); }catch(e){ console.warn('sandaros atstatymas nepavyko:',e); }
   render();
+  syncHist();          // be šito „Pirmyn“ mygtukas lieka neaktyvus ir grąžinti nebeįmanoma
 }
 document.getElementById('undo').onclick=doUndo;
 document.addEventListener('keydown',e=>{ if((e.ctrlKey||e.metaKey)&&e.key==='z'){ e.preventDefault(); doUndo(); }});
