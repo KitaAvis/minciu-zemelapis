@@ -3613,9 +3613,14 @@ function openAddDialog(parent){
 function applyBranchSel(){
   document.querySelectorAll('.node.branchSel').forEach(x=>x.classList.remove('branchSel'));
   branchSelIds.forEach(id=>{ const el=document.querySelector('.node[data-id="'+id+'"]'); if(el) el.classList.add('branchSel'); });
+  /* Pažymėjus kortelę, valdymo skydelis privalo kalbėti apie JĄ, o ne apie visą
+     žemėlapį — kitaip rodomos svetimos spalvos, o pakeitimas perdažo viską. */
+  if(window.mmFmtScopeAuto) window.mmFmtScopeAuto();
   if(window.fmtStateRefresh) window.fmtStateRefresh();
 }
-function clearBranchSel(){ if(!branchSelIds.size) return; branchSelIds.clear(); document.querySelectorAll('.node.branchSel').forEach(x=>x.classList.remove('branchSel')); if(window.fmtStateRefresh) window.fmtStateRefresh(); }
+function clearBranchSel(){ if(!branchSelIds.size) return; branchSelIds.clear(); document.querySelectorAll('.node.branchSel').forEach(x=>x.classList.remove('branchSel'));
+  if(window.mmFmtScopeAuto) window.mmFmtScopeAuto();
+  if(window.fmtStateRefresh) window.fmtStateRefresh(); }
 
 /* ═══ KORTELĖS PERKĖLIMAS VILKIMU ═══════════════════════════════════════
    Užvedus tempiamą kortelę ant kitos, ta apačioje esanti užsidega įprastu
@@ -4885,6 +4890,14 @@ document.getElementById('saveMap').onclick=saveMap;
   panel.addEventListener('click',e=>e.stopPropagation());
   let scope='all';
   const fsAll=document.getElementById('fsAll'), fsSel=document.getElementById('fsSel');
+  /* sritis seka pažymėjimą: yra pažymėtų → „pažymėtoms“, nėra → „visam žemėlapiui“ */
+  window.mmFmtScopeAuto=function(){
+    const want = branchSelIds.size ? 'sel' : 'all';
+    if(scope===want) return;
+    scope=want;
+    fsSel.classList.toggle('on', want==='sel');
+    fsAll.classList.toggle('on', want==='all');
+  };
   fsAll.onclick=()=>{ scope='all'; fsAll.classList.add('on'); fsSel.classList.remove('on'); fmtStateRefresh(); };
   fsSel.onclick=()=>{ scope='sel'; fsSel.classList.add('on'); fsAll.classList.remove('on'); fmtStateRefresh(); };
   function targets(){
@@ -4892,9 +4905,9 @@ document.getElementById('saveMap').onclick=saveMap;
     if(scope==='sel'){ showToast('Pažymėkite korteles — palaikykite kortelę; pažymėjus pirmąją, kitas žymimos paprastu paspaudimu'); return []; }
     return Object.values(OBJ);
   }
-  window.setFmt=function(props){
+  window.setFmt=function(props,noUndo){
     const ts=targets(); if(!ts.length) return;
-    pushUndo();
+    if(!noUndo) pushUndo();
     ts.forEach(n=>{ n.fmt=n.fmt||{}; Object.assign(n.fmt,props); });
     render();
     fmtStateRefresh();
@@ -4923,10 +4936,17 @@ document.getElementById('saveMap').onclick=saveMap;
         '<span>Šriftas '+Math.round(parseFloat(cs.fontSize))+'px · '+cs.fontWeight+'</span>'+
         '<span>Kontūras '+Math.round(parseFloat(cs.borderTopWidth))+'px '+cs.borderTopStyle+'</span>';
       const fill=document.getElementById('fmtFill'), st=document.getElementById('fmtStroke'), tx=document.getElementById('fmtText');
-      const hb=toHex(cs.backgroundColor), hs=toHex(cs.borderTopColor), ht=toHex(cs.color);
-      if(fill&&hb&&!/^#000000$/.test(hb)) fill.value=f.fill||hb;
-      if(st&&hs) st.value=f.stroke||hs;
-      if(tx&&ht) tx.value=f.textColor||ht;
+      /* Permatomas fonas (gradientas, tema be užpildo) duotų „#000000“ — tada
+         remiamės kortelės sava spalva, o ne paliekam ankstesnės kortelės reikšmę. */
+      const alphaOK=c=>{ const m=(c||'').match(/[\d.]+/g); return !(m && m.length>3 && +m[3]===0); };
+      const hb=alphaOK(cs.backgroundColor)?toHex(cs.backgroundColor):null;
+      const hs=alphaOK(cs.borderTopColor)?toHex(cs.borderTopColor):null;
+      const ht=alphaOK(cs.color)?toHex(cs.color):null;
+      const own=(n.customColor||(typeof colorOf!=='undefined'&&colorOf[n.cls])||null);
+      const put=(inp,val)=>{ if(!inp||!val) return; inp.value=val; inp.dataset.base=val.toLowerCase(); };
+      put(fill, f.fill || hb || own);
+      put(st,   f.stroke || hs || own);
+      put(tx,   f.textColor || ht);
       const setSel=(sel,val)=>{ if(!sel) return; const v=String(val);
         if(![...sel.options].some(o=>o.value===v)){ const o=document.createElement('option'); o.value=v; o.textContent=v; sel.appendChild(o); }
         sel.value=v; };
@@ -4959,9 +4979,19 @@ document.getElementById('saveMap').onclick=saveMap;
   document.getElementById('fmtShapeMore').onclick=e=>{ e.stopPropagation(); document.getElementById('fmtShapeMenu').classList.toggle('open'); };
   document.getElementById('fmtSize').onchange=e=>{ if(e.target.value) setFmt({fontSize:+e.target.value}); };
   document.getElementById('fmtBW').onchange=e=>{ if(e.target.value) setFmt({borderWidth:+e.target.value}); };
-  document.getElementById('fmtFill').oninput=e=>setFmt({fill:e.target.value});
-  document.getElementById('fmtStroke').oninput=e=>setFmt({stroke:e.target.value});
-  document.getElementById('fmtText').oninput=e=>setFmt({textColor:e.target.value});
+  /* Spalvos laukas keičia kortelę TIK tada, kai reikšmė iš tikrųjų kitokia nei
+     ta, kuri buvo parodyta. Taip atidarius ir uždarius parinkiklį nieko
+     nepasikeičia. Atšaukimo žingsnis fiksuojamas vieną kartą — atidarant. */
+  [['fmtFill','fill'],['fmtStroke','stroke'],['fmtText','textColor']].forEach(([id,key])=>{
+    const inp=document.getElementById(id); if(!inp) return;
+    inp.addEventListener('focus',()=>{ if(targets().length) pushUndo(); });
+    inp.addEventListener('input',e=>{
+      const v=String(e.target.value||'').toLowerCase();
+      if(v===(e.target.dataset.base||'')) return;      // nepakeista — nieko nedarom
+      e.target.dataset.base=v;
+      const o={}; o[key]=e.target.value; setFmt(o,true);
+    });
+  });
   panel.querySelectorAll('.fmtErase[data-e]').forEach(b=>b.onclick=()=>clearFmt(b.dataset.e.split(',')));
 })();
 // atkuriam išsaugotą temą
@@ -5242,7 +5272,14 @@ dz.addEventListener('drop',e=>{
   const RE_CONCL=/^\s*(taigi|vadinasi|todėl|tad|apibendrinant|apibendrindami|išvada|galiausiai|pabaigai|matome|akivaizdu|darytina)/i;
   const RE_END=/(apibendrin|pabaigai|apsvarstėme|aptarėme|baigiam|susumuo|galiausiai|pažad)/i;
   const RE_INTRO=/(įvad|pradžioje|apsvarstysime|aptarsime|kalbėsime|pristat|šiandien)/i;
-  const LEAD=/^(Taigi|Tačiau|Be to|Todėl|Tad|Vadinasi|Galiausiai|Matome|Kaip|Nes|Ir|Bet|O|Tuo tarpu|Antra vertus)[,\s]+/i;
+  const LEAD=/^(Kaip minėta|Atvirai sakant|Antra vertus|Tuo tarpu|Iš tikrųjų|Vis dėlto|Taigi|Tačiau|Be to|Todėl|Tad|Vadinasi|Galiausiai|Matome|Kaip|Nes|Ir|Bet|O|Tiesa|Štai|Beje|Aišku|Pavyzdžiui|Panašiai|Priešingai|Žinoma|Deja)[,\s]+/i;
+  /* Sakinys, prasidedantis šalutiniu dėmeniu („Jeigu…, tai X“ / „Kai…, X“), pagrindinę
+     mintį turi PO kablelio — pavadinimui imam būtent ją, o ne sąlygą. */
+  const FRONT=/^(jeigu|jei|kai|nors|kadangi|kol|kolei|jeib)\b[^,]{5,90},\s*/i;
+  /* po kablelio prasidedantis šalutinis dėmuo pagrindine mintimi netampa */
+  const NOTMAIN=/^(kas|kad|kuris|kuri|kurie|kurios|kurį|kurią|nes|o|bet|tačiau|todėl)\b/i;
+  /* skliaustuose esantys įterpiniai (dažniausiai Rašto nuorodos) pavadinime netinka */
+  const PAREN=/\s*\([^)]{1,60}\)/g;
   const SUB=/\s*,\s*(kad|kuris|kuri|kurie|kurios|kurį|kurią|nes|jei|jeigu|kai|nors|tačiau|todėl|o)\b[\s\S]*$/i;
   const STOP=new Set(('ir bet o jei kad tai yra buvo bus taip nes su be į iš už po apie nuo iki per prie kaip kai tik jau dar labai savo jų jis ji jie jos mes jūs aš tu ne nėra gali galima turi turime kuris kuri kurie kurios tas ta tie tos šis ši šie šios to tą tų tam tuo visi visa visos tačiau todėl taigi vadinasi tarp prieš pagal net gal turbūt ką kas kur kada kodėl arba ar nors bei pat kartu tada čia ten'
     ).split(/\s+/));
@@ -5261,9 +5298,17 @@ dz.addEventListener('drop',e=>{
     maxW=maxW||8;
     let x=String(s||'').trim()
       .replace(/^[-–—•*·\s]+/,'').replace(/^\d+[.)]\s*/,'')
-      .replace(/^[„"“]/,'').replace(LEAD,'').trim();
-    const head=x.replace(SUB,'').trim();        // nuimam šalutinį sakinį
-    if(head.split(/\s+/).length>=3) x=head;
+      .replace(PAREN,' ')                        // nuimam įterpinius skliaustuose
+      .replace(/[„"“”]/g,'')                     // kabutės pavadinime netinka
+      .replace(/\s+/g,' ')
+      .replace(LEAD,'').trim();
+    const main=x.replace(FRONT,'').trim();      // „Jeigu…, tai X“ → X
+    if(main!==x && main.split(/\s+/).length>=3 && !NOTMAIN.test(main)) x=main;
+    /* Šalutinį dėmenį nuimam tik tada, kai likusi dalis yra baigta mintis.
+       „Nuomonių skirtumai nereiškia“ be „kad…“ nieko nepasako. */
+    const NEEDOBJ=/\b(reiškia|nereiškia|rodo|parodo|sako|moko|teigia|reikia|matyti|primena|patvirtina|liudija|reiškiasi)$/i;
+    const head=x.replace(SUB,'').trim();
+    if(head.split(/\s+/).length>=4 && !NEEDOBJ.test(head)) x=head;
     x=x.replace(/[.,;:!?…]+$/,'').trim();
     let w=x.split(/\s+/).filter(Boolean);
     if(w.length>maxW){
@@ -5272,7 +5317,7 @@ dz.addEventListener('drop',e=>{
       w=w.slice(0,cut);
     }
     /* nepaliekam kabančio tarnybinio žodžio gale („…įrašai apie") */
-    const DANG=/^(apie|kaip|kad|su|be|į|iš|už|po|nuo|iki|per|prie|tarp|prieš|pagal|ir|ar|bei|o|bet|kai|jei|nes|tik|jau|dar|labai|savo|tas|ta|šis|ši|to|tą)$/i;
+    const DANG=/^(apie|kaip|kad|su|be|į|iš|už|po|nuo|iki|per|prie|tarp|prieš|pagal|ir|ar|bei|o|bet|kai|jei|nes|tik|jau|dar|labai|savo|tas|ta|šis|ši|to|tą|tam|tokį|tokia|toks|kokį|kokia|koks|vieną|kurio|kad ir)$/i;
     while(w.length>3&&DANG.test(w[w.length-1].replace(/[.,;:]/g,''))) w.pop();
     let out=w.join(' ').replace(/[.,;:–—\s]+$/,'').trim();
     if(out&&/[a-ząčėęįšųūž]/.test(out.charAt(0))) out=out.charAt(0).toUpperCase()+out.slice(1);
