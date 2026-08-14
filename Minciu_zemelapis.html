@@ -5864,9 +5864,10 @@ function mmDetectRole(text, fallback){
 /* ── Jungiklis: teksto struktūrų spalvos ───────────────────────────────
    Įjungus, struktūriniai teksto elementai išlaiko savo spalvą net ir tada,
    kai įjungta spalvų gama (gama nudažo korteles pagal kitą principą).      */
+window.MM_BUILD='v31.3';
 var mmStructOn = true;
 try{ var _s=localStorage.getItem('mm_struct'); if(_s!==null) mmStructOn = (_s==='1'); }catch(e){}
-window.mmStructOn=function(){ return mmStructOn; };
+window.mmStructIsOn=function(){ return mmStructOn===true; };
 window.mmSetStruct=function(v){
   mmStructOn=!!v; try{ localStorage.setItem('mm_struct', v?'1':'0'); }catch(e){}
   try{ for(var id in OBJ) delete OBJ[id]._eff; }catch(e){}
@@ -5958,7 +5959,7 @@ window.mmApplyRoleStyles=mmApplyRoleStyles; window.mmDetectRole=mmDetectRole; wi
       var applied = true;
       try{
         var _g=(typeof curGama!=='undefined' && curGama!=='tema');
-        var _s=window.mmStructOn();
+        var _s=window.mmStructIsOn();
         if(_g){ applied = (!MM_BUILTIN[r[0]] && _s); }   /* su gama vaidmens spalva matoma tik struktūroms su jungikliu */
         else if(!_s && !MM_BUILTIN[r[0]]){ applied=false; } /* jungiklis išjungtas → struktūrų eilutės gęsta */
       }catch(e){}
@@ -5967,7 +5968,7 @@ window.mmApplyRoleStyles=mmApplyRoleStyles; window.mmDetectRole=mmDetectRole; wi
           + (n?'<span class="lgN">'+n+'</span>':'')+'</div>';
     });
     probe.remove();
-    var on=true; try{ on=window.mmStructOn(); }catch(e){}
+    var on=true; try{ on=window.mmStructIsOn(); }catch(e){}
     var gamaOn=false; try{ gamaOn=(typeof curGama!=='undefined' && curGama!=='tema'); }catch(e){}
     var note='';
     if(gamaOn && on) note='<div class="lgNote">Struktūrų spalvos nugali spalvų gamą: struktūriniai elementai '
@@ -5986,6 +5987,7 @@ window.mmApplyRoleStyles=mmApplyRoleStyles; window.mmDetectRole=mmDetectRole; wi
       +'<div class="lgMark"><b>📋</b> užrašinė su tekstu</div>'
       +'<div class="lgMark"><b>N</b> suskleistų kortelių skaičius</div>'
       +'<div class="lgMark"><b>I</b> skaitymo eilės numeris</div>'
+      +'<div class="lgMark" style="opacity:.55;font-size:10px">versija '+(window.MM_BUILD||'?')+'</div>'
       +note+'</div>';
     var sw=B.querySelector('#lgStruct');
     if(sw) sw.onchange=function(){ try{ window.mmSetStruct(sw.checked); }catch(e){} };
@@ -5996,6 +5998,7 @@ window.mmApplyRoleStyles=mmApplyRoleStyles; window.mmDetectRole=mmDetectRole; wi
   };
   // perpiešiam po temos / gamos / žemėlapio pakeitimo
   var boot=function(){ try{ mmApplyRoleStyles(); }catch(e){} try{ window.mmStructOverride(); }catch(e){} try{ renderLegend(); }catch(e){} };
+  setTimeout(function(){ try{ window.mmStructOverride(); renderLegend(); }catch(e){} }, 600);
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot);
   else setTimeout(boot,0);
   try{ mmApplyRoleStyles(); }catch(e){}
