@@ -1798,6 +1798,18 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
     body.relPrint #relReport .rrBtn{display:none}
     body.relPrint #relReport .rrBody{overflow:visible}
   }
+
+  /* sąsajų ženkliukas kortelėje */
+  .node .relB{margin-left:8px;display:inline-flex;align-items:center;justify-content:center;
+    min-width:38px;height:38px;padding:0 10px;border-radius:11px;cursor:pointer;order:-1;
+    font-size:18px;font-weight:700;line-height:1;letter-spacing:.5px;font-variant-numeric:tabular-nums;
+    color:#B5791F;background:rgba(232,163,61,.14);box-shadow:inset 0 0 0 1.5px rgba(201,138,43,.55);
+    transition:transform .15s,background .15s,color .15s}
+  .node .relB:hover{transform:scale(1.08);background:rgba(232,163,61,.26)}
+  .node .relB.on{color:#fff;background:#C98A2B;box-shadow:inset 0 0 0 1.5px #C98A2B}
+  body[data-theme="cosmos"] .node .relB{color:#F0B24A;background:rgba(240,178,74,.12);box-shadow:inset 0 0 0 1.5px rgba(240,178,74,.5)}
+  body[data-theme="cosmos"] .node .relB.on{color:#0A1016;background:#F0B24A;box-shadow:inset 0 0 0 1.5px #F0B24A}
+  .n-center .relB, body[data-theme] .n-center .relB{display:none!important}
 </style>
 </head>
 <body>
@@ -3891,7 +3903,16 @@ function render(){
     if(n.ts) html+='<span class="tsbadge">'+n.ts+'</span>';
     const kc=(n.children||[]).length;
     if(kc) html+='<span class="cnt">'+(n._c?'+'+kc:'–')+'</span>';
+    /* sąsajų ženkliukas — tik kai kortelė sąsajų TURI; skaičius kaip pas +N */
+    let relN=0; try{ relN=mmRelFor(n.id).length; }catch(e){}
+    if(relN && n.cls!=='n-center')
+      html+='<span class="relB'+(relActive.has(n.id)?' on':'')+'" title="Sąsajų: '+relN+' — spustelėk, kad įjungtum gijas">⇄'+relN+'</span>';
     el.innerHTML=html; if(n._c&&kc) el.classList.add('collapsed');
+    const rb=el.querySelector('.relB');
+    if(rb){
+      ['pointerdown','pointerup'].forEach(t=>rb.addEventListener(t,ev=>ev.stopPropagation()));
+      rb.onclick=ev=>{ ev.stopPropagation(); mmToggleRel(n.id, rb); };
+    }
     // rankiniu būdu nustatytas plotis (tekstas wrapinasi) ir dydis (scale)
     if(n.w){ el.style.width=n.w+'px'; el.style.whiteSpace='normal';
       if(n.id==='root'){ el.style.height=n.w+'px'; el.style.fontSize=Math.round(n.w/376*42)+'px'; } }
@@ -4110,6 +4131,19 @@ function mmRelations(){
   REL_CACHE=pairs;
   return pairs;
 }
+/* Kurių kortelių gijos šiuo metu įjungtos. Pagal nutylėjimą — jokios:
+   gijos rodomos tik paspaudus kortelės sąsajų ženkliuką. */
+let relActive=new Set();
+function mmToggleRel(id, badge){
+  if(relActive.has(id)) relActive.delete(id); else relActive.add(id);
+  if(badge) badge.classList.toggle('on', relActive.has(id));
+  paintRelations();
+  if(relActive.has(id)){
+    /* trumpam uždegam susijusias korteles, kad akys rastų gijų galus */
+    mmRelFor(id).forEach(t=>{ const e=document.querySelector('.node[data-id="'+t.id+'"]');
+      if(e){ e.classList.add('lamp'); setTimeout(()=>e.classList.remove('lamp'),1800); } });
+  }
+}
 function mmRelFor(id){
   const out=[];
   mmRelations().forEach(p=>{
@@ -4123,6 +4157,7 @@ function paintRelations(){
   edgesSvg.querySelectorAll('.relEdge').forEach(x=>x.remove());
   const amber = document.body.dataset.theme==='cosmos' ? '#F0B24A' : '#C98A2B';
   mmRelations().forEach(p=>{
+    if(!relActive.has(p.a) && !relActive.has(p.b)) return;   /* gijos — tik įjungtos */
     const A=pos[p.a], B=pos[p.b]; if(!A||!B) return;
     const dx=B.x-A.x, dy=B.y-A.y, len=Math.hypot(dx,dy)||1;
     const off=Math.min(46, len*0.14);
