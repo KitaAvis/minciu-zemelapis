@@ -5769,11 +5769,14 @@ dz.addEventListener('drop',e=>{
       let added=0; const roots=[], places=[];
 
       blocks.forEach(b=>{
-        /* tekstą renkam iš VISOS pošakės: pastraipos kortelė dažnai turi tik šaltinio
-           nuorodą, o tikras turinys guli jos vaikuose */
-        const txt=(function all(n){ return (n.label||'')+' '+String(n.note||'').replace(/<[^>]+>/g,' ')+' '
+        /* Tekstą renkam iš VISOS pošakės: pastraipos kortelė dažnai turi tik šaltinio
+           nuorodą, o tikras turinys guli jos vaikuose. Šaltinio eilutes („📄 Psl. 1,
+           2 pastr.“) BŪTINA nuimti — jas sukūrė pats generatorius, ir nuoroda jose
+           nėra šaltinio nurodyta vieta. */
+        const bare=n=>String(n.note||'').replace(/<p class="src">[\s\S]*?<\/p>/g,' ').replace(/<[^>]+>/g,' ');
+        const txt=(function all(n){ return (n.label||'')+' '+bare(n)+' '
           + (n.children||[]).map(all).join(' '); })(b);
-        const hit=mmBestHost(txt, idx);
+        const hit=mmAnchorHost(txt) || mmBestHost(txt, idx);
         const host=(hit&&hit.node)||DATA;
         b.cls = (host===DATA) ? 'n-tools' : 'n-env';
         (function reid(n){ n.id=newId(); (n.children||[]).forEach(reid); })(b);
@@ -6426,6 +6429,30 @@ function mmBestHost(text, idx){
   });
   return (best && bestS>=1.2) ? {node:best, score:bestS, hits:bestHits} : null;
 }
+
+/* Jei pridedamas tekstas PATS nurodo vietą („3 pastr.“, „8, 9 pastr.“), spėlioti
+   nereikia — aiški nuoroda visada nugali turinio panašumą. Studijos komentarų
+   bandymas parodė, kodėl tai svarbu: pagal numerius vieta nustatoma tiksliai
+   15 kartų iš 15, o pagal turinį — mažiau nei pusėje atvejų. */
+function mmAnchorHost(text){
+  var m=String(text||'').match(/(\d+)(?:\s*[,–—-]\s*(\d+))?\s*pastr\./);
+  if(!m) return null;
+  var a=+m[1], b=m[2]?+m[2]:a;
+  var byPar={}, byQ={};
+  (function w(n){
+    var L=String(n.label||'');
+    var p=L.match(/^(\d+)\s*pastr\./); if(p) byPar[+p[1]]=n;
+    var q=L.match(/^(\d+)(?:\s*[–—-]\s*(\d+))?\s*kl\./);
+    if(q){ var f=+q[1], t=q[2]?+q[2]:f; for(var i=f;i<=t;i++) if(!byQ[i]) byQ[i]=n; }
+    (n.children||[]).forEach(w);
+  })(DATA);
+  /* apima kelias pastraipas → klausimo kortelė, kuri jas jungia; viena → tos pastraipos kortelė */
+  if(b>a && byQ[a] && byQ[a]===byQ[b]) return {node:byQ[a], score:99, hits:9, anchor:true};
+  if(byPar[a]) return {node:byPar[a], score:99, hits:9, anchor:true};
+  if(byQ[a])   return {node:byQ[a],   score:99, hits:9, anchor:true};
+  return null;
+}
+window.mmAnchorHost=mmAnchorHost;
 window.mmBuildIndex=mmBuildIndex; window.mmBestHost=mmBestHost;
 
 /* ═══════════ TEKSTO ELEMENTŲ TIPAI (atpažinimui — paieškos filtrams) ═══════════
