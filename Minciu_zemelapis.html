@@ -2,7 +2,7 @@
 <html lang="lt">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Sąskaitų automatizacija — minčių žemėlapis</title>
 <style>
   :root{
@@ -1810,6 +1810,26 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
   body[data-theme="cosmos"] .node .relB{color:#F0B24A;background:rgba(240,178,74,.12);box-shadow:inset 0 0 0 1.5px rgba(240,178,74,.5)}
   body[data-theme="cosmos"] .node .relB.on{color:#0A1016;background:#F0B24A;box-shadow:inset 0 0 0 1.5px #F0B24A}
   .n-center .relB, body[data-theme] .n-center .relB{display:none!important}
+
+  /* ══ LIEČIAMIEJI EKRANAI ══════════════════════════════════════════════ */
+  html,body{overscroll-behavior:none}
+  #stage{touch-action:none}
+  .node{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+  /* siauras ekranas: įrankių juosta VIENOJE eilutėje, slenkama pirštu */
+  @media (max-width:1180px), (pointer:coarse){
+    #bar{flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;gap:6px;
+      -webkit-overflow-scrolling:touch;scrollbar-width:none;touch-action:pan-x;
+      padding-bottom:2px}
+    #bar::-webkit-scrollbar{display:none}
+    #bar .tGroup, #bar>*{flex:none}
+  }
+  /* stambesni taikiniai pirštui */
+  @media (pointer:coarse){
+    .node .relB{min-width:44px;height:44px}
+    .rzR{width:.5em;height:1.1em}
+    .rzC{width:.72em;height:.72em}
+    .node:active .rzH{opacity:.96}
+  }
 </style>
 </head>
 <body>
@@ -4011,7 +4031,7 @@ function render(){
         },400);
     });
     el.addEventListener('pointermove',e=>{
-      if(!down) return;
+      if(!down||window.mmPinch) return;      /* du pirštai = mastelis, ne vilkimas */
       const dx=(e.clientX-startX)/scale, dy=(e.clientY-startY)/scale;
       if(Math.abs(e.clientX-startX)>4||Math.abs(e.clientY-startY)>4){
         if(!moved && !groupDrag){ pushUndo(); if(lpTimer){clearTimeout(lpTimer);lpTimer=null;} }
@@ -4689,13 +4709,45 @@ function fitAll(force){
 }
 let drag=false,sx=0,sy=0;
 stage.addEventListener('pointerdown',e=>{drag=true;sx=e.clientX-tx;sy=e.clientY-ty;stage.classList.add('grabbing');clearBranchSel();});
-addEventListener('pointermove',e=>{if(!drag)return;tx=e.clientX-sx;ty=e.clientY-sy;apply();});
+addEventListener('pointermove',e=>{if(!drag||window.mmPinch)return;tx=e.clientX-sx;ty=e.clientY-sy;apply();});
 addEventListener('pointerup',()=>{drag=false;stage.classList.remove('grabbing');});
 stage.addEventListener('wheel',e=>{e.preventDefault();const r=stage.getBoundingClientRect();
   const mx=e.clientX-r.left,my=e.clientY-r.top,wx=(mx-tx)/scale,wy=(my-ty)/scale;
   const ns=Math.min(2.2,Math.max(.01,scale*(e.deltaY<0?1.12:.89)));
   userZoomed=true;                 // vartotojas pats pasirinko mastelį → nebeperskaičiuojam automatiškai
   tx=mx-wx*ns;ty=my-wy*ns;scale=ns;apply();},{passive:false});
+/* ── SUSPAUDIMO (PINCH) MASTELIS liečiamiesiems ekranams ─────────────────
+   Naršyklės mastelis išjungtas (viewport), tad du pirštai valdo PATĮ žemėlapį:
+   mastelis keičiasi aplink pirštų vidurį ir laisvai grįžta atgal. Pinch metu
+   kortelių vilkimas ir lauko stumdymas pristabdomi, kad nesipeštų. */
+const tpts=new Map(); let pinch0=null;
+document.addEventListener('pointerdown',e=>{
+  if(e.pointerType!=='touch') return;
+  tpts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(tpts.size===2){
+    const pts=[...tpts.values()];
+    pinch0={d:Math.hypot(pts[0].x-pts[1].x,pts[0].y-pts[1].y)||1, s:scale};
+    window.mmPinch=true; drag=false;
+  }
+},true);
+document.addEventListener('pointermove',e=>{
+  if(e.pointerType!=='touch'||!tpts.has(e.pointerId)) return;
+  tpts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(!pinch0||tpts.size<2) return;
+  const pts=[...tpts.values()];
+  const d=Math.hypot(pts[0].x-pts[1].x,pts[0].y-pts[1].y)||1;
+  const cx=(pts[0].x+pts[1].x)/2, cy=(pts[0].y+pts[1].y)/2;
+  const ns=Math.min(2.2,Math.max(.05,pinch0.s*d/pinch0.d));
+  const wx=(cx-tx)/scale, wy=(cy-ty)/scale;
+  scale=ns; tx=cx-wx*scale; ty=cy-wy*scale;
+  userZoomed=true; apply();
+  if(e.cancelable) e.preventDefault();
+},{capture:true,passive:false});
+const mmTouchEnd=e=>{ if(e.pointerType!=='touch') return;
+  tpts.delete(e.pointerId);
+  if(tpts.size<2){ pinch0=null; window.mmPinch=false; } };
+document.addEventListener('pointerup',mmTouchEnd,true);
+document.addEventListener('pointercancel',mmTouchEnd,true);
 /* „Išskleisti viską" ↔ „Suskleisti viską" — persijungiantis mygtukas.
    Mygtuko užrašas = veiksmas, kurį jis atliks paspaudus:
    kai kas nors suskleista → rodo „Išskleisti viską"; kai viskas išskleista → „Suskleisti viską". */
