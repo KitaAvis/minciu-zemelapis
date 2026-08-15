@@ -2620,6 +2620,11 @@ const DATA = {
 /* ============== LOGIKA ============== */
 const world=document.getElementById('world'), edgesSvg=document.getElementById('edges'), stage=document.getElementById('stage');
 const OBJ={}; (function idx(n,p){n._p=p;OBJ[n.id]=n;(n.children||[]).forEach(c=>idx(c,n));})(DATA,null);
+/* Perkuria kortelių rodyklę. Būtina po KIEKVIENO medžio pakeitimo iš išorės
+   (įkėlus iš failo ar iš Saved Maps) — kitaip OBJ lieka rodyti į senas korteles
+   ir lūžta užrašinė, vilkimas, formatavimas bei miniatiūra. */
+function indexTree(){ Object.keys(OBJ).forEach(k=>delete OBJ[k]);
+  (function idx(n,p){ n._p=p; OBJ[n.id]=n; (n.children||[]).forEach(c=>idx(c,n)); })(DATA,null); }
 // HIERARCHINĖ NUMERACIJA: potemės = romėniški (I,II,III); jų kortelės = 1,2,3; gilesnės = 1.1, 1.1.1...
 const ROMAN=["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
 let NUMBERING_ON=true;
@@ -4720,21 +4725,35 @@ updateLayoutUI(curLayout);
 })();
 /* ===== IŠSAUGOJIMAS → Saved Maps (localStorage, bendras origin) ===== */
 function mapThumb(W,H){
+  /* Miniatiūra turi rodyti VISĄ žemėlapį, o ne tik tai, kas tą akimirką išskleista.
+     Žemėlapis atsidaro suskleistas, tad kitaip į Saved Maps patektų vienas taškas.
+     Laikinai išskleidžiam, perskaičiuojam vietas, o paskui viską grąžinam — vaizdas
+     ekrane nekeičiamas, nes DOM neliečiamas. */
+  const wasCollapsed={}; let expanded=false;
+  try{ (function w(n){ if(n._c){ wasCollapsed[n.id]=1; n._c=false; expanded=true; } (n.children||[]).forEach(w); })(DATA);
+       if(expanded) layout(); }catch(e){ expanded=false; }
+  const restore=()=>{ if(!expanded) return;
+    try{ (function w(n){ if(wasCollapsed[n.id]) n._c=true; (n.children||[]).forEach(w); })(DATA); layout(); }catch(e){} };
   const c=document.createElement('canvas'); c.width=W||360; c.height=H||230;
   const ctx=c.getContext('2d'); ctx.fillStyle=getComputedStyle(document.body).getPropertyValue('--bg').trim()||'#0A0E16'; ctx.fillRect(0,0,c.width,c.height);
-  const ks=Object.keys(pos); if(!ks.length) return c.toDataURL('image/png');
+  const ks=Object.keys(pos); if(!ks.length){ restore(); return c.toDataURL('image/png'); }
   let minX=1e9,minY=1e9,maxX=-1e9,maxY=-1e9;
   ks.forEach(id=>{const p=pos[id];minX=Math.min(minX,p.x);maxX=Math.max(maxX,p.x);minY=Math.min(minY,p.y);maxY=Math.max(maxY,p.y);});
   const pad=22, s=Math.min((c.width-2*pad)/((maxX-minX)||1),(c.height-2*pad)/((maxY-minY)||1));
   const ox=pad-minX*s+((c.width-2*pad)-(maxX-minX)*s)/2, oy=pad-minY*s+((c.height-2*pad)-(maxY-minY)*s)/2;
   const X=p=>p.x*s+ox, Y=p=>p.y*s+oy;
+  /* mazgus imam iš PAČIO medžio — miniatiūra neturi priklausyti nuo OBJ šviežumo */
+  const byId={}; (function w(n){ byId[n.id]=n; (n.children||[]).forEach(w); })(DATA);
   (function edge(n){ const p=pos[n.id]; if(!p||n._c||!n.children)return; n.children.forEach(cc=>{const cp=pos[cc.id]; if(!cp)return;
-    ctx.strokeStyle=(curTheme==='cosmos'?cosmosTint(OBJ[cc.id]):(colorOf[cc.cls]||'#8892a3')); ctx.globalAlpha=.5; ctx.lineWidth=1;
+    ctx.strokeStyle=(curTheme==='cosmos'?cosmosTint(cc):(colorOf[cc.cls]||'#8892a3')); ctx.globalAlpha=.5; ctx.lineWidth=1;
     ctx.beginPath(); ctx.moveTo(X(p),Y(p)); ctx.lineTo(X(cp),Y(cp)); ctx.stroke(); edge(cc); });})(DATA);
   ctx.globalAlpha=1;
-  ks.forEach(id=>{const p=pos[id], n=OBJ[id]; const col= id===DATA.id?'#2FD8FF':(curTheme==='cosmos'?cosmosTint(n):(colorOf[n.cls]||'#aab'));
+  ks.forEach(id=>{const p=pos[id], n=byId[id]; if(!n) return;
+    const col= id===DATA.id?'#2FD8FF':(curTheme==='cosmos'?cosmosTint(n):(colorOf[n.cls]||'#aab'));
     ctx.fillStyle=col; ctx.beginPath(); ctx.arc(X(p),Y(p), id===DATA.id?5:3,0,Math.PI*2); ctx.fill();});
-  return c.toDataURL('image/png');
+  const url=c.toDataURL('image/png');
+  restore();
+  return url;
 }
 function showToast(msg){
   let t=document.getElementById('mmToast');
