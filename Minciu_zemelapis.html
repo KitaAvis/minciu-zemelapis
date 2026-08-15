@@ -1751,6 +1751,16 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
   .apAuto b{color:#1F7F73}
   body[data-theme="cosmos"] .apAuto{color:#B9CBDC;background:rgba(46,158,143,.12);border-color:rgba(46,158,143,.3)}
   body[data-theme="cosmos"] .apAuto b,body[data-theme="cosmos"] .apAutoIco{color:#5FD0BE}
+
+  /* aktyvios Rašto ir leidinių nuorodos užrašinėje */
+  #nBody .bibleLink{color:#7E57C2;font-weight:650;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:2px}
+  #nBody .bibleLink:hover{color:#5E35B1;background:rgba(126,87,194,.09);border-radius:3px}
+  #nBody .bibleLink::after{content:"↗";font-size:9px;vertical-align:super;margin-left:1px;opacity:.65}
+  #nBody .pubLink{color:#2E75B6;font-style:italic;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:2px}
+  #nBody .pubLink:hover{background:#eef4fb;border-radius:3px}
+  #nBody .pubLink::after{content:"↗";font-size:9px;vertical-align:super;margin-left:1px;opacity:.65}
+  body[data-theme="cosmos"] #nBody .bibleLink{color:#B39DDB}
+  body[data-theme="cosmos"] #nBody .pubLink{color:#7FB8E8}
 </style>
 </head>
 <body>
@@ -4040,6 +4050,98 @@ let curNote=null;
 // sukuria žemėlapį: kortelės pavadinimas → id (sąsajoms)
 function labelToId(){ const m={}; for(const id in OBJ){ if(OBJ[id].label) m[OBJ[id].label]=id; } return m; }
 // paverčia sąsajų eilutes (↳ ...) paspaudžiamomis nuorodomis pagal kortelių pavadinimus
+
+/* ══ AKTYVIOS RAŠTO NUORODOS ═══════════════════════════════════════════════
+   Kiekviena Rašto nuoroda pastaboje tampa nuoroda į ORIGINALŲ „Naujojo
+   pasaulio" vertimo tekstą jw.org (oficialus gilusis adresas; wtlocale=L —
+   lietuvių kalba, patikrinta iš jw.org/lt). Tekstas atsidaro šaltinyje —
+   toks, koks yra originale. */
+var MM_BIBLE_BOOKS = (function(){
+  /* [nr, formos...] — pilnos lietuviškos formos ir įprastos santrumpos */
+  var T = [
+    [1,'pradzios','pr'],[2,'isejimo','is'],[3,'kunigu','kun'],[4,'skaiciu','sk'],
+    [5,'pakartoto','ist'],[6,'jozues','joz'],[7,'teiseju','ts'],[8,'rutos','rut'],
+    [9,'samuelio','sam'],[11,'karaliu','kar'],[13,'metrasciu','met'],
+    [15,'ezros','ezr'],[16,'nehemijo','neh'],[17,'esteros','est'],[18,'jobo','job'],
+    [19,'psalmyno','psalmiu','ps'],[20,'patarliu','pat'],[21,'mokytojo','mok'],
+    [22,'giesmiu','gg'],[23,'izaijo','iz'],[24,'jeremijo','jer'],[25,'raudu'],
+    [26,'ezechielio','ez'],[27,'danieliaus','dan'],[28,'ozejo','oz'],[29,'joelio','jl'],
+    [30,'amoso','am'],[31,'abdijo','abd'],[32,'jonos','jon'],[33,'michejo','mch'],
+    [34,'nahumo','nah'],[35,'habakuko','hab'],[36,'sofonijo','sof'],[37,'agejo','ag'],
+    [38,'zacharijo','zch'],[39,'malachijo','mal'],
+    [40,'mato','mt'],[41,'morkaus','mk'],[42,'luko','lk'],[43,'jono','jn'],
+    [44,'apastalu','apd'],[45,'romieciams','rom'],[46,'korintieciams','kor'],
+    [48,'galatams','gal'],[49,'efezieciams','ef'],[50,'filipieciams','flp'],
+    [51,'kolosieciams','kol'],[52,'tesalonikieciams','tes'],[54,'timotiejui','tim'],
+    [56,'titui','tit'],[57,'filemonui','flm'],[58,'hebrajams','hbr'],
+    [59,'jokubo','jok'],[60,'petro','pt'],[65,'judo','jud'],[66,'apreiskimo','apr']
+  ];
+  var m={};
+  T.forEach(function(row){ for(var i=1;i<row.length;i++) m[row[i]]=row[0]; });
+  return m;
+})();
+/* knygos, kur „1/2/3" keičia numerį: bazinis nr atitinka PIRMĄ knygą */
+var MM_BIBLE_NUMBERED={9:1,11:1,13:1,46:1,52:1,54:1,60:1,43:1};
+/* 1 Jono/2 Jono/3 Jono — atskiri numeriai nuo 62 */
+function mmBibleBookNr(prefix, word){
+  var w=String(word||'').toLowerCase()
+    .replace(/[ą]/g,'a').replace(/[č]/g,'c').replace(/[ęė]/g,'e').replace(/[į]/g,'i')
+    .replace(/[š]/g,'s').replace(/[ųū]/g,'u').replace(/[ž]/g,'z').replace(/\.$/,'');
+  var nr=MM_BIBLE_BOOKS[w];
+  if(!nr) return null;
+  var p=prefix?parseInt(prefix,10):0;
+  if(p){
+    if(nr===43) return 61+p;                 /* 1/2/3 Jono → 62/63/64 */
+    if(!MM_BIBLE_NUMBERED[nr]) return null;  /* „2 Mato" — nesąmonė, nelinkinam */
+    return nr+(p-1);
+  }
+  if(nr===9||nr===11||nr===13) return null;  /* Samuelio/Karalių/Metraščių be numerio — neaišku kuri */
+  return nr;
+}
+function mmBibleUrl(book, ch, v1, v2){
+  var pad=function(n,w){ n=String(n); while(n.length<w) n='0'+n; return n; };
+  var a=pad(book,2)+pad(ch,3)+pad(v1,3);
+  var b=(v2&&v2!==v1)?('-'+pad(book,2)+pad(ch,3)+pad(v2,3)):'';
+  return 'https://www.jw.org/finder?wtlocale=L&pub=nwt&bible='+a+b;
+}
+var MM_BIBLE_RE=/(?:\b([123])\s+)?([A-ZĄČĖĮŠŲŪŽ][a-ząčėįšųūž]{1,17}\.?)\s+(\d{1,3}):(\d{1,3})((?:\s*[,;–—-]\s*\d{1,3})*)/g;
+function mmLinkifyBibleText(txt){
+  return txt.replace(MM_BIBLE_RE, function(full, pre, word, ch, v1, rest){
+    var nr=mmBibleBookNr(pre, word);
+    if(!nr) return full;
+    /* paskutinė paminėta eilutė — intervalo pabaiga („37–39", „16, 17") */
+    var last=+v1;
+    (String(rest||'').match(/\d{1,3}/g)||[]).forEach(function(x){ var n=+x; if(n>last&&n<400) last=n; });
+    return '<a class="bibleLink" target="_blank" rel="noopener" title="Atidaryti „Naujojo pasaulio“ vertime" href="'
+      + mmBibleUrl(nr,+ch,+v1,last)+'">'+full+'</a>';
+  });
+}
+/* Pereinam per HTML: tekstas keičiamas TIK už žymių ribų ir ne <a> viduje.
+   Kursyvas be kabučių pradžioje — leidinio pavadinimas → paieškos nuoroda. */
+function mmLinkifySources(html){
+  var parts=String(html||'').split(/(<[^>]+>)/), inA=0, out=[];
+  for(var i=0;i<parts.length;i++){
+    var t=parts[i];
+    if(t.charAt(0)==='<'){
+      if(/^<a[\s>]/i.test(t)) inA++;
+      else if(/^<\/a>/i.test(t)) inA=Math.max(0,inA-1);
+      /* leidinys: <i>Pavadinimas</i>, neprasidedantis kabute */
+      if(/^<i>$/i.test(t) && inA===0 && i+2<parts.length && parts[i+2]==='</i>'){
+        var body=parts[i+1]||'';
+        if(body.length>=8 && body.length<=90 && !/^[„"“]/.test(body) && /[A-ZĄČĖĮŠŲŪŽ]/.test(body.charAt(0)) && !/\d+:\d+/.test(body)){
+          parts[i+1]='<a class="pubLink" target="_blank" rel="noopener" title="Ieškoti šio leidinio jw.org" href="https://www.jw.org/lt/paieska/?q='
+            + encodeURIComponent(body.replace(/[?!.]+$/,''))+'">'+body+'</a>';
+          out.push(t); out.push(parts[i+1]); out.push(parts[i+2]); i+=2; continue;
+        }
+      }
+      out.push(t); continue;
+    }
+    out.push(inA===0 ? mmLinkifyBibleText(t) : t);
+  }
+  return out.join('');
+}
+window.mmLinkifySources=mmLinkifySources;
+
 function linkifyRefs(html){
   const map=labelToId();
   const names=Object.keys(map).sort((a,b)=>b.length-a.length);
@@ -4163,6 +4265,7 @@ function openNote(n){
   document.getElementById('nKind').textContent=kind;
   let noteHtml=(n.note||'<p>—</p>')+renderAttachments(n);
   noteHtml=linkifyRefs(noteHtml);
+  noteHtml=mmLinkifySources(noteHtml);   /* Rašto eilutės ir leidiniai — aktyvios nuorodos */
   if(SQ) noteHtml=hiHtml(noteHtml);
   document.getElementById('nBody').innerHTML=noteHtml;
   document.getElementById('nEditArea').classList.remove('open');
@@ -5776,7 +5879,14 @@ dz.addEventListener('drop',e=>{
         const bare=n=>String(n.note||'').replace(/<p class="src">[\s\S]*?<\/p>/g,' ').replace(/<[^>]+>/g,' ');
         const txt=(function all(n){ return (n.label||'')+' '+bare(n)+' '
           + (n.children||[]).map(all).join(' '); })(b);
-        const hit=mmAnchorHost(txt) || mmBestHost(txt, idx);
+        /* Nuoroda („3 pastr.") duoda ŠAKĄ; joje minčių daug, todėl vieta dar
+           TIKSLINAMA pagal turinį — blokas kabinamas prie tos konkrečios minties
+           kortelės, su kuria labiausiai siejasi. Nepavykus — prie pačios šakos. */
+        let hit=mmAnchorHost(txt);
+        if(hit){
+          try{ const sub=mmBestHost(txt, mmBuildIndex(null, hit.node));
+               if(sub&&sub.node) hit={node:sub.node, score:sub.score, hits:sub.hits, anchor:true}; }catch(e){}
+        } else hit=mmBestHost(txt, idx);
         const host=(hit&&hit.node)||DATA;
         b.cls = (host===DATA) ? 'n-tools' : 'n-env';
         (function reid(n){ n.id=newId(); (n.children||[]).forEach(reid); })(b);
@@ -6400,8 +6510,8 @@ function mmCardText(n){
     .replace(/<p>\s*↳[\s\S]*?<\/p>/g,' ')
     .replace(/<[^>]+>/g,' ');
 }
-function mmBuildIndex(skip){
-  var cards=[], df={};
+function mmBuildIndex(skip, rootNode){
+  var cards=[], df={}, R=rootNode||DATA;
   (function w(n){
     if(n.id!==DATA.id && !(skip&&skip[n.id])){
       var tf={};
@@ -6412,7 +6522,7 @@ function mmBuildIndex(skip){
         keys.forEach(function(t){ df[t]=(df[t]||0)+1; }); }
     }
     (n.children||[]).forEach(w);
-  })(DATA);
+  })(R);
   var N=cards.length||1;
   return {cards:cards, idf:function(t){ return Math.log(1+N/(1+(df[t]||0))); }};
 }
