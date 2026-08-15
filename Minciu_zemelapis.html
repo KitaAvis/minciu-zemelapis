@@ -1744,6 +1744,13 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
   body[data-theme="street"] .apTx b,body[data-theme="street"] .apChkBody b{color:#F5F0E6}
   body[data-theme="night"] #addPanel{background:#efe7d3;border-color:#3b3226}
   body[data-theme="paveikslas"] #addPanel{background:#EFE3C4;border-color:#8A7A57}
+
+  .apAuto{display:flex;gap:9px;align-items:flex-start;margin:2px 0 4px;padding:9px 11px;border-radius:11px;
+    background:rgba(46,158,143,.08);border:1px solid rgba(46,158,143,.22);font-size:11.5px;line-height:1.45;color:#3B4658}
+  .apAutoIco{flex:none;color:#1F7F73;font-size:13px;line-height:1.3}
+  .apAuto b{color:#1F7F73}
+  body[data-theme="cosmos"] .apAuto{color:#B9CBDC;background:rgba(46,158,143,.12);border-color:rgba(46,158,143,.3)}
+  body[data-theme="cosmos"] .apAuto b,body[data-theme="cosmos"] .apAutoIco{color:#5FD0BE}
 </style>
 </head>
 <body>
@@ -5607,7 +5614,9 @@ dz.addEventListener('drop',e=>{
 
     /* 2. Centrinė tema (blokas suvartojamas — nesidubliuoja) */
     let title='';
-    if(blocks.length>1&&(blocks[0].t==='h'||(blocks[0].x.length<=95&&sentences(blocks[0].x).length<=1))){
+    /* Papildant pirmoji antraštė NEsuvartojama pavadinimui — ji yra pridedamo
+       skyriaus vardas, o žemėlapio pavadinimas jau yra. */
+    if(!opt.add && blocks.length>1&&(blocks[0].t==='h'||(blocks[0].x.length<=95&&sentences(blocks[0].x).length<=1))){
       title=shortLabel(blocks[0].x,10); blocks.shift();
     } else title=shortLabel(sentences(blocks[0].x)[0]||blocks[0].x,10);
     title=title.replace(/^(\d+|[IVXL]+)\s*[.)]\s*/,'').trim()||'Minčių žemėlapis';
@@ -5630,7 +5639,9 @@ dz.addEventListener('drop',e=>{
     }
     secs=secs.filter(s=>s.items.length);
     if(!secs.length) return false;
-    if(secs.length>1){
+    /* Papildant skyrių pavadinimai NEperrašomi: „Kūrinijos sudėtingumas“ neturi
+       virsti „Įvadu“ — tai ne naujo teksto įvadas, o priedas prie esamo žemėlapio. */
+    if(!opt.add && secs.length>1){
       const f=secs[0], l=secs[secs.length-1];
       if(!/įvad/i.test(f.name)&&RE_INTRO.test(f.items.map(i=>i.x).join(' ').slice(0,300))) f.name='Įvadas';
       if(!/baigiam|pabaig/i.test(l.name)&&RE_END.test(l.items.map(i=>i.x).join(' ').slice(0,400))) l.name='Baigiamoji dalis';
@@ -5739,28 +5750,53 @@ dz.addEventListener('drop',e=>{
 
     /* 8a. PAPILDYMAS: vietoj viso žemėlapio pakeitimo — prijungiam prie nurodytos kortelės.
            Naujas turinys lieka vienu bloku, kad matytųsi, kas ir kada buvo pridėta. */
-    if(opt.into && OBJ[opt.into.id]){
-      const host=opt.into;
+    if(opt.add){
       pushUndo();
-      root.cls = (host===DATA) ? 'n-tools' : 'n-env';
-      root.id  = 'add'+Date.now().toString(36);
-      /* naujiems mazgams — savi id, kad nesusidurtų su esamais */
-      let k=0; (function reid(n){ if(n!==root && OBJ[n.id]) n.id='a'+Date.now().toString(36)+(k++);
-        (n.children||[]).forEach(reid); })(root);
-      let added=0;
-      (function paint(n){ added++;
-        if(opt.color) n.customColor=opt.color;
-        if(opt.mark){ n.note=(n.note||'')+'<p class="addMark">'+String(opt.mark).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))+'</p>'; }
-        (n.children||[]).forEach(paint); })(root);
-      host.children=host.children||[]; host.children.push(root);
-      host._c=false; root._c=false;
+      /* Ką dėliojam: viršutinio lygio blokus. Jei tekstas davė vieną skyrių, o
+         to skyriaus kortelė savo teksto neturi (tik šaltinio nuorodą), leidžiamės
+         gilyn — tada kiekviena pastraipa savo vietos ieško atskirai. */
+      let blocks = root.children||[];
+      if(blocks.length===1){
+        const only=blocks[0];
+        const ownText=String(only.note||'').replace(/<p class="src">[\s\S]*?<\/p>/g,'').replace(/<[^>]+>/g,'').trim();
+        if(ownText.length<25 && (only.children||[]).length>1) blocks=only.children;
+      }
+      if(!blocks.length) blocks=[root];
+
+      const idx=mmBuildIndex(null);               /* rodyklė sudaroma PRIEŠ prijungiant */
+      let uidA=0; const newId=()=>'a'+Date.now().toString(36)+(uidA++);
+      const esc2=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+      let added=0; const roots=[], places=[];
+
+      blocks.forEach(b=>{
+        /* tekstą renkam iš VISOS pošakės: pastraipos kortelė dažnai turi tik šaltinio
+           nuorodą, o tikras turinys guli jos vaikuose */
+        const txt=(function all(n){ return (n.label||'')+' '+String(n.note||'').replace(/<[^>]+>/g,' ')+' '
+          + (n.children||[]).map(all).join(' '); })(b);
+        const hit=mmBestHost(txt, idx);
+        const host=(hit&&hit.node)||DATA;
+        b.cls = (host===DATA) ? 'n-tools' : 'n-env';
+        (function reid(n){ n.id=newId(); (n.children||[]).forEach(reid); })(b);
+        (function paint(n){ added++;
+          if(opt.color) n.customColor=opt.color;
+          if(opt.mark) n.note=(n.note||'')+'<p class="addMark">'+esc2(opt.mark)+'</p>';
+          (n.children||[]).forEach(paint); })(b);
+        host.children=host.children||[]; host.children.push(b);
+        host._c=false; b._c=false;
+        roots.push(b.id);
+        places.push(host===DATA ? 'centrą' : ('\u201E'+String(host.label).slice(0,26)+'\u201C'));
+      });
+
       try{ indexTree(); }catch(e){}
       try{ renumberAll(); }catch(e){}
       render();
       try{ if(typeof refreshExpandLabel==='function') refreshExpandLabel(); }catch(e){}
-      setTimeout(()=>{ try{ highlightNodes([root.id]); }catch(e){} },60);
-      try{ showToast('Žemėlapis papildytas — pridėta '+added+' '+(added%10===1&&added%100!==11?'kortelė':(added%10>=2&&added%10<=9&&(added%100<10||added%100>20)?'kortelės':'kortelių'))); }catch(e){}
-      window.mmLastCoverage={total:total,missing:miss,percent:cover,cards:added};
+      setTimeout(()=>{ try{ highlightNodes(roots); }catch(e){} },60);
+      const uniq=places.filter((p,i)=>places.indexOf(p)===i);
+      const kort=n=>n%10===1&&n%100!==11?'kortelė':(n%10>=2&&n%10<=9&&(n%100<10||n%100>20)?'kortelės':'kortelių');
+      try{ showToast('Pridėta '+added+' '+kort(added)+' \u00B7 priskirta prie: '
+        + uniq.slice(0,3).join(', ') + (uniq.length>3?(' ir dar '+(uniq.length-3)):'')); }catch(e){}
+      window.mmLastCoverage={total:total,missing:miss,percent:cover,cards:added,places:uniq};
       return true;
     }
 
@@ -6323,6 +6359,75 @@ document.addEventListener('change',function(e){
   else { t.checked=false; }
 });
 
+
+/* ══ TURINIO ATITIKIMO MODELIS ════════════════════════════════════════════
+   Pridėta medžiaga turi pati rasti savo vietą: kiekviena jos dalis prijungiama
+   prie tos kortelės, su kuria labiausiai siejasi jos turinys.
+
+   Kaip vertinama. Kiekviena kortelė aprašoma reikšminių žodžių rinkiniu
+   (pavadinimas sveria 3 kartus daugiau nei pastaba, nes pavadinimas skelbia
+   kortelės paskirtį). Retas žodis vertingesnis už dažną — todėl kiekvienam
+   žodžiui skaičiuojamas atvirkštinis dažnis (IDF): žodis „tikėjimas“ visame
+   žemėlapyje gali pasitaikyti dešimtis kartų ir beveik nieko neišskiria, o
+   „pranašystės“ — tik viename skyriuje ir todėl labai daug pasako.
+   Ilgos kortelės neturi laimėti vien dėl ilgio, tad rezultatas dalijamas iš
+   kortelės žodyno dydžio šaknies.
+
+   Lietuvių kalba stipriai kaitoma, todėl žodžiai lyginami nuėmus diakritikus
+   ir palikus pirmas 6 raides: „tikėjimo“, „tikėjimas“, „tikėjimu“ → „tikeji“. */
+var MM_STOP={};
+'ir ar bet kad kaip kai jei jeigu nes tik jau dar labai savo tas ta tai tie tos tuo tam apie nuo iki per prie tarp pries pagal bei arba taip ne nera yra buti buvo bus gali galima turi turime mes jus jie jos jis ji sis si sios sie kuris kuri kurie kurios kurio kada kodel todel taigi tad vis visa visi visos daug maza kito kitas kiti kitu mums jums jiems savo pats pati'
+ .split(' ').forEach(function(w){ MM_STOP[w]=1; });
+function mmNormWord(s){
+  return String(s||'').toLowerCase()
+    .replace(/[ą]/g,'a').replace(/[č]/g,'c').replace(/[ęė]/g,'e').replace(/[į]/g,'i')
+    .replace(/[š]/g,'s').replace(/[ųū]/g,'u').replace(/[ž]/g,'z');
+}
+function mmTerms(s){
+  return mmNormWord(String(s||'').replace(/<[^>]+>/g,' '))
+    .split(/[^a-z0-9]+/)
+    .filter(function(w){ return w.length>=4 && !MM_STOP[w]; })
+    .map(function(w){ return w.slice(0,6); });
+}
+/* kortelės tekstas be tarnybinių dalių (šaltinio nuorodos, sąsajos, prierašai) */
+function mmCardText(n){
+  return String(n.note||'')
+    .replace(/<p class="src">[\s\S]*?<\/p>/g,' ')
+    .replace(/<p class="addMark">[\s\S]*?<\/p>/g,' ')
+    .replace(/<p>\s*↳[\s\S]*?<\/p>/g,' ')
+    .replace(/<[^>]+>/g,' ');
+}
+function mmBuildIndex(skip){
+  var cards=[], df={};
+  (function w(n){
+    if(n.id!==DATA.id && !(skip&&skip[n.id])){
+      var tf={};
+      mmTerms(n.label).forEach(function(t){ tf[t]=(tf[t]||0)+3; });
+      mmTerms(mmCardText(n)).forEach(function(t){ tf[t]=(tf[t]||0)+1; });
+      var keys=Object.keys(tf);
+      if(keys.length){ cards.push({n:n,tf:tf,size:keys.length});
+        keys.forEach(function(t){ df[t]=(df[t]||0)+1; }); }
+    }
+    (n.children||[]).forEach(w);
+  })(DATA);
+  var N=cards.length||1;
+  return {cards:cards, idf:function(t){ return Math.log(1+N/(1+(df[t]||0))); }};
+}
+/* Grąžina tinkamiausią kortelę arba null, jei sąsaja per silpna. */
+function mmBestHost(text, idx){
+  var q={}; mmTerms(text).forEach(function(t){ q[t]=(q[t]||0)+1; });
+  var best=null, bestS=0, bestHits=0;
+  idx.cards.forEach(function(c){
+    var s=0, hits=0;
+    for(var t in q){ if(c.tf[t]){ s += Math.min(q[t],3)*c.tf[t]*idx.idf(t); hits++; } }
+    if(hits<2) return;                       /* vienas sutapęs žodis dar nieko nereiškia */
+    s = s/Math.sqrt(c.size);
+    if(s>bestS){ bestS=s; best=c.n; bestHits=hits; }
+  });
+  return (best && bestS>=1.2) ? {node:best, score:bestS, hits:bestHits} : null;
+}
+window.mmBuildIndex=mmBuildIndex; window.mmBestHost=mmBestHost;
+
 /* ═══════════ TEKSTO ELEMENTŲ TIPAI (atpažinimui — paieškos filtrams) ═══════════
    Spalvas lemia aplinkos tema ir spalvų gama. Tipas atsako į vieną klausimą:
    KĄ ŠI KORTELĖ DARO tekste? — ne „kokių žodžių joje yra".
@@ -6631,16 +6736,6 @@ function mmAddInit(){
   wrap.dataset.ready='1';
   let pickedFile=null, pickedImg=null;
 
-  function fillWhere(){
-    const sel=$('addWhere'); if(!sel) return;
-    const opts=[];
-    const cur = (branchSelIds.size ? OBJ[[...branchSelIds][0]] : (curNote||null));
-    if(cur && cur!==DATA) opts.push([cur.id, 'Prie kortelės „'+String(cur.label).slice(0,42)+'“']);
-    opts.push([DATA.id, 'Prie centrinės kortelės „'+String(DATA.label).slice(0,36)+'“']);
-    /* likusios potemės — kad būtų galima prijungti prie bet kurios šakos */
-    (DATA.children||[]).forEach(c=>{ if(!opts.some(o=>o[0]===c.id)) opts.push([c.id,'Prie šakos „'+String(c.label).slice(0,38)+'“']); });
-    sel.innerHTML=opts.map(o=>'<option value="'+o[0]+'">'+o[1].replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))+'</option>').join('');
-  }
   function sync(){
     const txt=($('addText').value||'').trim();
     const ok = txt.length>=40 || !!pickedImg || (!!pickedFile && pickedFile.__text && pickedFile.__text.length>=40);
@@ -6649,7 +6744,7 @@ function mmAddInit(){
       : ok ? 'Tekstas bus išskaidytas į korteles'
       : (txt.length? 'Per mažai teksto (bent 40 simbolių)' : 'Įklijuokite tekstą arba pasirinkite failą');
   }
-  function open(){ fillWhere(); wrap.classList.add('on'); wrap.setAttribute('aria-hidden','false');
+  function open(){ wrap.classList.add('on'); wrap.setAttribute('aria-hidden','false');
     setTimeout(()=>$('addText').focus(),60); sync(); }
   function close(){ wrap.classList.remove('on'); wrap.setAttribute('aria-hidden','true'); }
 
@@ -6683,7 +6778,6 @@ function mmAddInit(){
   $('addDrop').addEventListener('drop',e=>takeFile(e.dataTransfer.files&&e.dataTransfer.files[0]));
 
   $('addGo').onclick=async()=>{
-    const host=OBJ[$('addWhere').value]||DATA;
     const color=$('addUseColor').checked ? $('addColor').value : null;
     const mark =$('addUseMark').checked ? ($('addMark').value||'Papildyta').trim() : null;
 
@@ -6694,6 +6788,9 @@ function mmAddInit(){
         cls:'n-key', img:pickedImg.data, children:[],
         note:(mark?'<p class="addMark">'+mark+'</p>':'<p>Pridėtas paveikslėlis.</p>')};
       if(color) kid.customColor=color;
+      /* paveikslėliui vietą irgi parenka modelis — pagal pavadinimą ir prierašą */
+      let host=DATA;
+      try{ const hit=mmBestHost(kid.label+' '+(mark||''), mmBuildIndex(null)); if(hit&&hit.node) host=hit.node; }catch(e){}
       host.children=host.children||[]; host.children.push(kid); host._c=false;
       try{ indexTree(); renumberAll(); }catch(e){}
       render(); try{ saveMap(); }catch(e){}
@@ -6706,13 +6803,14 @@ function mmAddInit(){
     if(src.length<40){ showToast('Per mažai teksto'); return; }
     $('addGo').disabled=true; $('addHint').textContent='Dėlioju korteles…';
     try{
-      const ok=await window.mmGenerateFromText(src,{into:host, color:color, mark:mark, src:true, links:false});
+      const ok=await window.mmGenerateFromText(src,{add:true, color:color, mark:mark, src:true, links:false});
       if(ok){ close(); $('addText').value=''; pickedFile=null; $('addFileName').hidden=true;
         /* išsaugom tyliai, o paskui grąžinam savo pranešimą — kitaip „išsaugota“
            užgožtų svarbesnę žinią, kiek kortelių pridėta */
-        var n=(window.mmLastCoverage&&window.mmLastCoverage.cards)||0;
+        var c=window.mmLastCoverage||{}, pl=(c.places||[]);
         try{ saveMap(); }catch(e){}
-        try{ showToast('Žemėlapis papildytas — pridėta '+n+' kortelių · išsaugota'); }catch(e){} }
+        try{ showToast('Pridėta '+(c.cards||0)+' kortelių \u00B7 priskirta prie: '
+          + pl.slice(0,3).join(', ') + (pl.length>3?(' ir dar '+(pl.length-3)):'') + ' \u00B7 išsaugota'); }catch(e){} }
       else showToast('Nepavyko išskaidyti teksto');
     }catch(e){ showToast('Klaida: '+(e.message||'')); }
     sync();
@@ -6730,8 +6828,9 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
       <button class="apX" id="addClose" aria-label="Uždaryti">✕</button>
     </div>
     <div class="apBody">
-      <label class="apLbl" for="addWhere">Kur pridėti</label>
-      <select id="addWhere" class="apSel"></select>
+      <div class="apAuto"><span class="apAutoIco">◎</span>
+        <span>Vieta parenkama <b>automatiškai</b> — kiekviena pridėtos medžiagos dalis prijungiama
+        prie tos kortelės, su kuria labiausiai siejasi jos turinys</span></div>
 
       <label class="apLbl" for="addText">Tekstas</label>
       <textarea id="addText" placeholder="Įklijuokite tekstą, kurį norite pridėti…" spellcheck="false"></textarea>
