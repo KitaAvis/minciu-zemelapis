@@ -1676,6 +1676,74 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
   body[data-theme="street"] #nGrow .grBtn,body[data-theme="street"] #nGrow .grNo{background:#2A241D;border-color:#4a4136;color:#F5F0E6}
   body[data-theme="night"] #nGrow .grCard{background:#efe7d3;border-color:#3b3226}
   body[data-theme="paveikslas"] #nGrow .grCard{background:#EFE3C4;border-color:#8A7A57}
+
+  /* ══ PAPILDYTI ŽEMĖLAPĮ ═══════════════════════════════════════════════ */
+  #addWrap{position:fixed;inset:0;z-index:200;display:none}
+  #addWrap.on{display:block}
+  #addBack{position:absolute;inset:0;background:rgba(8,12,20,.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+  #addPanel{position:absolute;top:50%;left:50%;transform:translate(-50%,-48%) scale(.98);opacity:0;
+    width:min(560px,calc(100vw - 32px));max-height:calc(100vh - 64px);display:flex;flex-direction:column;
+    background:linear-gradient(180deg,#fff,#F7F9FC);border:1px solid rgba(20,32,54,.12);border-radius:18px;
+    box-shadow:0 24px 70px -20px rgba(10,16,28,.55),0 2px 6px rgba(16,24,40,.08);
+    transition:opacity .2s ease,transform .24s cubic-bezier(.25,1.1,.4,1);overflow:hidden}
+  #addWrap.on #addPanel{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  .apHead{display:flex;align-items:center;gap:12px;padding:16px 16px 13px;border-bottom:1px solid rgba(20,32,54,.08)}
+  .apIco{width:34px;height:34px;flex:none;border-radius:11px;display:grid;place-items:center;font-size:19px;font-weight:800;
+    background:linear-gradient(145deg,#2E9E8F,#1F7F73);color:#fff;box-shadow:0 3px 10px -3px rgba(31,127,115,.6)}
+  .apTx{flex:1;min-width:0;line-height:1.34}
+  .apTx b{display:block;font-size:14.5px;font-weight:800;color:#141C2B;letter-spacing:-.2px}
+  .apTx span{display:block;font-size:11.5px;color:#6B7688;margin-top:1px}
+  .apX{flex:none;width:30px;height:30px;border-radius:9px;border:1px solid rgba(20,32,54,.12);background:#fff;
+    color:#6B7688;font-size:13px;cursor:pointer;font-family:inherit;transition:background .15s,color .15s}
+  .apX:hover{background:#F1F4F9;color:#141C2B}
+  .apBody{padding:14px 16px 4px;overflow-y:auto}
+  .apLbl{display:block;font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#7A8698;margin:10px 0 5px}
+  .apSel,.apInp{width:100%;font-family:inherit;font-size:12.5px;font-weight:600;color:#141C2B;
+    padding:8px 10px;border-radius:10px;border:1px solid #D6DDE7;background:#fff}
+  #addText{width:100%;min-height:120px;max-height:220px;resize:vertical;font-family:inherit;font-size:12.5px;line-height:1.5;
+    color:#141C2B;padding:10px 11px;border-radius:12px;border:1px solid #D6DDE7;background:#fff}
+  #addText:focus,.apSel:focus,.apInp:focus{outline:2px solid rgba(46,158,143,.45);outline-offset:1px;border-color:#2E9E8F}
+  .apDrop{margin-top:10px;display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center;
+    padding:14px 12px;border:1.5px dashed #CBD5E1;border-radius:12px;background:#FBFCFE;cursor:pointer;
+    transition:border-color .16s,background .16s}
+  .apDrop:hover,.apDrop.drag{border-color:#2E9E8F;background:rgba(46,158,143,.06)}
+  .apDropIco{font-size:17px;color:#2E9E8F}
+  .apDropTx{font-size:12px;color:#3B4658}
+  .apDropSub{font-size:10.5px;color:#8A94A6}
+  .apFile{margin-top:8px;font-size:11.5px;font-weight:700;color:#1F7F73;background:rgba(46,158,143,.09);
+    border-radius:9px;padding:7px 10px}
+  .apOpt{margin-top:14px;border-top:1px solid rgba(20,32,54,.08);padding-top:12px}
+  .apChk{display:flex;align-items:flex-start;gap:10px;padding:8px 2px;cursor:pointer}
+  .apChk>input[type=checkbox]{margin:2px 0 0;width:16px;height:16px;flex:none;accent-color:#2E9E8F;cursor:pointer}
+  .apChkBody{flex:1;min-width:0;line-height:1.35}
+  .apChkBody b{display:block;font-size:12.5px;font-weight:700;color:#141C2B}
+  .apChkBody span{display:block;font-size:11px;color:#6B7688;margin-top:1px}
+  .apColor{width:38px;height:26px;flex:none;padding:2px;border:1px solid #D6DDE7;border-radius:8px;background:#fff;cursor:pointer}
+  .apFoot{display:flex;align-items:center;gap:9px;padding:12px 16px;border-top:1px solid rgba(20,32,54,.08);background:rgba(246,248,252,.7)}
+  .apHint{flex:1;min-width:0;font-size:11px;color:#7A8698}
+  .apNo{font-family:inherit;font-size:12px;font-weight:700;color:#6B7688;padding:9px 14px;border-radius:10px;
+    border:1px solid rgba(20,32,54,.12);background:#fff;cursor:pointer}
+  .apGo{font-family:inherit;font-size:12.5px;font-weight:800;color:#fff;padding:9px 18px;border-radius:10px;border:0;cursor:pointer;
+    background:linear-gradient(145deg,#2E9E8F,#1F7F73);box-shadow:0 3px 12px -4px rgba(31,127,115,.7);
+    transition:transform .16s cubic-bezier(.3,1.2,.5,1),box-shadow .16s}
+  .apGo:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 6px 18px -5px rgba(31,127,115,.8)}
+  .apGo:disabled{opacity:.4;cursor:default;box-shadow:none;transform:none}
+  /* prierašas pridėtose kortelėse */
+  .addMark{margin-top:9px;font-size:11px;font-weight:700;color:#8A6B22;background:rgba(232,163,61,.14);
+    border-left:3px solid rgba(232,163,61,.75);border-radius:0 7px 7px 0;padding:5px 9px;display:inline-block}
+  /* tamsios temos */
+  body[data-theme="cosmos"] #addPanel{background:linear-gradient(180deg,#131C2A,#0D141F);border-color:rgba(140,180,220,.22)}
+  body[data-theme="cosmos"] .apTx b,body[data-theme="cosmos"] .apChkBody b{color:#E9F1F8}
+  body[data-theme="cosmos"] .apTx span,body[data-theme="cosmos"] .apChkBody span,body[data-theme="cosmos"] .apHint{color:#93A7BD}
+  body[data-theme="cosmos"] #addText,body[data-theme="cosmos"] .apSel,body[data-theme="cosmos"] .apInp,
+  body[data-theme="cosmos"] .apX,body[data-theme="cosmos"] .apNo{background:rgba(160,190,225,.08);border-color:rgba(140,180,220,.24);color:#DCE7F2}
+  body[data-theme="cosmos"] .apDrop{background:rgba(160,190,225,.05);border-color:rgba(140,180,220,.3)}
+  body[data-theme="cosmos"] .apDropTx{color:#C4D3E2}
+  body[data-theme="cosmos"] .apFoot{background:rgba(10,16,26,.5);border-color:rgba(140,180,220,.16)}
+  body[data-theme="street"] #addPanel{background:#241F19;border-color:#4a4136}
+  body[data-theme="street"] .apTx b,body[data-theme="street"] .apChkBody b{color:#F5F0E6}
+  body[data-theme="night"] #addPanel{background:#efe7d3;border-color:#3b3226}
+  body[data-theme="paveikslas"] #addPanel{background:#EFE3C4;border-color:#8A7A57}
 </style>
 </head>
 <body>
@@ -1933,6 +2001,9 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
     </div>
     <button class="tb" id="tbSave" data-tip="Išsaugoti" aria-label="Išsaugoti">
       <svg viewBox="0 0 24 24" fill="none"><path d="M5 4h11l3 3v13H5V4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M8 4v6h7V4M8 20v-6h8v6" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+    </button>
+    <button class="tb" id="tbAdd" data-tip="Papildyti žemėlapį" aria-label="Papildyti žemėlapį">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M4 6.5A1.5 1.5 0 0 1 5.5 5H10l1.6 2H18a1.5 1.5 0 0 1 1.5 1.5V12" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M4 8v10.5h9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M17.5 14.5v6M14.5 17.5h6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
     </button>
     <div class="tbWrap">
       <button class="tb" id="tbShare" data-tip="Spausdinti / eksportuoti" aria-label="Spausdinti arba eksportuoti">
@@ -5665,6 +5736,34 @@ dz.addEventListener('drop',e=>{
     (function collapse(n,d){ if(d>=2&&n.children&&n.children.length) n._c=true;
       (n.children||[]).forEach(c=>collapse(c,d+1)); })(root,0);
     (function clean(n){ delete n._kw; (n.children||[]).forEach(clean); })(root);
+
+    /* 8a. PAPILDYMAS: vietoj viso žemėlapio pakeitimo — prijungiam prie nurodytos kortelės.
+           Naujas turinys lieka vienu bloku, kad matytųsi, kas ir kada buvo pridėta. */
+    if(opt.into && OBJ[opt.into.id]){
+      const host=opt.into;
+      pushUndo();
+      root.cls = (host===DATA) ? 'n-tools' : 'n-env';
+      root.id  = 'add'+Date.now().toString(36);
+      /* naujiems mazgams — savi id, kad nesusidurtų su esamais */
+      let k=0; (function reid(n){ if(n!==root && OBJ[n.id]) n.id='a'+Date.now().toString(36)+(k++);
+        (n.children||[]).forEach(reid); })(root);
+      let added=0;
+      (function paint(n){ added++;
+        if(opt.color) n.customColor=opt.color;
+        if(opt.mark){ n.note=(n.note||'')+'<p class="addMark">'+String(opt.mark).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))+'</p>'; }
+        (n.children||[]).forEach(paint); })(root);
+      host.children=host.children||[]; host.children.push(root);
+      host._c=false; root._c=false;
+      try{ indexTree(); }catch(e){}
+      try{ renumberAll(); }catch(e){}
+      render();
+      try{ if(typeof refreshExpandLabel==='function') refreshExpandLabel(); }catch(e){}
+      setTimeout(()=>{ try{ highlightNodes([root.id]); }catch(e){} },60);
+      try{ showToast('Žemėlapis papildytas — pridėta '+added+' '+(added%10===1&&added%100!==11?'kortelė':(added%10>=2&&added%10<=9&&(added%100<10||added%100>20)?'kortelės':'kortelių'))); }catch(e){}
+      window.mmLastCoverage={total:total,missing:miss,percent:cover,cards:added};
+      return true;
+    }
+
     Object.keys(DATA).forEach(k=>delete DATA[k]); Object.assign(DATA,root);
     Object.keys(OBJ).forEach(k=>delete OBJ[k]);
     (function idx(n,p){ n._p=p; OBJ[n.id]=n; (n.children||[]).forEach(c=>idx(c,n)); })(DATA,null);
@@ -6519,6 +6618,150 @@ window.mmSyncDomains=mmSyncDomains; window.mmActiveDomains=mmActiveDomains;
 window.mmDetectRole=mmDetectRole; window.mmNodeRole=mmNodeRole;
 window.mmClassify=mmClassify; window.MM_ROLES=MM_ROLES; window.MM_DOMAINS=MM_DOMAINS;
 
+
+/* ══ PAPILDYTI ŽEMĖLAPĮ ═══════════════════════════════════════════════════
+   Įrankių juostos mygtukas atveria skydelį: tekstas arba failas, o šalia —
+   dvi varnelės: pažymėti pridėtą medžiagą spalva ir palikti prierašą
+   kiekvienoje naujoje kortelėje. */
+/* Skydelio žymėjimas dokumente eina PO skriptais, tad iniciacija laukia,
+   kol dokumentas bus perskaitytas iki galo. */
+function mmAddInit(){
+  const $=id=>document.getElementById(id);
+  const wrap=$('addWrap'); if(!wrap||wrap.dataset.ready) return;
+  wrap.dataset.ready='1';
+  let pickedFile=null, pickedImg=null;
+
+  function fillWhere(){
+    const sel=$('addWhere'); if(!sel) return;
+    const opts=[];
+    const cur = (branchSelIds.size ? OBJ[[...branchSelIds][0]] : (curNote||null));
+    if(cur && cur!==DATA) opts.push([cur.id, 'Prie kortelės „'+String(cur.label).slice(0,42)+'“']);
+    opts.push([DATA.id, 'Prie centrinės kortelės „'+String(DATA.label).slice(0,36)+'“']);
+    /* likusios potemės — kad būtų galima prijungti prie bet kurios šakos */
+    (DATA.children||[]).forEach(c=>{ if(!opts.some(o=>o[0]===c.id)) opts.push([c.id,'Prie šakos „'+String(c.label).slice(0,38)+'“']); });
+    sel.innerHTML=opts.map(o=>'<option value="'+o[0]+'">'+o[1].replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))+'</option>').join('');
+  }
+  function sync(){
+    const txt=($('addText').value||'').trim();
+    const ok = txt.length>=40 || !!pickedImg || (!!pickedFile && pickedFile.__text && pickedFile.__text.length>=40);
+    $('addGo').disabled=!ok;
+    $('addHint').textContent = pickedImg ? 'Bus pridėta viena kortelė su paveikslėliu'
+      : ok ? 'Tekstas bus išskaidytas į korteles'
+      : (txt.length? 'Per mažai teksto (bent 40 simbolių)' : 'Įklijuokite tekstą arba pasirinkite failą');
+  }
+  function open(){ fillWhere(); wrap.classList.add('on'); wrap.setAttribute('aria-hidden','false');
+    setTimeout(()=>$('addText').focus(),60); sync(); }
+  function close(){ wrap.classList.remove('on'); wrap.setAttribute('aria-hidden','true'); }
+
+  function takeFile(f){
+    if(!f) return;
+    if(f.size>10*1024*1024){ showToast('Failas per didelis (iki 10 MB)'); return; }
+    pickedFile=null; pickedImg=null;
+    if(/^image\//.test(f.type)){
+      const r=new FileReader();
+      r.onload=e=>{ pickedImg={name:f.name, data:e.target.result};
+        $('addFileName').hidden=false; $('addFileName').textContent='🖼 '+f.name; sync(); };
+      r.readAsDataURL(f); return;
+    }
+    if(/\.(txt|md)$/i.test(f.name)){
+      const r=new FileReader();
+      r.onload=e=>{ f.__text=String(e.target.result||''); pickedFile=f;
+        $('addFileName').hidden=false; $('addFileName').textContent='📄 '+f.name+' · '+f.__text.length+' simb.'; sync(); };
+      r.readAsText(f); return;
+    }
+    showToast('PDF ir DOCX apdorojimas dar ruošiamas — įklijuokite tekstą');
+  }
+
+  $('tbAdd').onclick=open;
+  $('addClose').onclick=close; $('addCancel').onclick=close; $('addBack').onclick=close;
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&wrap.classList.contains('on')) close(); });
+  $('addText').addEventListener('input',sync);
+  $('addDrop').onclick=()=>$('addFile').click();
+  $('addFile').onchange=e=>{ takeFile(e.target.files&&e.target.files[0]); e.target.value=''; };
+  ['dragenter','dragover'].forEach(ev=>$('addDrop').addEventListener(ev,e=>{ e.preventDefault(); $('addDrop').classList.add('drag'); }));
+  ['dragleave','drop'].forEach(ev=>$('addDrop').addEventListener(ev,e=>{ e.preventDefault(); $('addDrop').classList.remove('drag'); }));
+  $('addDrop').addEventListener('drop',e=>takeFile(e.dataTransfer.files&&e.dataTransfer.files[0]));
+
+  $('addGo').onclick=async()=>{
+    const host=OBJ[$('addWhere').value]||DATA;
+    const color=$('addUseColor').checked ? $('addColor').value : null;
+    const mark =$('addUseMark').checked ? ($('addMark').value||'Papildyta').trim() : null;
+
+    if(pickedImg){                       /* paveikslėlis — viena kortelė */
+      pushUndo();
+      const id='img'+Date.now().toString(36);
+      const kid={id:id, label:pickedImg.name.replace(/\.[a-z0-9]+$/i,'').slice(0,40)||'Paveikslėlis',
+        cls:'n-key', img:pickedImg.data, children:[],
+        note:(mark?'<p class="addMark">'+mark+'</p>':'<p>Pridėtas paveikslėlis.</p>')};
+      if(color) kid.customColor=color;
+      host.children=host.children||[]; host.children.push(kid); host._c=false;
+      try{ indexTree(); renumberAll(); }catch(e){}
+      render(); try{ saveMap(); }catch(e){}
+      showToast('Pridėta kortelė su paveikslėliu');
+      close(); pickedImg=null; $('addFileName').hidden=true; sync(); return;
+    }
+
+    let src=($('addText').value||'').trim();
+    if(!src && pickedFile && pickedFile.__text) src=pickedFile.__text;
+    if(src.length<40){ showToast('Per mažai teksto'); return; }
+    $('addGo').disabled=true; $('addHint').textContent='Dėlioju korteles…';
+    try{
+      const ok=await window.mmGenerateFromText(src,{into:host, color:color, mark:mark, src:true, links:false});
+      if(ok){ close(); $('addText').value=''; pickedFile=null; $('addFileName').hidden=true;
+        /* išsaugom tyliai, o paskui grąžinam savo pranešimą — kitaip „išsaugota“
+           užgožtų svarbesnę žinią, kiek kortelių pridėta */
+        var n=(window.mmLastCoverage&&window.mmLastCoverage.cards)||0;
+        try{ saveMap(); }catch(e){}
+        try{ showToast('Žemėlapis papildytas — pridėta '+n+' kortelių · išsaugota'); }catch(e){} }
+      else showToast('Nepavyko išskaidyti teksto');
+    }catch(e){ showToast('Klaida: '+(e.message||'')); }
+    sync();
+  };
+}
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',mmAddInit); else mmAddInit();
 </script>
+<div id="addWrap" aria-hidden="true">
+  <div id="addBack"></div>
+  <div id="addPanel" role="dialog" aria-modal="true" aria-labelledby="addTitle">
+    <div class="apHead">
+      <span class="apIco">＋</span>
+      <div class="apTx"><b id="addTitle">Papildyti žemėlapį</b>
+        <span>Naujas tekstas bus išskaidytas į korteles ir prijungtas prie pasirinktos vietos</span></div>
+      <button class="apX" id="addClose" aria-label="Uždaryti">✕</button>
+    </div>
+    <div class="apBody">
+      <label class="apLbl" for="addWhere">Kur pridėti</label>
+      <select id="addWhere" class="apSel"></select>
+
+      <label class="apLbl" for="addText">Tekstas</label>
+      <textarea id="addText" placeholder="Įklijuokite tekstą, kurį norite pridėti…" spellcheck="false"></textarea>
+
+      <div class="apDrop" id="addDrop">
+        <span class="apDropIco">⇪</span>
+        <span class="apDropTx"><b>Nutempkite failą</b> arba <u>pasirinkite</u></span>
+        <span class="apDropSub">TXT · MD · paveikslėlis (PNG, JPG)</span>
+        <input type="file" id="addFile" accept=".txt,.md,image/*" hidden>
+      </div>
+      <div class="apFile" id="addFileName" hidden></div>
+
+      <div class="apOpt">
+        <label class="apChk"><input type="checkbox" id="addUseColor" checked>
+          <span class="apChkBody"><b>Pažymėti pridėtą medžiagą spalva</b>
+            <span>Naujos kortelės gaus atskirą spalvą, kad iš karto matytųsi, kas pridėta</span></span>
+          <input type="color" id="addColor" value="#E8A33D" class="apColor" aria-label="Pridėtos medžiagos spalva"></label>
+
+        <label class="apChk"><input type="checkbox" id="addUseMark" checked>
+          <span class="apChkBody"><b>Kiekvienoje kortelėje palikti prierašą</b>
+            <span>Į kiekvienos naujos kortelės užrašinę bus įrašyta žyma</span></span></label>
+        <input type="text" id="addMark" class="apInp" value="Papildyta" aria-label="Prierašo tekstas">
+      </div>
+    </div>
+    <div class="apFoot">
+      <span class="apHint" id="addHint">Įklijuokite tekstą arba pasirinkite failą</span>
+      <button class="apNo" id="addCancel">Atsisakyti</button>
+      <button class="apGo" id="addGo" disabled>Papildyti</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
