@@ -1761,6 +1761,43 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
   #nBody .pubLink::after{content:"↗";font-size:9px;vertical-align:super;margin-left:1px;opacity:.65}
   body[data-theme="cosmos"] #nBody .bibleLink{color:#B39DDB}
   body[data-theme="cosmos"] #nBody .pubLink{color:#7FB8E8}
+
+  /* susijusios kortelės užrašinėje */
+  #nBody .relBox{margin-top:14px;border-top:1px dashed rgba(201,138,43,.5);padding-top:9px}
+  #nBody .relHead{font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#A8792B;margin-bottom:5px}
+  #nBody .relRow{margin:3px 0}
+  /* sąsajų sąrašas */
+  #relReport{position:fixed;inset:0;z-index:220;background:rgba(8,12,20,.55);backdrop-filter:blur(3px)}
+  #relReport .rrPanel{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:min(720px,calc(100vw - 32px));max-height:calc(100vh - 60px);display:flex;flex-direction:column;
+    background:#fff;border:1px solid rgba(20,32,54,.12);border-radius:16px;overflow:hidden;
+    box-shadow:0 24px 70px -20px rgba(10,16,28,.55)}
+  #relReport .rrHead{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid rgba(20,32,54,.1)}
+  #relReport .rrHead>div{flex:1;min-width:0}
+  #relReport .rrHead b{display:block;font-size:14.5px;font-weight:800;color:#141C2B}
+  #relReport .rrHead span{display:block;font-size:11px;color:#6B7688;margin-top:1px}
+  #relReport .rrBtn{font-family:inherit;font-size:12px;font-weight:750;cursor:pointer;color:#fff;
+    padding:8px 14px;border-radius:9px;border:0;background:linear-gradient(145deg,#2E9E8F,#1F7F73)}
+  #relReport .rrBtn.ghost{background:#fff;color:#6B7688;border:1px solid rgba(20,32,54,.14)}
+  #relReport .rrBody{overflow-y:auto;padding:12px 16px 16px}
+  #relReport .rrGroup{margin-bottom:14px;border:1px solid rgba(20,32,54,.09);border-radius:12px;padding:10px 12px}
+  #relReport .rrGroupHead{font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#A8792B;margin-bottom:6px}
+  #relReport .rrCard{padding:5px 0;border-top:1px dashed rgba(20,32,54,.08)}
+  #relReport .rrCard:first-of-type{border-top:0}
+  #relReport .rrName{font-size:12.5px;font-weight:750;color:#1B2333;cursor:pointer;text-decoration:underline;
+    text-decoration-style:dotted;text-underline-offset:2px}
+  #relReport .rrName:hover{color:#1F7F73}
+  #relReport .rrName.sm{font-weight:650;font-size:11.5px;color:#3B4658}
+  #relReport .rrRel{font-size:11px;color:#6B7688;margin-top:2px}
+  #relReport .rrEmpty{font-size:12.5px;color:#6B7688;padding:14px}
+  /* spausdinimas: kai sąrašas atidarytas, spausdinamas TIK jis */
+  @media print{
+    body.relPrint>:not(#relReport){display:none!important}
+    body.relPrint #relReport{position:static;background:none;backdrop-filter:none}
+    body.relPrint #relReport .rrPanel{position:static;transform:none;width:auto;max-height:none;box-shadow:none;border:0}
+    body.relPrint #relReport .rrBtn{display:none}
+    body.relPrint #relReport .rrBody{overflow:visible}
+  }
 </style>
 </head>
 <body>
@@ -2028,6 +2065,7 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
       </button>
       <div class="tbMenu" id="tbShareMenu">
         <button class="tbItem" data-a="print">Spausdinti…</button>
+        <button class="tbItem" data-a="rels">Sąsajų sąrašas…</button>
         <button class="tbItem" data-a="png">Eksportuoti PNG</button>
         <button class="tbItem" data-a="json">Eksportuoti JSON</button>
       </div>
@@ -3834,6 +3872,8 @@ function render(){
   (function edge(n){ const p=pos[n.id]; if(!p||n._c||!n.children) return;
     n.children.forEach(c=>{ const cp=pos[c.id]; if(!cp)return; paintEdge(p,cp,c); edge(c);});})(DATA);
   paintDecor();
+  REL_CACHE=null;                       /* pastabos galėjo pasikeisti — perskaičiuojam sąsajas */
+  try{ paintRelations(); }catch(e){}
   (function draw(n){ const p=pos[n.id]; if(!p)return;
     const el=document.createElement('div'); el.className='node '+n.cls;
     el.dataset.id=n.id;
@@ -4038,11 +4078,120 @@ function render(){
   if(wChanged && _passes<4){ _passes++; render(); _passes--; }
 }
 /* perpiešia TIK linijas (greita, tempiant) */
+
+/* ══ KORTELIŲ SĄSAJOS ═══════════════════════════════════════════════════
+   Sąsaja gimsta iš ↳ eilutės pastaboje, kurioje paminėtas kitos kortelės
+   pavadinimas. Iš jų: punktyrinės linijos žemėlapyje, abipusė skiltis
+   „Susijusios kortelės" užrašinėje ir spausdinamas sąrašas. */
+let REL_CACHE=null;
+function mmRelations(){
+  if(REL_CACHE) return REL_CACHE;
+  const map=labelToId();
+  const names=Object.keys(map).sort((x,y)=>y.length-x.length);
+  const pairs=[], seen={};
+  (function w(n){
+    const lines=String(n.note||'').match(/<p>↳[^<]*<\/p>/g)||[];
+    lines.forEach(line=>{
+      let rest=line;
+      names.forEach(name=>{
+        if(name.length<6) return;
+        if(rest.indexOf(name)<0) return;
+        const tid=map[name];
+        rest=rest.split(name).join('\u0001');      /* kad trumpesnis vardas nesirastų viduje */
+        if(!tid||tid===n.id) return;
+        const t=OBJ[tid];
+        if(t && (t._p===n || n._p===t)) return;    /* tėvą ir vaiką jau jungia tikra linija */
+        const key=n.id<tid ? n.id+'|'+tid : tid+'|'+n.id;
+        if(!seen[key]){ seen[key]=1; pairs.push({a:n.id,b:tid}); }
+      });
+    });
+    (n.children||[]).forEach(w);
+  })(DATA);
+  REL_CACHE=pairs;
+  return pairs;
+}
+function mmRelFor(id){
+  const out=[];
+  mmRelations().forEach(p=>{
+    if(p.a===id && OBJ[p.b]) out.push(OBJ[p.b]);
+    else if(p.b===id && OBJ[p.a]) out.push(OBJ[p.a]);
+  });
+  return out;
+}
+/* Punktyrinės linijos — ryšiai matomi visą laiką, kol abi kortelės ekrane. */
+function paintRelations(){
+  edgesSvg.querySelectorAll('.relEdge').forEach(x=>x.remove());
+  const amber = document.body.dataset.theme==='cosmos' ? '#F0B24A' : '#C98A2B';
+  mmRelations().forEach(p=>{
+    const A=pos[p.a], B=pos[p.b]; if(!A||!B) return;
+    const dx=B.x-A.x, dy=B.y-A.y, len=Math.hypot(dx,dy)||1;
+    const off=Math.min(46, len*0.14);
+    const cx=(A.x+B.x)/2 - dy/len*off, cy=(A.y+B.y)/2 + dx/len*off;
+    const el=document.createElementNS('http://www.w3.org/2000/svg','path');
+    el.setAttribute('d','M'+A.x+' '+A.y+' Q'+cx+' '+cy+' '+B.x+' '+B.y);
+    el.setAttribute('class','relEdge');
+    el.setAttribute('fill','none');
+    el.setAttribute('stroke',amber);
+    el.setAttribute('stroke-width','1.7');
+    el.setAttribute('stroke-dasharray','7 6');
+    el.setAttribute('stroke-linecap','round');
+    el.setAttribute('opacity','0.55');
+    edgesSvg.appendChild(el);
+  });
+}
+
+
+/* ══ SĄSAJŲ SĄRAŠAS (spausdinamas) ══════════════════════════════════════ */
+function mmShowRelReport(){
+  const pairs=mmRelations();
+  let box=document.getElementById('relReport');
+  if(box) box.remove();
+  box=document.createElement('div'); box.id='relReport';
+  /* grupuojame į susijusių kortelių grupes (jungtinius komponentus) */
+  const par={}; const find=x=>{ while(par[x]!==x) x=par[x]=par[par[x]]; return x; };
+  const ids={}; pairs.forEach(p=>{ ids[p.a]=1; ids[p.b]=1; });
+  Object.keys(ids).forEach(id=>par[id]=id);
+  pairs.forEach(p=>{ par[find(p.a)]=find(p.b); });
+  const groups={};
+  Object.keys(ids).forEach(id=>{ const r=find(id); (groups[r]=groups[r]||[]).push(id); });
+  const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+  const relOf=id=>pairs.filter(p=>p.a===id||p.b===id).map(p=>p.a===id?p.b:p.a);
+  const glist=Object.values(groups).sort((a,b)=>b.length-a.length);
+  let rows='';
+  glist.forEach((g,i)=>{
+    rows+='<div class="rrGroup"><div class="rrGroupHead">Grupė '+(i+1)+' · kortelių: '+g.length+'</div>';
+    g.forEach(id=>{ const n=OBJ[id]; if(!n) return;
+      rows+='<div class="rrCard"><a class="rrName" data-goto="'+id+'">'+esc(n.label)+'</a>'
+          + '<div class="rrRel">susijusi su: '+relOf(id).map(t=>OBJ[t]?('<a class="rrName sm" data-goto="'+t+'">'+esc(OBJ[t].label)+'</a>'):'').join(' · ')+'</div></div>';
+    });
+    rows+='</div>';
+  });
+  if(!rows) rows='<p class="rrEmpty">Šiame žemėlapyje sąsajų tarp kortelių nėra.</p>';
+  box.innerHTML=
+    '<div class="rrPanel">'
+    +'<div class="rrHead"><div><b>Sąsajų sąrašas</b>'
+    +'<span>'+esc(DATA.label||'')+' · sąsajų: '+pairs.length+' · kortelių: '+Object.keys(ids).length+' · grupių: '+glist.length+'</span></div>'
+    +'<button class="rrBtn" id="rrPrint">🖨 Spausdinti</button>'
+    +'<button class="rrBtn ghost" id="rrClose">✕</button></div>'
+    +'<div class="rrBody">'+rows+'</div></div>';
+  document.body.appendChild(box);
+  document.body.classList.add('relPrint');
+  box.querySelector('#rrClose').onclick=()=>{ box.remove(); document.body.classList.remove('relPrint'); };
+  box.querySelector('#rrPrint').onclick=()=>window.print();
+  box.querySelectorAll('[data-goto]').forEach(a=>a.onclick=e=>{
+    e.preventDefault();
+    box.remove(); document.body.classList.remove('relPrint');
+    highlightNodes([a.dataset.goto]);
+  });
+}
+window.mmShowRelReport=mmShowRelReport;
+
 function redrawEdges(){
   edgesSvg.innerHTML='';
   (function edge(n){ const p=pos[n.id]; if(!p||n._c||!n.children) return;
     n.children.forEach(c=>{ const cp=pos[c.id]; if(!cp)return; paintEdge(p,cp,c); edge(c);});})(DATA);
   paintDecor();
+  try{ paintRelations(); }catch(e){}
 }
 /* užrašinė */
 const notes=document.getElementById('notes');
@@ -4266,6 +4415,17 @@ function openNote(n){
   let noteHtml=(n.note||'<p>—</p>')+renderAttachments(n);
   noteHtml=linkifyRefs(noteHtml);
   noteHtml=mmLinkifySources(noteHtml);   /* Rašto eilutės ir leidiniai — aktyvios nuorodos */
+  /* Susijusios kortelės — ABIEM kryptim: nuoroda matoma ir toje kortelėje,
+     kurioje sąsaja įrašyta, ir toje, į kurią rodoma. */
+  try{
+    const rel=mmRelFor(n.id);
+    if(rel.length){
+      noteHtml+='<div class="relBox"><div class="relHead">🔗 Susijusios kortelės</div>'
+        + rel.map(r=>'<p class="relRow">↳ <a class="refLink" data-goto="'+r.id+'">'
+          + String(r.label).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))+'</a></p>').join('')
+        + '</div>';
+    }
+  }catch(e){}
   if(SQ) noteHtml=hiHtml(noteHtml);
   document.getElementById('nBody').innerHTML=noteHtml;
   document.getElementById('nEditArea').classList.remove('open');
@@ -5043,6 +5203,7 @@ document.getElementById('saveMap').onclick=saveMap;
   $('tbShareMenu').querySelectorAll('.tbItem').forEach(b=>b.onclick=()=>{
     const a=b.dataset.a;
     if(a==='print'){ window.print(); }
+    else if(a==='rels'){ mmShowRelReport(); }
     else if(a==='png'){
       const url=mapThumb(1400,900); const l=document.createElement('a');
       l.href=url; l.download=(DATA.label||'zemelapis')+'.png'; l.click(); showToast('PNG eksportuotas');
