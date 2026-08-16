@@ -1884,7 +1884,11 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
   #cpBox .cpT{font-weight:inherit;line-height:1.25;padding-right:1.7em}
   #cpBox .cpB{font-weight:500;line-height:1.5;margin-top:.62em;padding-top:.58em;
     border-top:1px solid rgba(128,128,128,.28);overflow-y:auto;overscroll-behavior:contain;
-    touch-action:pan-y}          /* pirštu slenkam tekstą, du pirštai lieka masteliui */
+    scrollbar-width:thin;touch-action:pan-y}
+  /* Ilgas tekstas slenkamas TEMPIANT (pele) arba pirštu — ratukas lieka vien
+     masteliui. Taip abu veiksmai nebesivaržo dėl to paties ratuko. */
+  #cpBox .cpB.scrollable{cursor:grab}
+  #cpBox .cpB.scrollable:active{cursor:grabbing}
   #cpBox .cpB p{margin:0 0 .6em}
   #cpBox .cpB p:last-child{margin-bottom:0}
   #cpBox .cpB img{max-width:100%;border-radius:8px}
@@ -4848,16 +4852,33 @@ function cpEls(){
     /* Ratukas virš lentelės: pirmiausia slenkam tekstą, jei jis netelpa ir dar
        yra kur slinkti; kitu atveju — keičiam žemėlapio mastelį, kaip ir tuščioje
        vietoje. Be šito ratukas ties lentele nedarydavo nieko. */
+    /* Ratukas virš lentelės VISADA keičia mastelį — lygiai kaip tuščioje
+       vietoje. Anksčiau jis pirma bandydavo slinkti tekstą, ir sukant žemyn
+       virš ilgo teksto mastelis nereaguodavo. Konflikto nebėra, nes lentelė
+       rodo visą tekstą — slinkti nebereikia. */
     cpBox.addEventListener('wheel',e=>{
-      const b=cpBox.querySelector('.cpB');
-      if(b && b.scrollHeight-b.clientHeight>1){
-        const up=e.deltaY<0;
-        const atTop=b.scrollTop<=0;
-        const atEnd=b.scrollTop+b.clientHeight>=b.scrollHeight-1;
-        if((up && !atTop) || (!up && !atEnd)) return;   /* slenkam patį tekstą */
-      }
       e.preventDefault(); mmZoomAt(e.clientX,e.clientY,e.deltaY);
     },{passive:false});
+    /* Teksto slinkimas TEMPIANT — pakeičia ratuką, kuris dabar skirtas tik
+       masteliui. Liečiamuosiuose ekranuose slenkama pirštu (touch-action). */
+    (function(){
+      let sc=false, y0=0, t0=0;
+      cpBox.addEventListener('pointerdown',e=>{
+        const b=cpBox.querySelector('.cpB');
+        if(!b||!b.contains(e.target)||b.scrollHeight-b.clientHeight<=1) return;
+        if(e.pointerType==='touch') return;         /* pirštu slenka pati naršyklė */
+        sc=true; y0=e.clientY; t0=b.scrollTop;
+        try{ cpBox.setPointerCapture(e.pointerId); }catch(_){}
+      });
+      cpBox.addEventListener('pointermove',e=>{
+        if(!sc) return;
+        const b=cpBox.querySelector('.cpB'); if(!b) return;
+        b.scrollTop = t0 - (e.clientY-y0)/Math.max(0.08,scale);
+      });
+      ['pointerup','pointercancel'].forEach(t=>cpBox.addEventListener(t,e=>{
+        sc=false; try{ cpBox.releasePointerCapture(e.pointerId); }catch(_){}
+      }));
+    })();
     document.body.appendChild(cpBox); }
 }
 function cpClose(){
@@ -4899,8 +4920,6 @@ function cpStyle(){
   cpBox.style.textAlign='left';
   cpBox.style.width=Math.max(520, el.offsetWidth||420)+'px';
   cpS={h: el.offsetHeight||60};
-  const b=cpBox.querySelector('.cpB');
-  if(b) b.style.maxHeight=Math.round(innerHeight*0.62/Math.max(0.2,scale))+'px';
   return true;
 }
 /* Kas kadrą — TIK padėtis. Jokių getComputedStyle: kitaip kiekvienas ratuko
@@ -4913,9 +4932,10 @@ window.cpPos=function(){
   cpBox.style.left=sx+'px';
   cpBox.style.top=(sy-cpS.h/2*scale)+'px';
   cpBox.style.transform='translate(-50%,0) scale('+scale+')';
-  /* aukščio riba seka mastelį: kad ir kiek priartintum, lentelė telpa į ekraną */
+  /* Riba seka mastelį: kad ir kiek priartintum, lentelė telpa į ekraną */
   const bb=cpBox.querySelector('.cpB');
-  if(bb) bb.style.maxHeight=Math.round(innerHeight*0.66/Math.max(0.08,scale))+'px';
+  if(bb){ bb.style.maxHeight=Math.round(innerHeight*0.72/Math.max(0.08,scale))+'px';
+    bb.classList.toggle('scrollable', bb.scrollHeight-bb.clientHeight>1); }
   cpDim.style.setProperty('--cpx', Math.round(sx)+'px');
   cpDim.style.setProperty('--cpy', Math.round(sy)+'px');
 };
