@@ -1822,6 +1822,27 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
       padding-bottom:2px}
     #bar::-webkit-scrollbar{display:none}
     #bar .tGroup, #bar>*{flex:none}
+    /* Pirštui patogūs taikiniai (rekomenduojama ≥44px) */
+    #bar .tb{height:44px;padding:0 11px}
+    #bar .tb svg{width:22px;height:22px}
+    #bar .tGroup{padding:2px}
+    #layLockBtn{font-size:17px}
+
+    /* ══ IŠKRENTANTYS SKYDELIAI — LAKŠTAI PO JUOSTA ═══════════════════════
+       Juosta siaurame ekrane slenkama (overflow-x:auto), o overflow-y:hidden
+       NUKIRPDAVO visus jos viduje esančius absoliučiai pozicionuotus meniu —
+       telefone jie paprasčiausiai nepasirodydavo. position:fixed nepriklauso
+       nuo tėvo overflow, tad skydeliai išlenda virš viso ekrano. DOM struktūra
+       nekeičiama, todėl uždarymo logika (wrap.contains) veikia kaip veikusi. */
+    #bar #tbNewMenu, #bar #tbOpenMenu, #bar #tbShareMenu, #bar #tbZoomMenu,
+    #bar #themeMenu, #bar #layoutMenu, #bar #gamaMenu, #bar #sPanel{
+      position:fixed;top:72px;left:10px;right:10px;
+      width:auto;min-width:0;max-width:none;
+      max-height:calc(100vh - 88px);max-height:calc(100dvh - 88px);
+      overflow-y:auto;-webkit-overflow-scrolling:touch}
+    #bar .themeMenu.gridMenu, #bar .themeMenu.gridMenu.wide{width:auto}
+    #bar .optCard{width:calc(33.333% - 6px);min-width:92px}
+    #bar .u2Opt{min-height:56px}
   }
   /* stambesni taikiniai pirštui */
   @media (pointer:coarse){
@@ -1924,14 +1945,14 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
               <span class="u2OptB"><span class="u2OptT">Sąvokų žemėlapis</span><span class="u2OptD">Įvardyti ryšiai · teorija, priežastingumas</span></span>
               <span class="u2Tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
             </button>
-            <button type="button" class="u2Opt" data-l="h">
-              <span class="u2Pv"><svg viewBox="0 0 140 68" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="10" y="27" width="32" height="14" rx="3"/><rect x="86" y="8" width="36" height="12" rx="3"/><rect x="86" y="28" width="36" height="12" rx="3"/><rect x="86" y="48" width="36" height="12" rx="3"/><path d="M42 34h20V14h24M62 34h24M62 34v20h24" opacity=".55"/></svg></span>
-              <span class="u2OptB"><span class="u2OptT">Horizontalus medis</span><span class="u2OptD">Skaitoma iš kairės į dešinę</span></span>
-              <span class="u2Tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
-            </button>
             <button type="button" class="u2Opt" data-l="v">
               <span class="u2Pv"><svg viewBox="0 0 140 68" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="52" y="8" width="36" height="13" rx="3"/><rect x="12" y="46" width="32" height="13" rx="3"/><rect x="54" y="46" width="32" height="13" rx="3"/><rect x="96" y="46" width="32" height="13" rx="3"/><path d="M70 21v12M28 33h84M28 33v13m42-13v13m42-13v13" opacity=".55"/></svg></span>
-              <span class="u2OptB"><span class="u2OptT">Vertikalus medis</span><span class="u2OptD">Organizacinė schema</span></span>
+              <span class="u2OptB"><span class="u2OptT">Horizontalus medis</span><span class="u2OptD">Kortelės eile — organizacinė schema</span></span>
+              <span class="u2Tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+            </button>
+            <button type="button" class="u2Opt" data-l="h">
+              <span class="u2Pv"><svg viewBox="0 0 140 68" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="10" y="27" width="32" height="14" rx="3"/><rect x="86" y="8" width="36" height="12" rx="3"/><rect x="86" y="28" width="36" height="12" rx="3"/><rect x="86" y="48" width="36" height="12" rx="3"/><path d="M42 34h20V14h24M62 34h24M62 34v20h24" opacity=".55"/></svg></span>
+              <span class="u2OptB"><span class="u2OptT">Vertikalus medis</span><span class="u2OptD">Kortelės stulpeliu, viena po kita</span></span>
               <span class="u2Tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
             </button>
             <button type="button" class="u2Opt" data-l="lin">
@@ -2174,8 +2195,8 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
     <div class="themeMenu gridMenu" id="layoutMenu">
       <button class="themeOpt optCard lay" data-l="r"><svg class="pv" viewBox="0 0 112 78"><g fill="none" stroke="currentColor" stroke-width="1" opacity=".55"><path d="M56 39 28 18M56 39 84 18M56 39 22 42M56 39 90 42M56 39 34 64M56 39 78 64"/></g><circle cx="56" cy="39" r="9" fill="currentColor" opacity=".85"/><g fill="currentColor" opacity=".65"><rect x="14" y="13" width="22" height="8" rx="2.5"/><rect x="76" y="13" width="22" height="8" rx="2.5"/><rect x="4" y="38" width="20" height="8" rx="2.5"/><rect x="88" y="38" width="20" height="8" rx="2.5"/><rect x="20" y="60" width="22" height="8" rx="2.5"/><rect x="70" y="60" width="22" height="8" rx="2.5"/></g></svg><span class="cap">Radialinis</span></button>
       <button class="themeOpt optCard lay" data-l="cmap"><svg class="pv" viewBox="0 0 112 78"><g fill="none" stroke="currentColor" stroke-width="1" opacity=".5"><path d="M56 25 30 43M56 25l26 18M42 60h28"/></g><rect x="40" y="11" width="32" height="12" rx="3" fill="currentColor" opacity=".85"/><g fill="currentColor" opacity=".6"><rect x="12" y="45" width="30" height="11" rx="3"/><rect x="70" y="45" width="30" height="11" rx="3"/></g><g fill="currentColor" opacity=".38"><rect x="28" y="30" width="16" height="6" rx="3"/><rect x="68" y="30" width="16" height="6" rx="3"/><rect x="47" y="63" width="18" height="6" rx="3"/></g></svg><span class="cap">Sąvokų žemėlapis</span></button>
-      <button class="themeOpt optCard lay" data-l="h"><svg class="pv" viewBox="0 0 112 78"><g fill="none" stroke="currentColor" stroke-width="1" opacity=".55"><path d="M28 39H40M40 39V17H56M40 39v22h16M76 17h10M76 61h10"/></g><rect x="6" y="34" width="22" height="10" rx="3" fill="currentColor" opacity=".85"/><g fill="currentColor" opacity=".62"><rect x="56" y="12" width="20" height="9" rx="2.5"/><rect x="56" y="56" width="20" height="9" rx="2.5"/><rect x="86" y="12" width="20" height="9" rx="2.5"/><rect x="86" y="56" width="20" height="9" rx="2.5"/></g></svg><span class="cap">Horizontalus</span></button>
-      <button class="themeOpt optCard lay" data-l="v"><svg class="pv" viewBox="0 0 112 78"><g fill="none" stroke="currentColor" stroke-width="1" opacity=".55"><path d="M56 20v10M24 30h64M24 30v10M88 30v10M24 52v8h10M88 52v8H78"/></g><rect x="42" y="9" width="28" height="11" rx="3" fill="currentColor" opacity=".85"/><g fill="currentColor" opacity=".62"><rect x="12" y="41" width="24" height="10" rx="2.5"/><rect x="76" y="41" width="24" height="10" rx="2.5"/><rect x="34" y="57" width="22" height="9" rx="2.5"/><rect x="56" y="57" width="22" height="9" rx="2.5"/></g></svg><span class="cap">Vertikalus</span></button>
+      <button class="themeOpt optCard lay" data-l="v"><svg class="pv" viewBox="0 0 112 78"><g fill="none" stroke="currentColor" stroke-width="1" opacity=".55"><path d="M56 20v10M24 30h64M24 30v10M88 30v10M24 52v8h10M88 52v8H78"/></g><rect x="42" y="9" width="28" height="11" rx="3" fill="currentColor" opacity=".85"/><g fill="currentColor" opacity=".62"><rect x="12" y="41" width="24" height="10" rx="2.5"/><rect x="76" y="41" width="24" height="10" rx="2.5"/><rect x="34" y="57" width="22" height="9" rx="2.5"/><rect x="56" y="57" width="22" height="9" rx="2.5"/></g></svg><span class="cap">Horizontalus</span></button>
+      <button class="themeOpt optCard lay" data-l="h"><svg class="pv" viewBox="0 0 112 78"><g fill="none" stroke="currentColor" stroke-width="1" opacity=".55"><path d="M28 39H40M40 39V17H56M40 39v22h16M76 17h10M76 61h10"/></g><rect x="6" y="34" width="22" height="10" rx="3" fill="currentColor" opacity=".85"/><g fill="currentColor" opacity=".62"><rect x="56" y="12" width="20" height="9" rx="2.5"/><rect x="56" y="56" width="20" height="9" rx="2.5"/><rect x="86" y="12" width="20" height="9" rx="2.5"/><rect x="86" y="56" width="20" height="9" rx="2.5"/></g></svg><span class="cap">Vertikalus</span></button>
       <button class="themeOpt optCard lay" data-l="lin">
         <span class="optGear" id="linCfg" title="Linijinio išdėstymo nustatymai">⚙</span>
         <svg class="pv" viewBox="0 0 112 78"><g fill="none" stroke="currentColor" stroke-width="1" opacity=".55"><path d="M26 39h74"/><path d="M40 39V22h10M40 22V14h10M62 39v17h10M62 56v8h10M84 39V26h8M84 26v-8h8"/></g><rect x="6" y="33" width="20" height="12" rx="2" fill="currentColor" opacity=".9"/><g fill="currentColor" opacity=".8"><rect x="36" y="35" width="9" height="8" rx="2"/><rect x="58" y="35" width="9" height="8" rx="2"/><rect x="80" y="35" width="9" height="8" rx="2"/></g><g fill="currentColor" opacity=".5"><rect x="50" y="18" width="20" height="7" rx="2"/><rect x="50" y="10" width="20" height="7" rx="2"/><rect x="72" y="52" width="20" height="7" rx="2"/><rect x="72" y="61" width="20" height="7" rx="2"/><rect x="92" y="22" width="16" height="7" rx="2"/><rect x="92" y="14" width="16" height="7" rx="2"/></g></svg><span class="cap">Linijinis</span></button>
@@ -2884,7 +2905,9 @@ try{ LAY_LOCK=JSON.parse(localStorage.getItem('mm_lay_lock')||'{}')||{}; }catch(
 /* ar dabartinė (ar nurodyta) struktūra užrakinta */
 function layLocked(id){ id=id||curLayout;
   return (Object.prototype.hasOwnProperty.call(LAY_LOCK,id)) ? !!LAY_LOCK[id] : !!LAY_FIXED[id]; }
-const LAY_NAMES={r:'Radialinis',cmap:'Sąvokų žemėlapis',h:'Horizontalus',v:'Vertikalus',lin:'Linijinis',
+/* Pavadinimas pagal tai, kaip issirikiuoja KORTELES: 'h' — stulpeliu (vertikalus),
+   'v' — eile (horizontalus). Id nekeiciami, kad seni zemelapiai liktu galioti. */
+const LAY_NAMES={r:'Radialinis',cmap:'Sąvokų žemėlapis',h:'Vertikalus',v:'Horizontalus',lin:'Linijinis',
   cyc:'Ciklas',fish:'Priežasčių medis',mtx:'Matrica',loci:'Maršrutas'};
 let LOCK={}, DECOR=null;
 const VK=n=>(!n._c&&n.children&&n.children.length)?n.children:null;
