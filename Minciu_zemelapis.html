@@ -1830,6 +1830,11 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
     .rzC{width:.72em;height:.72em}
     .node:active .rzH{opacity:.96}
   }
+
+  /* išdėstymo spynelė */
+  #layLockBtn{font-size:15px;line-height:1}
+  #layLockBtn.lockOn{color:#1F7F73;background:rgba(46,158,143,.14);box-shadow:inset 0 0 0 1.5px rgba(46,158,143,.5)}
+  body[data-theme="cosmos"] #layLockBtn.lockOn{color:#5FD0BE;background:rgba(95,208,190,.14);box-shadow:inset 0 0 0 1.5px rgba(95,208,190,.45)}
 </style>
 </head>
 <body>
@@ -1949,11 +1954,7 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
               <span class="u2OptB"><span class="u2OptT">Matrica</span><span class="u2OptD">Eilutės × stulpeliai · palyginimas, SSGG</span></span>
               <span class="u2Tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
             </button>
-            <button type="button" class="u2Opt" data-l="net">
-              <span class="u2Pv"><svg viewBox="0 0 140 68" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M36 22 70 8l34 16-18 28-38 2z" opacity=".45"/><path d="M70 8 86 52M36 22l50 30" opacity=".45"/><circle cx="70" cy="8" r="6"/><circle cx="86" cy="52" r="6"/><circle cx="36" cy="22" r="5" opacity=".7"/><circle cx="104" cy="24" r="5" opacity=".7"/><circle cx="48" cy="54" r="5" opacity=".7"/></svg></span>
-              <span class="u2OptB"><span class="u2OptT">Tinklas</span><span class="u2OptD">Be hierarchijos · užrašų bazė, Zettelkasten</span></span>
-              <span class="u2Tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
-            </button>
+            
             <button type="button" class="u2Opt" data-l="loci">
               <span class="u2Pv"><svg viewBox="0 0 140 68" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M22 14h46q8 0 8 8t-8 8H34q-8 0-8 8t8 8h56" opacity=".45" stroke-dasharray="3 4"/><rect x="10" y="8" width="22" height="11" rx="3"/><rect x="58" y="8" width="22" height="11" rx="3"/><rect x="26" y="25" width="22" height="11" rx="3" opacity=".75"/><rect x="26" y="46" width="22" height="11" rx="3" opacity=".75"/><rect x="66" y="46" width="22" height="11" rx="3" opacity=".75"/><rect x="104" y="46" width="22" height="11" rx="3" opacity=".75"/></svg></span>
               <span class="u2OptB"><span class="u2OptT">Maršrutas (atminties rūmai)</span><span class="u2OptD">Režimas įsiminimui · kortelės eilės tvarka erdvėje</span></span>
@@ -2181,11 +2182,14 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
       <button class="themeOpt optCard lay" data-l="cyc"><svg class="pv" viewBox="0 0 112 78"><circle cx="56" cy="39" r="25" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".4" stroke-dasharray="3 4"/><g fill="currentColor" opacity=".7"><rect x="44" y="7" width="24" height="10" rx="3"/><rect x="79" y="34" width="24" height="10" rx="3"/><rect x="44" y="61" width="24" height="10" rx="3"/><rect x="9" y="34" width="24" height="10" rx="3"/></g><g fill="currentColor" opacity=".85"><path d="M79 21l7 3-5 5z"/><path d="M33 57l-7-3 5-5z"/></g></svg><span class="cap">Ciklas</span></button>
       <button class="themeOpt optCard lay" data-l="fish"><svg class="pv" viewBox="0 0 112 78"><g fill="none" stroke="currentColor" stroke-width="1.2" opacity=".48"><path d="M6 39h72"/><path d="M25 19 37 39M53 19 65 39M32 60 43 39M60 60 71 39"/></g><path d="M80 39l-7-3.5v7z" fill="currentColor" opacity=".7"/><rect x="83" y="31" width="25" height="15" rx="4" fill="currentColor" opacity=".85"/><g fill="currentColor" opacity=".58"><rect x="14" y="9" width="22" height="9" rx="2.5"/><rect x="42" y="9" width="22" height="9" rx="2.5"/><rect x="22" y="61" width="22" height="9" rx="2.5"/><rect x="50" y="61" width="22" height="9" rx="2.5"/></g></svg><span class="cap">Priežasčių medis</span></button>
       <button class="themeOpt optCard lay" data-l="mtx"><svg class="pv" viewBox="0 0 112 78"><g fill="none" stroke="currentColor" stroke-width="1" opacity=".38"><rect x="9" y="9" width="94" height="60" rx="5"/><path d="M39 9v60M71 9v60M9 29h94M9 49h94"/></g><g fill="currentColor" opacity=".82"><rect x="13" y="13" width="22" height="11" rx="2.5"/><rect x="13" y="33" width="22" height="11" rx="2.5"/><rect x="13" y="53" width="22" height="11" rx="2.5"/></g><g fill="currentColor" opacity=".45"><rect x="44" y="14" width="23" height="9" rx="2.5"/><rect x="76" y="14" width="23" height="9" rx="2.5"/><rect x="44" y="34" width="23" height="9" rx="2.5"/><rect x="76" y="34" width="23" height="9" rx="2.5"/><rect x="44" y="54" width="23" height="9" rx="2.5"/><rect x="76" y="54" width="23" height="9" rx="2.5"/></g></svg><span class="cap">Matrica</span></button>
-      <button class="themeOpt optCard lay" data-l="net"><svg class="pv" viewBox="0 0 112 78"><g fill="none" stroke="currentColor" stroke-width="1" opacity=".45"><path d="M30 26 56 13 84 28 68 53 38 55 30 26M56 13 68 53M30 26 68 53"/></g><g fill="currentColor"><circle cx="56" cy="13" r="7" opacity=".85"/><circle cx="68" cy="53" r="7" opacity=".85"/><circle cx="30" cy="26" r="5.5" opacity=".6"/><circle cx="84" cy="28" r="5.5" opacity=".6"/><circle cx="38" cy="55" r="5.5" opacity=".6"/></g></svg><span class="cap">Tinklas</span></button>
+      
       <button class="themeOpt optCard lay" data-l="loci"><svg class="pv" viewBox="0 0 112 78"><path d="M20 18h34q9 0 9 9t-9 9H30q-9 0-9 9t9 9h42" fill="none" stroke="currentColor" stroke-width="1.3" opacity=".42" stroke-dasharray="3 4"/><g fill="currentColor" opacity=".78"><rect x="12" y="12" width="18" height="11" rx="3"/><rect x="44" y="12" width="18" height="11" rx="3"/><rect x="22" y="30" width="18" height="11" rx="3"/><rect x="22" y="48" width="18" height="11" rx="3"/><rect x="54" y="48" width="18" height="11" rx="3"/><rect x="80" y="48" width="18" height="11" rx="3"/></g></svg><span class="cap">Maršrutas</span></button>
-      <span class="gridNote">Linijinio kryptis nustatoma ⚙ mygtuku. Maršrutas — įsiminimo režimas: kortelės eilės tvarka erdvėje.</span>
+      <span class="gridNote">Linijinio kryptis nustatoma ⚙ mygtuku. Maršrutas — įsiminimo režimas: kortelės eilės tvarka erdvėje. Spynelė juostoje: <b>užrakinta</b> — struktūra laikosi tiesiai, <b>atrakinta</b> — korteles galima judinti laisvai.</span>
     </div>
   </div>
+  <button class="tb" id="layLockBtn" title="Užrakinti / atrakinti išdėstymą" aria-pressed="false">
+    <span id="layLockIco">🔒</span>
+  </button>
   <div class="themeWrap">
     <button class="tb themeBtn" id="gamaBtn" title="Spalvų gama">
       <span class="palIco"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="5.4" cy="5.4" r="3.1" fill="currentColor" opacity=".9"/><circle cx="10.6" cy="5.4" r="3.1" fill="currentColor" opacity=".55"/><circle cx="8" cy="10.4" r="3.1" fill="currentColor" opacity=".3"/></svg></span>
@@ -2871,10 +2875,17 @@ let SEC={};
 const EXG=1.45, EYG=0.70;   // vienas elipses mastelis VISUR (placement + relax)
 /* ===== 8 STRUKTŪRŲ RINKINYS (+ maršruto režimas) =====
    Kiekviena struktūra laimi bent viename teksto tipe; nė viena nedubliuoja kitos. */
-const LAY_IDS=['r','cmap','h','v','lin','cyc','fish','mtx','net','loci'];
-const LAY_FIXED={lin:1,cyc:1,fish:1,mtx:1,loci:1};   // struktūra fiksuota — kortelių netraukiam
+const LAY_IDS=['r','cmap','h','v','lin','cyc','fish','mtx','loci'];
+/* Kurios struktūros pagal nutylėjimą laikosi FIKSUOTAI (tiesios linijos, kortelės
+   nejudinamos). Naudotojas kiekvienai gali tai perjungti spynele. */
+const LAY_FIXED={lin:1,cyc:1,fish:1,mtx:1,loci:1,h:1,v:1};
+let LAY_LOCK={};
+try{ LAY_LOCK=JSON.parse(localStorage.getItem('mm_lay_lock')||'{}')||{}; }catch(e){ LAY_LOCK={}; }
+/* ar dabartinė (ar nurodyta) struktūra užrakinta */
+function layLocked(id){ id=id||curLayout;
+  return (Object.prototype.hasOwnProperty.call(LAY_LOCK,id)) ? !!LAY_LOCK[id] : !!LAY_FIXED[id]; }
 const LAY_NAMES={r:'Radialinis',cmap:'Sąvokų žemėlapis',h:'Horizontalus',v:'Vertikalus',lin:'Linijinis',
-  cyc:'Ciklas',fish:'Priežasčių medis',mtx:'Matrica',net:'Tinklas',loci:'Maršrutas'};
+  cyc:'Ciklas',fish:'Priežasčių medis',mtx:'Matrica',loci:'Maršrutas'};
 let LOCK={}, DECOR=null;
 const VK=n=>(!n._c&&n.children&&n.children.length)?n.children:null;
 const LW=id=>(WMAP[id]||420), LH=id=>(HMAP[id]||120);
@@ -2888,7 +2899,6 @@ function layout(){
     case 'cyc':  return layoutCycle();
     case 'fish': return layoutFish();
     case 'mtx':  return layoutMatrix();
-    case 'net':  return layoutNet();
     case 'loci': return layoutLoci();
   }
   return layoutRadial();
@@ -3128,22 +3138,57 @@ function layoutLinear(){
   pos[DATA.id]={x:rootX,y:CY,d:0};
   for(const id in FIXED){ if(pos[id]){ pos[id].x=FIXED[id].x; pos[id].y=FIXED[id].y; } }
 }
+/* ===== MEDIS: HORIZONTALUS / VERTIKALUS =====================================
+   Tvarkingo medzio desnis: kiekviena posake gauna JUOSTA, kurios dydis lygus
+   jos korteliu tikriems matmenims (o ne fiksuotam skaiciui). Seseru juostos
+   nepersidengia, tevas centruojamas savo juostoje, o lygiai atskiriami pagal
+   didziausia to lygio kortele. Todel:
+     - kortelės niekada nepersidengia, kad ir kiek ju butu;
+     - jungtys lieka TIESIOS (staciakampes alkunes), be jokio stumdymo.
+   Uzrakintoje struktūroje persidengimu sprendejas NEjungiamas — jis pastumtu
+   korteles nuo lygiu ir linijos nustotu buti tiesios. */
 function layoutTree(dir){
-  pos={}; let slot=0; const DEPTH=340, SIB=165;
-  (function place(n,depth){
-    const kids=(!n._c && n.children && n.children.length)?n.children:null;
-    let s;
-    if(!kids){ s=slot++; }
-    else { const cs=kids.map(c=>place(c,depth+1)); s=(cs[0]+cs[cs.length-1])/2; }
+  pos={};
+  const horiz = (dir==='h');
+  const GAP = horiz ? 54 : 70;        /* tarpas tarp seseru juostu */
+  const LGAP = horiz ? 150 : 130;     /* tarpas tarp lygiu */
+  const cross = id => horiz ? LH(id) : LW(id);   /* matmuo skersai medzio */
+  const along = id => horiz ? LW(id) : LH(id);   /* matmuo isilgai medzio */
+
+  /* 1) lygiu storiai — pagal didziausia to lygio kortele */
+  const lvl={};
+  (function meas(n,d){ lvl[d]=Math.max(lvl[d]||0, along(n.id));
+    const k=VK(n); if(k) k.forEach(c=>meas(c,d+1)); })(DATA,0);
+  const lpos={}; let acc=0;
+  Object.keys(lvl).map(Number).sort((a,b)=>a-b).forEach(d=>{
+    lpos[d]=acc+lvl[d]/2; acc+=lvl[d]+LGAP; });
+
+  /* 2) posakiu juostu dydziai */
+  const ext={};
+  (function band(n){
+    const k=VK(n), own=cross(n.id);
+    if(!k){ ext[n.id]=own; return own; }
+    let s=0; k.forEach((c,i)=>{ s+=band(c)+(i?GAP:0); });
+    ext[n.id]=Math.max(s,own); return ext[n.id];
+  })(DATA);
+
+  /* 3) demimas: vaikai centruojami tevo juostoje */
+  (function place(n,d,start){
+    const k=VK(n), mid=start+ext[n.id]/2;
+    if(k){
+      let tot=0; k.forEach((c,i)=>{ tot+=ext[c.id]+(i?GAP:0); });
+      let cur=start+(ext[n.id]-tot)/2;
+      k.forEach(c=>{ place(c,d+1,cur); cur+=ext[c.id]+GAP; });
+    }
     let x,y;
-    if(dir==='h'){ x=CX-620+depth*DEPTH; y=CY-320+s*SIB; }
-    else { y=CY-300+depth*280; x=CX-360+s*(SIB+120); }
+    if(horiz){ x=CX-900+lpos[d]; y=CY-ext[DATA.id]/2+mid; }
+    else     { y=CY-700+lpos[d]; x=CX-ext[DATA.id]/2+mid; }
     const m=manual[n.id]; if(m){ x=m.x; y=m.y; }
-    pos[n.id]={x,y,d:depth};
-    return s;
-  })(DATA,0);
+    pos[n.id]={x,y,d:d};
+  })(DATA,0,0);
+
   for(const id in FIXED){ if(pos[id]){ pos[id].x=FIXED[id].x; pos[id].y=FIXED[id].y; } }
-  resolveOverlaps();
+  if(!layLocked()) resolveOverlaps();   /* atrakinus — leidziam svelnu issistumdyma */
 }
 /* ===== RADIALINIO ISDESTYMO DESNIS (PATVIRTINTAS ETALONAS - NEKEISTI PRINCIPO) =====
    Sis modelis patvirtintas naudotojo. Kai korteliu skaicius auga, TIK skaiciavimai
@@ -3701,8 +3746,33 @@ function paintDecor(){
     });
   }
 }
+/* Stačiakampė (alkūninė) jungtis — tiesios fiksuotos linijos medžio išdėstymams.
+   Horizontaliame lūžis daromas tarp tėvo ir vaiko x, vertikaliame — tarp y. */
+function paintEdgeOrtho(p,cp,c,vertical){
+  const TH=THEMES[curTheme]||THEMES.standard;
+  const n=OBJ[c.id], col=edgeCol(n);
+  let d;
+  if(vertical){
+    const my=(p.y+cp.y)/2;
+    d = Math.abs(cp.x-p.x)<2 ? 'M'+p.x+' '+p.y+'V'+cp.y
+                             : 'M'+p.x+' '+p.y+'V'+my+'H'+cp.x+'V'+cp.y;
+  } else {
+    const mx=(p.x+cp.x)/2;
+    d = Math.abs(cp.y-p.y)<2 ? 'M'+p.x+' '+p.y+'H'+cp.x
+                             : 'M'+p.x+' '+p.y+'H'+mx+'V'+cp.y+'H'+cp.x;
+  }
+  const mk=(w,op)=>{ const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d',d); path.setAttribute('fill','none'); path.setAttribute('stroke',col);
+    path.setAttribute('stroke-width',edgeWidth(n,w)); path.setAttribute('opacity',op);
+    const dsh=edgeDash(n); if(dsh) path.setAttribute('stroke-dasharray',dsh);
+    path.setAttribute('stroke-linejoin','round'); path.setAttribute('stroke-linecap','round');
+    edgesSvg.appendChild(path); };
+  if(curTheme==='cosmos'){ mk(7,.13); mk(2.4,.95); }
+  else mk(TH.lineWidth||2.2, TH.lineOpacity||.6);
+}
 function paintEdge(p,cp,c){
   if(curLayout==='lin'){ paintEdgeLinear(p,cp,c); return; }
+  if(curLayout==='h'||curLayout==='v'){ paintEdgeOrtho(p,cp,c,curLayout==='v'); return; }
   if(curLayout==='mtx'||curLayout==='loci') return;              // struktūrą rodo tinklelis / maršrutas
   if(curLayout==='cmap'){ paintEdgeConcept(p,cp,c); return; }
   if(curLayout==='cyc'||curLayout==='fish'){
@@ -4038,7 +4108,7 @@ function render(){
         moved=true;
       }
       if(groupDrag){
-        if(LAY_FIXED[curLayout]) return;   // fiksuota struktūra — kortelių netraukiam
+        if(layLocked()) return;            // užrakinta struktūra — kortelių netraukiam
         // GRUPINIS TEMPIMAS — visa pažymėta šaka juda kartu
         gNodes.forEach(gn=>{
           const st=gStart[gn.id]; if(!st||!pos[gn.id]) return;
@@ -4048,7 +4118,7 @@ function render(){
         });
         redrawEdges();
       } else {
-        if(LAY_FIXED[curLayout]) return;   // fiksuota struktūra
+        if(layLocked()) return;            // užrakinta struktūra
         const nx=ox+dx, ny=oy+dy;
         manual[n.id]={x:nx,y:ny}; pos[n.id].x=nx; pos[n.id].y=ny;
         el.style.left=nx+'px'; el.style.top=ny+'px';
@@ -4691,10 +4761,17 @@ function fitAll(force){
   if(!force && userZoomed) return;
   const els=document.querySelectorAll('#world .node');
   if(!els.length){ center(); return; }
+  /* Matuojam iš IŠDĖSTYMO koordinačių (offsetLeft/offsetWidth), o ne iš
+     getBoundingClientRect. Ekrano stačiakampiai perėjimo (transition) metu
+     grąžina animacijos VIDURIO reikšmes, o dalinam iš galutinio mastelio —
+     todėl plotas išeidavo milžiniškas ir mastelis nukrisdavo iki 4%. Kortelė
+     dedama centru (left/top = centras, translate(-50%,-50%)), tad kraštus
+     skaičiuojam patys. */
   let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;
-  els.forEach(el=>{ const r=el.getBoundingClientRect();
-    x0=Math.min(x0,(r.left-tx)/scale); y0=Math.min(y0,(r.top-ty)/scale);
-    x1=Math.max(x1,(r.right-tx)/scale); y1=Math.max(y1,(r.bottom-ty)/scale); });
+  els.forEach(el=>{ const w=el.offsetWidth||1, h=el.offsetHeight||1;
+    const cx=el.offsetLeft, cy=el.offsetTop;
+    x0=Math.min(x0,cx-w/2); y0=Math.min(y0,cy-h/2);
+    x1=Math.max(x1,cx+w/2); y1=Math.max(y1,cy+h/2); });
   const w=Math.max(1,x1-x0), h=Math.max(1,y1-y0);
   const notesOpen = notes && notes.classList.contains('open') && innerWidth>900;
   const padL=70, padR=notesOpen?400:70, padT=110, padB=60;
@@ -5142,7 +5219,30 @@ function applyGamaSel(id){
 updateGamaUI(curGama);
 /* išdėstymo perjungiklis */
 function updateLayoutUI(id){ document.querySelectorAll('#layoutMenu .themeOpt').forEach(o=>o.classList.toggle('active',o.dataset.l===id)); }
-function applyLayout(id){ curLayout=id; try{localStorage.setItem('mm_layout',id);}catch(e){} manual={}; updateLayoutUI(id); render(); userZoomed=false; setTimeout(()=>fitAll(true),60); }
+function applyLayout(id){ curLayout=id; try{localStorage.setItem('mm_layout',id);}catch(e){} manual={}; updateLayoutUI(id); updateLockUI(); render(); userZoomed=false; setTimeout(()=>fitAll(true),60); }
+/* ── Spynelė: užrakinta → struktūra laikosi tiesiai; atrakinta → kortelės laisvos ── */
+function updateLockUI(){
+  const b=document.getElementById('layLockBtn'), i=document.getElementById('layLockIco');
+  if(!b||!i) return;
+  const on=layLocked();
+  i.textContent = on ? '🔒' : '🔓';
+  b.classList.toggle('lockOn', on);
+  b.setAttribute('aria-pressed', on?'true':'false');
+  b.title = (on ? 'Išdėstymas užrakintas — kortelės laikosi tiesiai. Spustelėk, kad atrakintum'
+                : 'Išdėstymas atrakintas — korteles galima judinti laisvai. Spustelėk, kad užrakintum')
+          + ' · ' + (LAY_NAMES[curLayout]||curLayout);
+}
+function toggleLayLock(){
+  const on=!layLocked();
+  LAY_LOCK[curLayout]=on;
+  try{ localStorage.setItem('mm_lay_lock', JSON.stringify(LAY_LOCK)); }catch(e){}
+  if(on){ manual={}; }                 /* užrakinus — grįžtam į tiesią struktūrą */
+  updateLockUI(); render();
+  try{ showToast(on ? 'Išdėstymas užrakintas — kortelės laikosi tiesiai'
+                    : 'Išdėstymas atrakintas — korteles galima judinti laisvai'); }catch(e){}
+}
+(function(){ const b=document.getElementById('layLockBtn');
+  if(b) b.addEventListener('click',e=>{ e.stopPropagation(); toggleLayLock(); }); })();
 (function(){
   const btn=document.getElementById('layoutBtn'), menu=document.getElementById('layoutMenu');
   if(!btn||!menu) return;
@@ -5153,7 +5253,8 @@ function applyLayout(id){ curLayout=id; try{localStorage.setItem('mm_layout',id)
   document.addEventListener('click',()=>{ menu.classList.remove('open'); if(window.syncLit) window.syncLit(); });
 })();
 try{ const sl=localStorage.getItem('mm_layout'); if(sl&&LAY_IDS.indexOf(sl)>=0) curLayout=sl; }catch(e){}
-updateLayoutUI(curLayout);
+if(LAY_IDS.indexOf(curLayout)<0) curLayout='r';        /* pašalintas „Tinklas" → radialinis */
+updateLayoutUI(curLayout); updateLockUI();
 /* linijinio išdėstymo nustatymų dialogas */
 (function(){
   const dlg=document.getElementById('linDlg'), gear=document.getElementById('linCfg');
