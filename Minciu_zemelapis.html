@@ -1883,7 +1883,8 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
     transform .34s cubic-bezier(.4,0,.2,1)}
   #cpBox .cpT{font-weight:inherit;line-height:1.25;padding-right:1.7em}
   #cpBox .cpB{font-weight:500;line-height:1.5;margin-top:.62em;padding-top:.58em;
-    border-top:1px solid rgba(128,128,128,.28);overflow-y:auto;overscroll-behavior:contain}
+    border-top:1px solid rgba(128,128,128,.28);overflow-y:auto;overscroll-behavior:contain;
+    touch-action:pan-y}          /* pirštu slenkam tekstą, du pirštai lieka masteliui */
   #cpBox .cpB p{margin:0 0 .6em}
   #cpBox .cpB p:last-child{margin-bottom:0}
   #cpBox .cpB img{max-width:100%;border-radius:8px}
@@ -4844,6 +4845,19 @@ function cpEls(){
     /* Ant kortelės informacijos naršyklės meniu nerodomas — matosi tik pati
        informacija. Tuščioje vietoje naršyklės meniu lieka kaip buvęs. */
     cpBox.addEventListener('contextmenu',e=>{ e.preventDefault(); e.stopPropagation(); });
+    /* Ratukas virš lentelės: pirmiausia slenkam tekstą, jei jis netelpa ir dar
+       yra kur slinkti; kitu atveju — keičiam žemėlapio mastelį, kaip ir tuščioje
+       vietoje. Be šito ratukas ties lentele nedarydavo nieko. */
+    cpBox.addEventListener('wheel',e=>{
+      const b=cpBox.querySelector('.cpB');
+      if(b && b.scrollHeight-b.clientHeight>1){
+        const up=e.deltaY<0;
+        const atTop=b.scrollTop<=0;
+        const atEnd=b.scrollTop+b.clientHeight>=b.scrollHeight-1;
+        if((up && !atTop) || (!up && !atEnd)) return;   /* slenkam patį tekstą */
+      }
+      e.preventDefault(); mmZoomAt(e.clientX,e.clientY,e.deltaY);
+    },{passive:false});
     document.body.appendChild(cpBox); }
 }
 function cpClose(){
@@ -5002,14 +5016,20 @@ let drag=false,sx=0,sy=0;
 stage.addEventListener('pointerdown',e=>{drag=true;sx=e.clientX-tx;sy=e.clientY-ty;stage.classList.add('grabbing');clearBranchSel();});
 addEventListener('pointermove',e=>{if(!drag||window.mmPinch)return;tx=e.clientX-sx;ty=e.clientY-sy;apply();});
 addEventListener('pointerup',()=>{drag=false;stage.classList.remove('grabbing');});
-stage.addEventListener('wheel',e=>{e.preventDefault();
+/* Mastelio keitimas ties nurodytu ekrano tašku. Atskira funkcija, nes tą patį
+   veiksmą turi atlikti ir žemėlapio laukas, ir virš jo esanti kortelės
+   lentelė — ji yra ne lauko viduje, tad savo klausytojo neturėtų. */
+function mmZoomAt(clientX, clientY, deltaY){
   /* rankinis mastelis — lentelė turi sekti AKIMIRKSNIU, be jokio vijimosi */
   if(typeof cpBox!=='undefined'&&cpBox){ cpBox.classList.remove('follow'); cpBox.classList.remove('anim'); }
   const r=stage.getBoundingClientRect();
-  const mx=e.clientX-r.left,my=e.clientY-r.top,wx=(mx-tx)/scale,wy=(my-ty)/scale;
-  const ns=Math.min(2.2,Math.max(.01,scale*(e.deltaY<0?1.12:.89)));
+  const mx=clientX-r.left,my=clientY-r.top,wx=(mx-tx)/scale,wy=(my-ty)/scale;
+  const ns=Math.min(2.2,Math.max(.01,scale*(deltaY<0?1.12:.89)));
   userZoomed=true;                 // vartotojas pats pasirinko mastelį → nebeperskaičiuojam automatiškai
-  tx=mx-wx*ns;ty=my-wy*ns;scale=ns;apply();},{passive:false});
+  tx=mx-wx*ns;ty=my-wy*ns;scale=ns;apply();
+}
+stage.addEventListener('wheel',e=>{ e.preventDefault();
+  mmZoomAt(e.clientX,e.clientY,e.deltaY); },{passive:false});
 /* ── SUSPAUDIMO (PINCH) MASTELIS liečiamiesiems ekranams ─────────────────
    Naršyklės mastelis išjungtas (viewport), tad du pirštai valdo PATĮ žemėlapį:
    mastelis keičiasi aplink pirštų vidurį ir laisvai grįžta atgal. Pinch metu
