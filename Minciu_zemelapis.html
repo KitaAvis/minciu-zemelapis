@@ -8286,7 +8286,7 @@ async function mmPdfText(buf){
   }); });
   if(cur) paras.push({p:cur, page:curPage});
   let text=paras.map(o=>o.p).join('\n\n');
-  text=mmFixLtPdf(text);
+  text=mmStripPdfMarks(mmFixLtPdf(text));
   if(text.replace(/\s+/g,'').length<40)
     throw new Error('teksto sluoksnio nėra — tai greičiausiai skenuotas PDF (nuotraukos)');
   return {text:text, paras:paras.length, pages:pageParas.length};
@@ -8307,6 +8307,27 @@ function mmFixLtPdf(text){
     [/\u00A7/g,'ą'],[/\u00A9/g,'ę'],[/\u00AB/g,'į'],[/\u00AD/g,'ų']];
   P.forEach(p=>{ text=text.replace(p[0],p[1]); });
   return text.normalize('NFC');
+}
+/* Leidybiniai artefaktai:
+   1) išretinta antraštė „S A R G Y B O S …" sujungiama į vieną žodį ir
+      atskiriama nauja pastraipa, kad nesuliptų su straipsnio pavadinimu;
+   2) logotipo glifas Ð išmetamas;
+   3) jei tekste knibžda pavienių U/s/n tarp tarpų (eilučių žymekliai,
+      ToUnicode juos vadina raidėmis) — jie išvalomi. Saugiklis pagal dažnį,
+      kad nepaliestume normalių dokumentų. */
+function mmStripPdfMarks(text){
+  /* Ð šalinamas PRIEŠ antraštės jungimą — kitaip įsilieja į ją */
+  text=text.replace(/(^|[\s\n])\u00D0(?=[\s\n]|$)/g,'$1');
+  text=text.replace(/(?:(?<=^|[\s\n])\p{Lu}[\s\n]+){3,}\p{Lu}(?=[\s\n]|$)/gu,
+    m=>m.replace(/[\s\n]+/g,'')+'\n\n');
+  /* leidinio antraštė (vienas ilgas DIDŽIŲJŲ žodis) — ne turinys, išmetama */
+  text=text.split('\n\n').filter(p=>!/^\p{Lu}{12,}$/u.test(p.trim())).join('\n\n');
+  const uCnt=(text.match(/(^|[\s\n])[Usn](?=[\s\n])/g)||[]).length;
+  const dens=uCnt/Math.max(1,text.length/1000);
+  if(uCnt>8 && dens>0.5){
+    text=text.replace(/(^|[\s\n])[Usn](?=[\s\n])/g,'$1');
+  }
+  return text.replace(/[ \t]{2,}/g,' ').replace(/\n{3,}/g,'\n\n').trim();
 }
 async function mmExtractDoc(file){
   const buf=await file.arrayBuffer();
