@@ -1855,6 +1855,27 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
   #layLockBtn{font-size:15px;line-height:1}
   #layLockBtn.lockOn{color:#1F7F73;background:rgba(46,158,143,.14);box-shadow:inset 0 0 0 1.5px rgba(46,158,143,.5)}
   body[data-theme="cosmos"] #layLockBtn.lockOn{color:#5FD0BE;background:rgba(95,208,190,.14);box-shadow:inset 0 0 0 1.5px rgba(95,208,190,.45)}
+
+  /* ══ SEMANTINIS ZŪMAS ═══════════════════════════════════════════════ */
+  #szBtn.szOn{color:#1F7F73;background:rgba(46,158,143,.14);box-shadow:inset 0 0 0 1.5px rgba(46,158,143,.5)}
+  body[data-theme="cosmos"] #szBtn.szOn{color:#5FD0BE;background:rgba(95,208,190,.14);box-shadow:inset 0 0 0 1.5px rgba(95,208,190,.45)}
+  /* fono pritemdymas — kad dėmesys liktų ties centrine kortele */
+  #szDim{position:fixed;inset:0;z-index:14;pointer-events:none;opacity:0;
+    background:radial-gradient(ellipse at var(--szx,50%) var(--szy,50%),
+      rgba(8,12,20,0) 7%, rgba(8,12,20,.46) 42%, rgba(8,12,20,.66) 100%)}
+  /* išsiplėtusi kortelė — sluoksnis virš žemėlapio, išdėstymo nejudina */
+  #szCard{position:fixed;z-index:15;pointer-events:none;opacity:0;
+    transform:translate(-50%,0);transform-origin:50% 0;
+    border-radius:var(--cardRadius,14px);padding:13px 18px;
+    box-shadow:0 18px 46px rgba(12,20,36,.34);border:2.5px solid transparent;
+    font-weight:600;line-height:1.3;text-align:left;overflow:hidden}
+  #szCard .szT{font-weight:inherit;margin:0;line-height:1.25}
+  #szCard .szB{font-weight:500;line-height:1.45;margin-top:.62em;
+    padding-top:.55em;border-top:1px solid currentColor;border-color:rgba(128,128,128,.28)}
+  #szCard .szB p{margin:0 0 .55em}
+  #szCard .szB p:last-child{margin-bottom:0}
+  #szCard .szB i{font-style:italic}
+  #szCard .szB img{max-width:100%;border-radius:8px}
 </style>
 </head>
 <body>
@@ -2169,6 +2190,9 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
     </div>
     <button class="tb tbStep" id="zIn" data-tip="Didinti" aria-label="Didinti">
       <svg viewBox="0 0 24 24" fill="none"><path d="M12 6v12M6 12h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <button class="tb tbStep" id="szBtn" data-tip="Semantinis zūmas" aria-label="Semantinis zūmas" aria-pressed="false">
+      <svg viewBox="0 0 24 24" fill="none"><circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" stroke-width="1.8"/><path d="M15.4 15.4 21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M7.4 8.2h6.2M7.4 10.8h6.2M7.4 13.4h3.6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
     </button>
   </div>
 
@@ -4236,6 +4260,8 @@ function render(){
   }
   // iki 4 perskaiciavimu: matmenys stabilizuojasi ir persidengimai isnyksta
   if(wChanged && _passes<4){ _passes++; render(); _passes--; }
+  if(!_passes){ if(typeof szDrop==='function') szDrop();
+    if(window.szUpdate) window.szUpdate(); }              /* semantinis sluoksnis */
 }
 /* perpiešia TIK linijas (greita, tempiant) */
 
@@ -4765,7 +4791,127 @@ document.getElementById('nCancel').onclick=()=>{
 
 /* pan + zoom */
 let scale=.8,tx=0,ty=0;
-function apply(){world.style.transform=`translate(${tx}px,${ty}px) scale(${scale})`; if(window.syncZoom) window.syncZoom();}
+function apply(){world.style.transform=`translate(${tx}px,${ty}px) scale(${scale})`; if(window.syncZoom) window.syncZoom(); if(window.szUpdate) window.szUpdate();}
+
+/* ══ SEMANTINIS ZŪMAS ═══════════════════════════════════════════════════
+   Detalumo lygis rišamas prie mastelio: vartotojas tiesiog artina, ir
+   kortelėje, į kurią artina, ima ryškėti jos tekstas iš įkelto šaltinio.
+   Nieko naujo nerodoma — tik tai, kas kortelėje jau įrašyta.
+     • veikia nuo SZ_ON (70%); tekstas atsiranda IŠ KARTO visas, bet
+       permatomas, ir iki SZ_FULL (135%) palaipsniui tampa ryškus;
+     • tekstą gauna TIK viena kortelė — arčiausia ekrano centro;
+     • išsiplėtusi kortelė piešiama atskirame sluoksnyje ekrano
+       koordinatėmis, todėl žemėlapio išdėstymas NEJUDA ir niekas nešokinėja;
+     • sluoksnis nepraleidžia pelės (`pointer-events:none`) — žemėlapis po juo
+       lieka visiškai valdomas. */
+const SZ_ON=0.70, SZ_FULL=1.35, SZ_MINW=520;
+let szOn=false, szCur=null, szDim=null, szCard=null, szFaded=null;
+/* Originali kortelė blėsta lygiai tiek, kiek ryškėja išplėstinė — antraip
+   po permatomu sluoksniu prasišviečia jos pačios antraštė ir tekstai
+   persikloja. */
+function szFade(el){
+  if(szFaded && szFaded!==el){ szFaded.style.opacity=''; szFaded=null; }
+  if(!el) return;
+  szFaded=el; el.style.opacity='0';     /* dengiama tiksliai tokiu pat sluoksniu */
+}
+function szUnfade(){ if(szFaded){ szFaded.style.opacity=''; szFaded=null; } }
+try{ szOn = localStorage.getItem('mm_semzoom')==='1'; }catch(e){}
+
+/* Tik šaltinio tekstas: išmetam savo tarnybines eilutes. */
+function szText(n){
+  if(!n||!n.note) return '';
+  const d=document.createElement('div'); d.innerHTML=n.note;
+  d.querySelectorAll('.src,.addMark,.relBox,.szSkip').forEach(e=>e.remove());
+  Array.prototype.slice.call(d.children).forEach(e=>{
+    const t=(e.textContent||'').trim();
+    if(!t || t.charAt(0)==='\u21b3') e.remove();      /* „↳ …" — sąsajų eilutės */
+  });
+  return d.innerHTML.trim();
+}
+function szDrop(){ szFaded=null; }   /* po render() senos kortelės nebėra */
+function szEls(){
+  if(!szDim){ szDim=document.createElement('div'); szDim.id='szDim'; document.body.appendChild(szDim); }
+  if(!szCard){ szCard=document.createElement('div'); szCard.id='szCard'; document.body.appendChild(szCard); }
+}
+function szHide(){ if(szDim) szDim.style.opacity='0';
+  if(szCard){ szCard.style.opacity='0'; szCard.style.pointerEvents='none'; }
+  szUnfade(); szCur=null; }
+
+/* Kortelė, į kurią vartotojas artina = arčiausia ekrano centro. */
+function szPick(){
+  const cx=innerWidth/2, cy=(innerHeight+66)/2;
+  const lim=Math.min(innerWidth,innerHeight)*0.42;
+  let best=null, bd=1e9;
+  document.querySelectorAll('#world .node').forEach(el=>{
+    const n=OBJ[el.dataset.id]; if(!n) return;
+    const p=pos[n.id]; if(!p) return;
+    const sx=p.x*scale+tx, sy=p.y*scale+ty;
+    const d=Math.hypot(sx-cx, sy-cy);
+    if(d<bd){ bd=d; best={n, el, sx, sy}; }
+  });
+  return (best && bd<=lim) ? best : null;
+}
+window.szUpdate=function(){
+  if(!szOn || scale<SZ_ON){ szHide(); return; }
+  const t=szPick();
+  if(!t){ szHide(); return; }
+  const body=szText(t.n);
+  if(!body){ szHide(); return; }
+  szEls();
+  const k=Math.max(0, Math.min(1, (scale-SZ_ON)/(SZ_FULL-SZ_ON)));
+  /* Kortelė lieka vientisa (jos antraštė — toje pačioje vietoje), o
+     PERMATOMAS yra tik šaltinio tekstas: nuo 70% jis jau visas, tik vos
+     matomas, ir artinant palaipsniui tampa ryškus. */
+  const op=0.12+0.88*k;
+  if(szCur!==t.n.id){
+    szCur=t.n.id;
+    const cs=getComputedStyle(t.el);
+    szCard.style.background=cs.backgroundColor;
+    szCard.style.color=cs.color;
+    szCard.style.borderColor=cs.borderColor;
+    szCard.innerHTML='<div class="szT"></div><div class="szB"></div>';
+    szCard.querySelector('.szT').textContent=t.n.label||'';
+    szCard.querySelector('.szB').innerHTML=body;
+  }
+  const cs2=getComputedStyle(t.el);
+  const w=Math.max(SZ_MINW, t.el.offsetWidth||420);
+  szCard.style.width=w+'px';
+  szCard.style.padding=cs2.padding;
+  szCard.style.borderRadius=cs2.borderRadius;
+  szCard.style.borderWidth=cs2.borderWidth;
+  szCard.style.fontSize=cs2.fontSize;
+  szCard.style.fontWeight=cs2.fontWeight;
+  /* viršus lygiuojamas su kortelės viršumi — antraštė lieka toje pačioje vietoje */
+  const top=t.sy-(t.el.offsetHeight||60)/2*scale;
+  szCard.style.left=t.sx+'px'; szCard.style.top=top+'px';
+  szCard.style.transform='translate(-50%,0) scale('+scale+')';
+  szCard.style.opacity='1';
+  szCard.querySelector('.szB').style.opacity=op.toFixed(3);
+  szDim.style.setProperty('--szx', Math.round(t.sx)+'px');
+  szDim.style.setProperty('--szy', Math.round(t.sy)+'px');
+  szDim.style.opacity=(0.85*k).toFixed(3);
+  szFade(t.el);
+};
+function szSync(){
+  const b=document.getElementById('szBtn'); if(!b) return;
+  b.classList.toggle('szOn', szOn);
+  b.setAttribute('aria-pressed', szOn?'true':'false');
+  b.title = szOn ? 'Semantinis zūmas įjungtas — artinant kortelėje ryškėja jos tekstas. Spustelėk, kad išjungtum'
+                 : 'Semantinis zūmas — artinant kortelėje ima ryškėti jos tekstas iš šaltinio';
+}
+function szToggle(){
+  szOn=!szOn;
+  try{ localStorage.setItem('mm_semzoom', szOn?'1':'0'); }catch(e){}
+  if(szOn) szEls();                 /* sukuriam iš karto — be pirmo kadro mirktelėjimo */
+  szSync(); szCur=null; window.szUpdate();
+  try{ showToast(szOn ? 'Semantinis zūmas įjungtas — artink, ir kortelėje ryškės jos tekstas'
+                      : 'Semantinis zūmas išjungtas'); }catch(e){}
+}
+document.addEventListener('DOMContentLoaded',function(){
+  const b=document.getElementById('szBtn');
+  if(b) b.addEventListener('click',e=>{ e.stopPropagation(); szToggle(); });
+  szSync();
+});
 function center(){
   const ks=Object.keys(pos);
   if(!ks.length){ scale=.48; tx=innerWidth/2-CX*scale; ty=innerHeight/2-CY*scale; apply(); return; }
