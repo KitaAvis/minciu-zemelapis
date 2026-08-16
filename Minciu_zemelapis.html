@@ -1860,11 +1860,11 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
   /* ══ KORTELĖS LENTELĖ ═══════════════════════════════════════════════
      Paspaudus kortelę atsiveria jos turinys — tas pats tekstas, kuris
      kortelėje jau yra iš įkelto šaltinio. */
-  #cpDim{position:fixed;inset:0;z-index:24;opacity:0;pointer-events:none;
+  #cpDim{position:fixed;inset:0;z-index:24;opacity:0;pointer-events:none !important;
     background:radial-gradient(ellipse at var(--cpx,50%) var(--cpy,50%),
       rgba(8,12,20,0) 6%, rgba(8,12,20,.42) 40%, rgba(8,12,20,.62) 100%);
     transition:opacity .22s ease}
-  #cpDim.on{opacity:1;pointer-events:auto}
+  #cpDim.on{opacity:1}          /* tik vaizdinis — pelės NEGAUDO, kad veiktų mastelis */
   #cpBox{position:fixed;z-index:25;opacity:0;pointer-events:none;
     transform:translate(-50%,0) scale(.965);transform-origin:50% 0;
     border-radius:var(--cardRadius,14px);border:2.5px solid transparent;
@@ -4828,10 +4828,12 @@ function cpText(n){
 }
 function cpEls(){
   if(!cpDim){ cpDim=document.createElement('div'); cpDim.id='cpDim';
-    cpDim.addEventListener('pointerdown',e=>{ e.stopPropagation(); cpClose(); });
     document.body.appendChild(cpDim); }
   if(!cpBox){ cpBox=document.createElement('div'); cpBox.id='cpBox';
     cpBox.addEventListener('pointerdown',e=>e.stopPropagation());
+    /* Ant kortelės informacijos naršyklės meniu nerodomas — matosi tik pati
+       informacija. Tuščioje vietoje naršyklės meniu lieka kaip buvęs. */
+    cpBox.addEventListener('contextmenu',e=>{ e.preventDefault(); e.stopPropagation(); });
     document.body.appendChild(cpBox); }
 }
 function cpClose(){
@@ -4888,6 +4890,19 @@ function cpTap(n, e){
   cpOpen(n);
 }
 addEventListener('keydown',e=>{ if(e.key==='Escape' && cpId) cpClose(); });
+/* Lentelė užsidaro paspaudus ŠALIA — bet ne tempiant žemėlapį ir ne keičiant
+   mastelio (ratukas nesukelia paspaudimo, o suspaudimas dviem pirštais
+   atpažįstamas iš mmPinch ir iš nueito atstumo). */
+let cpDX=0, cpDY=0;
+addEventListener('pointerdown',e=>{ cpDX=e.clientX; cpDY=e.clientY; },true);
+addEventListener('pointerup',e=>{
+  if(!cpId || window.mmPinch) return;
+  const t=e.target;
+  if(t && t.closest && (t.closest('#cpBox')||t.closest('.node')||t.closest('#bar')
+      ||t.closest('#notes')||t.closest('.themeMenu')||t.closest('.tbMenu'))) return;
+  if(Math.abs(e.clientX-cpDX)>5 || Math.abs(e.clientY-cpDY)>5) return;   /* buvo tempimas */
+  cpClose();
+},true);
 
 function center(){
   const ks=Object.keys(pos);
