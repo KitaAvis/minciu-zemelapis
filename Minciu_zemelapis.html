@@ -8035,10 +8035,25 @@ window.mmExportMd=mmExportMd;
    todėl lietuviška diakritika išlieka. Skenuotas PDF be teksto sluoksnio
    atpažįstamas ir apie tai pasakoma aiškiai. */
 async function mmInflate(u8){
+  /* PDF srautuose po zlib pabaigos dažnai lieka \r\n — griežtas
+     DecompressionStream dėl to meta klaidą JAU IŠDAVĘS visą turinį.
+     Skaitome gabalais ir, jei klaida įvyksta gavus duomenų, juos grąžinam. */
+  let end=u8.length;
+  while(end>0 && (u8[end-1]===13||u8[end-1]===10||u8[end-1]===32||u8[end-1]===9)) end--;
+  const trimmed=u8.subarray(0,end);
   for(const f of ['deflate','deflate-raw']){
     try{
-      const st=new Blob([u8]).stream().pipeThrough(new DecompressionStream(f));
-      return new Uint8Array(await new Response(st).arrayBuffer());
+      const ds=new DecompressionStream(f);
+      const wr=ds.writable.getWriter();
+      wr.write(trimmed).catch(()=>{}); wr.close().catch(()=>{});
+      const rd=ds.readable.getReader();
+      const chunks=[]; let total=0;
+      try{
+        for(;;){ const r=await rd.read(); if(r.done) break;
+          chunks.push(r.value); total+=r.value.length; }
+      }catch(e){ /* liekanos už galo — turinys jau mūsų rankose */ }
+      if(total){ const out=new Uint8Array(total); let o=0;
+        chunks.forEach(c=>{ out.set(c,o); o+=c.length; }); return out; }
     }catch(e){}
   }
   return null;
@@ -8154,10 +8169,15 @@ async function mmPdfText(buf){
     let rd='';
     const rm=/\/Resources\s+(\d+)\s+\d+\s+R/.exec(d);
     if(rm && objs[+rm[1]]) rd=objs[+rm[1]].dict; else rd=d;
-    const fi=rd.indexOf('/Font'); if(fi<0) return {};
-    const sub=rd.slice(fi, fi+1600), fonts={};
+    /* /Font gali būti ir netiesioginis objektas (/Font 196 0 R) — tada
+       vardų žodynas guli atskirame objekte */
+    let fsec='';
+    const fref=/\/Font\s+(\d+)\s+\d+\s+R/.exec(rd);
+    if(fref && objs[+fref[1]]) fsec=objs[+fref[1]].dict;
+    else{ const fi=rd.indexOf('/Font'); fsec = fi>=0 ? rd.slice(fi, fi+2000) : ''; }
+    const fonts={};
     let x; const fm=/\/([A-Za-z][\w.]*)\s+(\d+)\s+\d+\s+R/g;
-    while((x=fm.exec(sub))) fonts[x[1]]=+x[2];
+    while((x=fm.exec(fsec))) fonts[x[1]]=+x[2];
     return fonts;
   }
   const decodeStr=(s,map)=>{
@@ -8257,7 +8277,7 @@ async function mmPdfText(buf){
   /* eilutės → pastraipos (su kėlimo brūkšnio suliejimu) */
   const paras=[]; let cur='', curPage=1;
   pageParas.forEach(pg=>{ pg.lines.forEach(t=>{
-    t=t.normalize('NFC').replace(/\u00AD/g,'');
+    t=t.normalize('NFC');
     if(!cur){ cur=t; curPage=pg.page; return; }
     if(/[-‐]$/.test(cur)) cur=cur.replace(/[-‐]$/,'')+t;
     else if(/[.!?…:]["'”“)\]]?$/.test(cur) && /^[A-ZĄČĘĖĮŠŲŪŽ0-9„"]/.test(t)){
@@ -8265,10 +8285,28 @@ async function mmPdfText(buf){
     else cur+=' '+t;
   }); });
   if(cur) paras.push({p:cur, page:curPage});
-  const text=paras.map(o=>o.p).join('\n\n');
+  let text=paras.map(o=>o.p).join('\n\n');
+  text=mmFixLtPdf(text);
   if(text.replace(/\s+/g,'').length<40)
     throw new Error('teksto sluoksnio nėra — tai greičiausiai skenuotas PDF (nuotraukos)');
   return {text:text, paras:paras.length, pages:pageParas.length};
+}
+/* Kai kurių leidyklų PDF šriftai lietuvišką diakritiką laiko atskirais
+   ženklais (ˇ + Z = Ž) arba užgrobtais kodais (§ = ą). Atpažįstam pagal
+   akcentų buvimą ir sudedam atgal; kitiems PDF — tik minkštojo brūkšnio
+   (soft hyphen) valymas. */
+function mmFixLtPdf(text){
+  const gated=/[\u02C7\u02D9\u02DB]|\u00AF\s*[uU]/.test(text);
+  if(!gated) return text.replace(/\u00AD/g,'');
+  const P=[[/\s*\u02C7\s*z/g,'ž'],[/\s*\u02C7\s*Z/g,'Ž'],[/\s*\u02C7\s*c/g,'č'],[/\s*\u02C7\s*C/g,'Č'],
+    [/\s*\u02C7\s*s/g,'š'],[/\s*\u02C7\s*S/g,'Š'],
+    [/\s*\u02D9\s*e/g,'ė'],[/\s*\u02D9\s*E/g,'Ė'],
+    [/\s*[\u00AF\u02C9]\s*u/g,'ū'],[/\s*[\u00AF\u02C9]\s*U/g,'Ū'],
+    [/\s*\u02DB\s*a/g,'ą'],[/\s*\u02DB\s*A/g,'Ą'],[/\s*\u02DB\s*e/g,'ę'],[/\s*\u02DB\s*E/g,'Ę'],
+    [/\s*\u02DB\s*i/g,'į'],[/\s*\u02DB\s*I/g,'Į'],[/\s*\u02DB\s*u/g,'ų'],[/\s*\u02DB\s*U/g,'Ų'],
+    [/\u00A7/g,'ą'],[/\u00A9/g,'ę'],[/\u00AB/g,'į'],[/\u00AD/g,'ų']];
+  P.forEach(p=>{ text=text.replace(p[0],p[1]); });
+  return text.normalize('NFC');
 }
 async function mmExtractDoc(file){
   const buf=await file.arrayBuffer();
