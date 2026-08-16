@@ -825,6 +825,7 @@
   .optCard{position:relative;display:flex;flex-direction:column;align-items:stretch;gap:0;padding:0;width:112px;
     border-radius:11px;overflow:hidden;background:#f7f9fc;border:1px solid #e6e9ef;cursor:pointer;font-family:inherit}
   .optCard .pv{width:100%;height:78px;display:block;background:#fff}
+  .gam .pv{background:#fbfcfe;border-bottom:1px solid #eef1f5}
   .optCard .cap{padding:6px 5px 8px;font-size:11.5px;font-weight:700;line-height:1.25;text-align:center;color:#1b2333}
   .optCard:hover{border-color:#c3ccd8}
   .optCard.active{background:#eef3fb;box-shadow:inset 0 0 0 2px #2B2D6E;border-color:transparent}
@@ -832,8 +833,6 @@
     color:#4a5364;font-size:11px;line-height:1;padding:4px 5px;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.18)}
   .optGear:hover{background:#FFD34D;color:#2a2205}
   .gridNote{width:100%;font-size:11px;color:#8a93a3;padding:1px 3px 0}
-  .gamaSw{display:flex;width:100%;height:100%}
-  .gamaSw i{flex:1}
   .stPip{display:inline-flex;align-items:center;justify-content:center;width:1.15em;height:1.15em;margin-right:.5em;
     border-radius:50%;font-size:.72em;line-height:1;cursor:pointer;flex:none;
     background:rgba(255,255,255,.16);box-shadow:inset 0 0 0 1.5px currentColor;transition:transform .16s}
@@ -2217,12 +2216,12 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
       <span>Spalvų gama</span>
     </button>
     <div class="themeMenu gridMenu" id="gamaMenu">
-      <button class="themeOpt optCard gam" data-g="tema"><span class="pv"><span class="gamaSw"><i style="background:#2B2D6E"></i><i style="background:#E8615D"></i><i style="background:#2E9E8F"></i><i style="background:#E8A33D"></i><i style="background:#7E57C2"></i></span></span><span class="cap">Kaip temoje</span></button>
-      <button class="themeOpt optCard gam" data-g="cat"><span class="pv"><span class="gamaSw"><i style="background:#0072B2"></i><i style="background:#D55E00"></i><i style="background:#009E73"></i><i style="background:#CC79A7"></i><i style="background:#E69F00"></i><i style="background:#56B4E9"></i></span></span><span class="cap">Kategorinė</span></button>
-      <button class="themeOpt optCard gam" data-g="depth"><span class="pv"><span class="gamaSw"><i style="background:#12325F"></i><i style="background:#1F4E86"></i><i style="background:#3D74AC"></i><i style="background:#7CA4CC"></i><i style="background:#BBD2E6"></i></span></span><span class="cap">Gylio</span></button>
-      <button class="themeOpt optCard gam" data-g="polar"><span class="pv"><span class="gamaSw"><i style="background:#B2182B"></i><i style="background:#F4A582"></i><i style="background:#9A9A9A"></i><i style="background:#92C5DE"></i><i style="background:#2166AC"></i></span></span><span class="cap">Poliarinė</span></button>
-      <button class="themeOpt optCard gam" data-g="status"><span class="pv"><span class="gamaSw"><i style="background:#8C93A1"></i><i style="background:#E0A22B"></i><i style="background:#2E9E68"></i></span></span><span class="cap">Žinojimo statuso</span></button>
-      <button class="themeOpt optCard gam" data-g="min"><span class="pv"><span class="gamaSw"><i style="background:#1B2333"></i><i style="background:#6E747F"></i><i style="background:#B9BEC6"></i><i style="background:#E4E7EB"></i><i style="background:#C05A2B"></i></span></span><span class="cap">Minimali</span></button>
+      <button class="themeOpt optCard gam" data-g="tema"><svg class="pv" viewBox="0 0 112 78" preserveAspectRatio="xMidYMid meet"><path d="M27 38.5H32.5V14H38" fill="none" stroke="#8E9BAE" stroke-width="2" stroke-linejoin="round"/><path d="M61 14H65.5V9.5H70" fill="none" stroke="#c3ccd8" stroke-width="1.5" stroke-linejoin="round"/><path d="M61 14H65.5V22.5H70" fill="none" stroke="#c3ccd8" stroke-width="1.5" stroke-linejoin="round"/><path d="M27 38.5H32.5V38H38" fill="none" stroke="#8E9BAE" stroke-width="2" stroke-linejoin="round"/><path d="M61 38H65.5V33.5H70" fill="none" stroke="#c3ccd8" stroke-width="1.5" stroke-linejoin="round"/><path d="M61 38H65.5V46.5H70" fill="none" stroke="#c3ccd8" stroke-width="1.5" stroke-linejoin="round"/><path d="M27 38.5H32.5V62H38" fill="none" stroke="#8E9BAE" stroke-width="2" stroke-linejoin="round"/><path d="M61 62H65.5V57.5H70" fill="none" stroke="#c3ccd8" stroke-width="1.5" stroke-linejoin="round"/><path d="M61 62H65.5V70.5H70" fill="none" stroke="#c3ccd8" stroke-width="1.5" stroke-linejoin="round"/><rect x="38" y="7" width="23" height="14" rx="4" fill="#6C7A89"/><rect x="70" y="4" width="28" height="11" rx="3" fill="#E8615D"/><rect x="70" y="17" width="28" height="11" rx="3" fill="#E8615D"/><rect x="38" y="31" width="23" height="14" rx="4" fill="#6C7A89"/><rect x="70" y="28" width="28" height="11" rx="3" fill="#2E9E8F"/><rect x="70" y="41" width="28" height="11" rx="3" fill="#2E9E8F"/><rect x="38" y="55" width="23" height="14" rx="4" fill="#6C7A89"/><rect x="70" y="52" width="28" height="11" rx="3" fill="#E8A33D"/><rect x="70" y="65" width="28" height="11" rx="3" fill="#E8A33D"/><rect x="3" y="30" width="24" height="17" rx="5" fill="#2B2D6E"/></svg><span class="cap">Kaip temoje</span></button>
+      <button class="themeOpt optCard gam" data-g="cat"><svg class="pv" viewBox="0 0 112 78" preserveAspectRatio="xMidYMid meet"><path d="M27 38.5H32.5V14H38" fill="none" stroke="#0072B2" stroke-width="2" stroke-linejoin="round"/><path d="M61 14H65.5V9.5H70" fill="none" stroke="#5ca5ce" stroke-width="1.5" stroke-linejoin="round"/><path d="M61 14H65.5V22.5H70" fill="none" stroke="#5ca5ce" stroke-width="1.5" stroke-linejoin="round"/><path d="M27 38.5H32.5V38H38" fill="none" stroke="#0072B2" stroke-width="2" stroke-linejoin="round" stroke-dasharray="5 3"/><path d="M61 38H65.5V33.5H70" fill="none" stroke="#5ca5ce" stroke-width="1.5" stroke-linejoin="round" stroke-dasharray="5 3"/><path d="M61 38H65.5V46.5H70" fill="none" stroke="#5ca5ce" stroke-width="1.5" stroke-linejoin="round" stroke-dasharray="5 3"/><path d="M27 38.5H32.5V62H38" fill="none" stroke="#0072B2" stroke-width="2" stroke-linejoin="round" stroke-dasharray="1.5 3"/><path d="M61 62H65.5V57.5H70" fill="none" stroke="#5ca5ce" stroke-width="1.5" stroke-linejoin="round" stroke-dasharray="1.5 3"/><path d="M61 62H65.5V70.5H70" fill="none" stroke="#5ca5ce" stroke-width="1.5" stroke-linejoin="round" stroke-dasharray="1.5 3"/><rect x="38" y="7" width="23" height="14" rx="4" fill="#0072B2"/><rect x="70" y="4" width="28" height="11" rx="3" fill="#5ca5ce"/><rect x="70" y="17" width="28" height="11" rx="3" fill="#5ca5ce"/><rect x="38" y="31" width="23" height="14" rx="4" fill="#D55E00"/><rect x="70" y="28" width="28" height="11" rx="3" fill="#e4985c"/><rect x="70" y="41" width="28" height="11" rx="3" fill="#e4985c"/><rect x="38" y="55" width="23" height="14" rx="4" fill="#009E73"/><rect x="70" y="52" width="28" height="11" rx="3" fill="#5cc1a5"/><rect x="70" y="65" width="28" height="11" rx="3" fill="#5cc1a5"/><rect x="3" y="30" width="24" height="17" rx="5" fill="#2B2D6E"/></svg><span class="cap">Kategorinė</span></button>
+      <button class="themeOpt optCard gam" data-g="depth"><svg class="pv" viewBox="0 0 112 78" preserveAspectRatio="xMidYMid meet"><path d="M27 38.5H32.5V14H38" fill="none" stroke="#1f4e86" stroke-width="3" stroke-linejoin="round"/><path d="M61 14H65.5V9.5H70" fill="none" stroke="#7491b4" stroke-width="1.6" stroke-linejoin="round"/><path d="M61 14H65.5V22.5H70" fill="none" stroke="#7491b4" stroke-width="1.6" stroke-linejoin="round"/><path d="M27 38.5H32.5V38H38" fill="none" stroke="#1f4e86" stroke-width="3" stroke-linejoin="round"/><path d="M61 38H65.5V33.5H70" fill="none" stroke="#7491b4" stroke-width="1.6" stroke-linejoin="round"/><path d="M61 38H65.5V46.5H70" fill="none" stroke="#7491b4" stroke-width="1.6" stroke-linejoin="round"/><path d="M27 38.5H32.5V62H38" fill="none" stroke="#1f4e86" stroke-width="3" stroke-linejoin="round"/><path d="M61 62H65.5V57.5H70" fill="none" stroke="#7491b4" stroke-width="1.6" stroke-linejoin="round"/><path d="M61 62H65.5V70.5H70" fill="none" stroke="#7491b4" stroke-width="1.6" stroke-linejoin="round"/><rect x="38" y="7" width="23" height="14" rx="4" fill="#1f4e86"/><rect x="70" y="4" width="28" height="11" rx="3" fill="#4a709d"/><rect x="70" y="17" width="28" height="11" rx="3" fill="#4a709d"/><rect x="38" y="31" width="23" height="14" rx="4" fill="#1f4e86"/><rect x="70" y="28" width="28" height="11" rx="3" fill="#4a709d"/><rect x="70" y="41" width="28" height="11" rx="3" fill="#4a709d"/><rect x="38" y="55" width="23" height="14" rx="4" fill="#1f4e86"/><rect x="70" y="52" width="28" height="11" rx="3" fill="#4a709d"/><rect x="70" y="65" width="28" height="11" rx="3" fill="#4a709d"/><rect x="3" y="30" width="24" height="17" rx="5" fill="#183962"/></svg><span class="cap">Gylio</span></button>
+      
+      
+      
       <span class="gridNote">Spalva niekada nėra vienintelis kodas — kartu keičiasi ir linijų stilius. Strukturą ir gamą renkiesi atskirai.</span>
       <span id="gamaStat"></span>
     </div>
@@ -5109,13 +5108,11 @@ function updateThemeUI(id){
 /* ===== SPALVŲ GAMOS (spalva = atskiras pasirinkimas nuo struktūros) =====
    Kiekvienoje gamoje spalva NIEKADA nėra vienintelis kodas — kartu keičiasi linijos
    stilius ar storis, todėl žemėlapis skaitomas ir daltonizmui, ir nespalvotai. */
-const GAMA_IDS=['tema','cat','depth','polar','status','min'];
-const GAMA_NAMES={tema:'Kaip temoje',cat:'Kategorinė',depth:'Gylio',polar:'Poliarinė',status:'Žinojimo statuso',min:'Minimali'};
+const GAMA_IDS=['tema','cat','depth'];
+const GAMA_NAMES={tema:'Kaip temoje',cat:'Kategorinė',depth:'Gylio'};
+/* Trumpas paaiškinimas po miniatiūromis — ką gama daro su spalvomis. */
+const GAMA_HINT={tema:'Kiekviena kortelė laiko savo tipo spalvą — taip, kaip nustatyta temoje.',cat:'Kiekviena šaka gauna savo spalvą; jos kortelės — tos pačios spalvos šeimos.',depth:'Viena spalva visam žemėlapiui: kuo giliau kortelė, tuo šviesesnė ir plonesnė linija.'};
 const OKABE=['#0072B2','#D55E00','#009E73','#CC79A7','#E69F00','#56B4E9','#8B6F00','#6A4C93'];
-const DIVERG=['#B2182B','#D6604D','#F4A582','#9A9A9A','#92C5DE','#4393C3','#2166AC'];
-const STATUS_C={0:'#8C93A1',1:'#E0A22B',2:'#2E9E68'};
-const STATUS_GL={0:'○',1:'◐',2:'●'};
-const STATUS_T={0:'nežinau',1:'mokausi',2:'moku'};
 let curGama='tema', GC={};
 try{ const g=localStorage.getItem('mm_gama'); if(g&&GAMA_IDS.indexOf(g)>=0) curGama=g; }catch(e){}
 function isDarkTheme(){ return curTheme==='cosmos'||curTheme==='street'; }
@@ -5161,24 +5158,11 @@ function computeGama(){
     } else if(curGama==='depth'){
       base=dark?'#4FD8F5':'#1F4E86';
       lw=Math.max(1.3, 3.6-d*0.6);
-    } else if(curGama==='polar'){
-      base=isRoot?'#7A8494':DIVERG[Math.round((ix/mm)*(DIVERG.length-1))];
-      const t=ix/mm; dash = t<0.4 ? null : (t>0.6 ? '10 7' : '3 7');
-    } else if(curGama==='status'){
-      const st=n.st|0;
-      base=isRoot?'#6C7688':STATUS_C[st];
-      dash = st===0 ? '3 8' : (st===1 ? '12 7' : null);
-    } else {
-      base=isRoot?(dark?'#E9F1F8':'#1B2333'):(d===1?(dark?'#FFB65C':'#C05A2B'):'#878D97');
-      lw = d===1 ? 2.6 : 1.5;
     }
     if(curGama==='depth'){
       const t=Math.min(0.74, (d-1)*0.19);
       bg = isRoot ? (dark?mix(base,'#03151C',0.35):mix(base,'#0A1220',0.35))
                   : (dark ? mix(base,'#F2F8FF',t) : mix(base,'#FFFFFF',t));
-    } else if(curGama==='min' && d>1){
-      bg = dark ? mix(base,'#0B1016',Math.min(0.62,0.3+(d-2)*0.12))
-                : mix(base,'#FFFFFF',Math.min(0.7,0.42+(d-2)*0.12));
     } else {
       bg = d<=1 ? base : mix(base, dark?'#0B1016':'#FFFFFF', Math.min(0.6, 0.2+(d-1)*0.16));
     }
@@ -5186,9 +5170,6 @@ function computeGama(){
     const ink = pickInk(bg, base);
     GC[id]={bg, ink, edge:(d<=1?base:mix(base, dark?'#0B1016':'#3A4250', 0.2)), dash, lw};
   }
-}
-function gamaCounts(){
-  const c=[0,0,0]; for(const id in OBJ){ if(id===DATA.id) continue; c[OBJ[id].st|0]++; } return c;
 }
 function applyGama(){
   document.querySelectorAll('.stPip').forEach(p=>p.remove());
@@ -5199,16 +5180,6 @@ function applyGama(){
     if(g && !n.customColor){
       el.style.background=g.bg; el.style.color=g.ink;
       el.style.borderColor = lumOf(g.bg)>152 ? 'rgba(10,16,24,.5)' : 'rgba(255,255,255,.32)';
-    }
-    if(curGama==='status' && n.id!==DATA.id){
-      const st=n.st|0;
-      const pip=document.createElement('span');
-      pip.className='stPip'; pip.textContent=STATUS_GL[st];
-      pip.title='Žinojimo statusas: '+STATUS_T[st]+' — spustelk, kad pakeistum';
-      pip.addEventListener('pointerdown',ev=>ev.stopPropagation());
-      pip.addEventListener('pointerup',ev=>ev.stopPropagation());
-      pip.addEventListener('click',ev=>{ ev.stopPropagation(); pushUndo(); n.st=((n.st|0)+1)%3; render(); });
-      el.insertBefore(pip, el.firstChild);
     }
   });
 }
@@ -5221,9 +5192,7 @@ function edgeWidth(n,base){ const g=GC[n.id]; return (g&&g.lw)||base; }
 function updateGamaUI(id){
   document.querySelectorAll('#gamaMenu .themeOpt').forEach(o=>o.classList.toggle('active',o.dataset.g===id));
   const st=document.getElementById('gamaStat');
-  if(st){ if(id==='status'){ const c=gamaCounts();
-      st.textContent='Moku '+c[2]+' · Mokausi '+c[1]+' · Nežinau '+c[0]+' — spustelk kortelės ženklą.'; }
-    else st.textContent=''; }
+  if(st) st.textContent=GAMA_HINT[id]||'';
 }
 function applyGamaSel(id){
   curGama=id; try{ localStorage.setItem('mm_gama',id); }catch(e){}
