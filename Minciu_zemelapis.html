@@ -1866,11 +1866,21 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
     transition:opacity .22s ease}
   #cpDim.on{opacity:1}          /* tik vaizdinis — pelės NEGAUDO, kad veiktų mastelis */
   #cpBox{position:fixed;z-index:25;opacity:0;pointer-events:none;
-    transform:translate(-50%,0) scale(.965);transform-origin:50% 0;
+    transform-origin:50% 0;background-repeat:no-repeat;background-size:cover;
     border-radius:var(--cardRadius,14px);border:2.5px solid transparent;
     box-shadow:0 22px 54px rgba(10,18,32,.36);text-align:left;overflow:hidden;
-    transition:opacity .2s cubic-bezier(.2,.7,.3,1), transform .24s cubic-bezier(.2,.7,.3,1)}
-  #cpBox.on{opacity:1;pointer-events:auto;transform:translate(-50%,0) scale(1)}
+    transition:opacity .2s cubic-bezier(.2,.7,.3,1)}
+  #cpBox.on{opacity:1;pointer-events:auto}
+  /* Judesio perėjimas veikia TIK atsiveriant. Paliktas visam laikui jis
+     verstų mastelį vytis iš paskos — lentelė atrodytų drebanti. */
+  #cpBox.anim{transition:opacity .2s cubic-bezier(.2,.7,.3,1),
+    transform .24s cubic-bezier(.2,.7,.3,1)}
+  /* Kai pats žemėlapis slenka animuotai (pritaikius ekranui, išskleidus šaką),
+     lentelė turi slinkti TUO PAČIU tempu — antraip ji šokteli į galutinę vietą
+     ir atrodo, kad dreba. */
+  #cpBox.follow{transition:opacity .2s cubic-bezier(.2,.7,.3,1),
+    left .34s cubic-bezier(.4,0,.2,1), top .34s cubic-bezier(.4,0,.2,1),
+    transform .34s cubic-bezier(.4,0,.2,1)}
   #cpBox .cpT{font-weight:inherit;line-height:1.25;padding-right:1.7em}
   #cpBox .cpB{font-weight:500;line-height:1.5;margin-top:.62em;padding-top:.58em;
     border-top:1px solid rgba(128,128,128,.28);overflow-y:auto;overscroll-behavior:contain}
@@ -4273,7 +4283,7 @@ function render(){
   }
   // iki 4 perskaiciavimu: matmenys stabilizuojasi ir persidengimai isnyksta
   if(wChanged && _passes<4){ _passes++; render(); _passes--; }
-  if(!_passes && window.cpPos) window.cpPos();   /* lentelė lieka ant savo kortelės */
+  if(!_passes && cpId){ if(cpStyle()) window.cpPos(); }   /* lentelė lieka ant savo kortelės */
 }
 /* perpiešia TIK linijas (greita, tempiant) */
 
@@ -4837,30 +4847,61 @@ function cpEls(){
     document.body.appendChild(cpBox); }
 }
 function cpClose(){
-  if(cpBox) cpBox.classList.remove('on');
+  if(cpBox){ cpBox.classList.remove('on'); cpBox.classList.remove('anim'); }
   if(cpDim) cpDim.classList.remove('on');
-  cpId=null;
+  cpId=null; cpS=null;
 }
-window.cpPos=function(){
-  if(!cpId||!cpBox) return;
-  const el=document.querySelector('.node[data-id="'+cpId+'"]'), p=pos[cpId];
-  if(!el||!p){ cpClose(); return; }
-  const sx=p.x*scale+tx, sy=p.y*scale+ty;
+/* Pirmas spalvos tonas iš gradiento — vientisas pagrindas po juo.
+   Centrinės kortelės spalva gyvena BŪTENT gradiente, o backgroundColor
+   grąžina rgba(0,0,0,0); be šito lentelė lieka permatoma ir kortelės
+   užrašas prasišviečia pro tekstą. */
+function cpFirstColor(s){
+  const m=/rgba?\([^)]+\)|#[0-9a-fA-F]{3,8}/.exec(s||'');
+  return m ? m[0] : null;
+}
+function cpOpaque(c){
+  const m=/rgba\(([^)]+)\)/.exec(c||'');
+  if(!m) return true;
+  const p=m[1].split(',');
+  return p.length<4 || parseFloat(p[3])>0.98;
+}
+let cpS=null;   /* pastovūs matmenys — skaičiuojami atidarant, ne kas kadrą */
+function cpStyle(){
+  if(!cpId||!cpBox) return false;
+  const el=document.querySelector('.node[data-id="'+cpId+'"]');
+  if(!el){ cpClose(); return false; }
   const cs=getComputedStyle(el);
-  cpBox.style.width=Math.max(520, el.offsetWidth||420)+'px';
-  cpBox.style.padding=cs.padding;
-  cpBox.style.borderRadius=cs.borderRadius;
-  cpBox.style.borderWidth=cs.borderWidth;
-  cpBox.style.fontSize=cs.fontSize;
-  cpBox.style.fontWeight=cs.fontWeight;
-  cpBox.style.background=cs.backgroundColor;
+  const bgc=cs.backgroundColor, bgi=cs.backgroundImage;
+  cpBox.style.backgroundColor = cpOpaque(bgc) ? bgc : (cpFirstColor(bgi)||bgc);
+  cpBox.style.backgroundImage = (bgi && bgi!=='none') ? bgi : 'none';
   cpBox.style.color=cs.color;
   cpBox.style.borderColor=cs.borderColor;
-  cpBox.style.left=sx+'px';
-  cpBox.style.top=(sy-(el.offsetHeight||60)/2*scale)+'px';
-  cpBox.style.transform='translate(-50%,0) scale('+(cpBox.classList.contains('on')?scale:scale*0.965)+')';
+  cpBox.style.borderWidth=cs.borderWidth;
+  cpBox.style.padding=cs.padding;
+  /* apvali centrinė kortelė: procentinis apvalinimas lentelei netinka */
+  cpBox.style.borderRadius = /%/.test(cs.borderRadius) ? '18px' : cs.borderRadius;
+  cpBox.style.fontSize=cs.fontSize;
+  cpBox.style.fontWeight=cs.fontWeight;
+  cpBox.style.textAlign='left';
+  cpBox.style.width=Math.max(520, el.offsetWidth||420)+'px';
+  cpS={h: el.offsetHeight||60};
   const b=cpBox.querySelector('.cpB');
-  if(b) b.style.maxHeight=Math.round((innerHeight*0.62)/Math.max(0.2,scale))+'px';
+  if(b) b.style.maxHeight=Math.round(innerHeight*0.62/Math.max(0.2,scale))+'px';
+  return true;
+}
+/* Kas kadrą — TIK padėtis. Jokių getComputedStyle: kitaip kiekvienas ratuko
+   krustelėjimas verčia perskaičiuoti stilius ir judesys tampa trūkčiojantis. */
+window.cpPos=function(){
+  if(!cpId||!cpBox||!cpS) return;
+  const p=pos[cpId];
+  if(!p){ cpClose(); return; }
+  const sx=p.x*scale+tx, sy=p.y*scale+ty;
+  cpBox.style.left=sx+'px';
+  cpBox.style.top=(sy-cpS.h/2*scale)+'px';
+  cpBox.style.transform='translate(-50%,0) scale('+scale+')';
+  /* aukščio riba seka mastelį: kad ir kiek priartintum, lentelė telpa į ekraną */
+  const bb=cpBox.querySelector('.cpB');
+  if(bb) bb.style.maxHeight=Math.round(innerHeight*0.66/Math.max(0.08,scale))+'px';
   cpDim.style.setProperty('--cpx', Math.round(sx)+'px');
   cpDim.style.setProperty('--cpy', Math.round(sy)+'px');
 };
@@ -4874,10 +4915,18 @@ function cpOpen(n){
   cpBox.querySelector('.cpT').textContent=n.label||'';
   cpBox.querySelector('.cpB').innerHTML=body;
   cpBox.querySelector('#cpX').onclick=e=>{ e.stopPropagation(); cpClose(); };
-  window.cpPos();
+  if(!cpStyle()) return;
+  /* pradinė padėtis — truputį mažesnė, kad atsivertų sklandžiai */
+  const p0=pos[cpId];
+  cpBox.style.left=(p0.x*scale+tx)+'px';
+  cpBox.style.top=(p0.y*scale+ty-cpS.h/2*scale)+'px';
+  cpBox.style.transform='translate(-50%,0) scale('+(scale*0.965)+')';
   void cpBox.offsetHeight;          /* priverstinis perskaičiavimas — perėjimas suveikia iš karto */
+  cpBox.classList.add('anim');
   cpDim.classList.add('on'); cpBox.classList.add('on');
   window.cpPos();
+  clearTimeout(cpOpen._t);
+  cpOpen._t=setTimeout(()=>{ if(cpBox) cpBox.classList.remove('anim'); },280);
 }
 /* Pele — vienas paspaudimas, liečiant — du baksnojimai. */
 let cpTapT=0, cpTapId=null;
@@ -4940,15 +4989,23 @@ function fitAll(force){
   tx=padL+availW/2-(x0+x1)/2*scale;
   ty=padT+availH/2-(y0+y1)/2*scale;
   world.style.transition='transform .34s cubic-bezier(.4,0,.2,1)';
+  if(typeof cpId!=='undefined' && cpId && cpBox) cpBox.classList.add('follow');
   apply();
   clearTimeout(fitAll._t);
-  fitAll._t=setTimeout(()=>{ world.style.transition=''; },380);
+  fitAll._t=setTimeout(()=>{ world.style.transition='';
+    if(typeof cpBox!=='undefined' && cpBox) cpBox.classList.remove('follow'); },380);
+  if(!fitAll._te){ fitAll._te=1;
+    world.addEventListener('transitionend',()=>{ if(typeof cpBox!=='undefined'&&cpBox)
+      cpBox.classList.remove('follow'); }); }
 }
 let drag=false,sx=0,sy=0;
 stage.addEventListener('pointerdown',e=>{drag=true;sx=e.clientX-tx;sy=e.clientY-ty;stage.classList.add('grabbing');clearBranchSel();});
 addEventListener('pointermove',e=>{if(!drag||window.mmPinch)return;tx=e.clientX-sx;ty=e.clientY-sy;apply();});
 addEventListener('pointerup',()=>{drag=false;stage.classList.remove('grabbing');});
-stage.addEventListener('wheel',e=>{e.preventDefault();const r=stage.getBoundingClientRect();
+stage.addEventListener('wheel',e=>{e.preventDefault();
+  /* rankinis mastelis — lentelė turi sekti AKIMIRKSNIU, be jokio vijimosi */
+  if(typeof cpBox!=='undefined'&&cpBox){ cpBox.classList.remove('follow'); cpBox.classList.remove('anim'); }
+  const r=stage.getBoundingClientRect();
   const mx=e.clientX-r.left,my=e.clientY-r.top,wx=(mx-tx)/scale,wy=(my-ty)/scale;
   const ns=Math.min(2.2,Math.max(.01,scale*(e.deltaY<0?1.12:.89)));
   userZoomed=true;                 // vartotojas pats pasirinko mastelį → nebeperskaičiuojam automatiškai
@@ -4975,6 +5032,7 @@ document.addEventListener('pointermove',e=>{
   const d=Math.hypot(pts[0].x-pts[1].x,pts[0].y-pts[1].y)||1;
   const cx=(pts[0].x+pts[1].x)/2, cy=(pts[0].y+pts[1].y)/2;
   const ns=Math.min(2.2,Math.max(.05,pinch0.s*d/pinch0.d));
+  if(typeof cpBox!=='undefined'&&cpBox){ cpBox.classList.remove('follow'); cpBox.classList.remove('anim'); }
   const wx=(cx-tx)/scale, wy=(cy-ty)/scale;
   scale=ns; tx=cx-wx*scale; ty=cy-wy*scale;
   userZoomed=true; apply();
