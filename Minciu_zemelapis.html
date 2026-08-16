@@ -4249,12 +4249,13 @@ function render(){
         } else if(onNoteIco){
           openNote(n);              // pastabos ikonėlė → atidaro pastabą
         } else {
-          cpTap(n, e);              // kortelės kūnas → atveria kortelės lentelę
+          cpCardTap(n, kc, e);      // kairysis → įprastinis veiksmas (išskleisti / suskleisti)
         }
       }
     });
-    // dešinys paspaudimas → redaktorius
-    el.addEventListener('contextmenu',e=>{ e.preventDefault(); e.stopPropagation(); openEditor(n); });
+    /* dešinys paspaudimas → informacinė kortelės lentelė
+       (redaktorius lieka pasiekiamas ⚙ ženkliuku) */
+    el.addEventListener('contextmenu',e=>{ e.preventDefault(); e.stopPropagation(); cpOpen(n); });
 
     world.appendChild(el);
     if(!n._c&&n.children) n.children.forEach(draw);
@@ -4962,15 +4963,28 @@ function cpOpen(n){
   clearTimeout(cpOpen._t);
   cpOpen._t=setTimeout(()=>{ if(cpBox) cpBox.classList.remove('anim'); },280);
 }
-/* Pele — vienas paspaudimas, liečiant — du baksnojimai. */
-let cpTapT=0, cpTapId=null;
-function cpTap(n, e){
+/* KAIRYSIS paspaudimas — įprastinis kortelės veiksmas: su vaikais išskleidžia
+   arba suskleidžia, be vaikų — atidaro užrašinę. Informacinę lentelę atveria
+   DEŠINYSIS paspaudimas (o liečiamajame ekrane, kur jo nėra, — du baksnojimai).
+   Pirmas baksnojimas atidedamas 260 ms, kad nesuveiktų abu veiksmai iš karto. */
+let cpTapT=0, cpTapId=null, cpTapTimer=null;
+function cpStdAction(n, kc){
+  if(kc){ n._c=!n._c; render(); setTimeout(fitAll,60); }
+  else toggleNote(n);
+}
+function cpCardTap(n, kc, e){
   if(e && e.pointerType==='touch'){
     const now=(performance&&performance.now)?performance.now():0;
-    if(cpTapId===n.id && now-cpTapT<420){ cpTapT=0; cpTapId=null; cpOpen(n); return; }
-    cpTapT=now; cpTapId=n.id; return;
+    if(cpTapId===n.id && now-cpTapT<420){          /* antras baksnojimas → lentelė */
+      clearTimeout(cpTapTimer); cpTapTimer=null; cpTapT=0; cpTapId=null;
+      cpOpen(n); return;
+    }
+    cpTapT=now; cpTapId=n.id;
+    clearTimeout(cpTapTimer);
+    cpTapTimer=setTimeout(()=>{ cpTapTimer=null; cpStdAction(n,kc); },260);
+    return;
   }
-  cpOpen(n);
+  cpStdAction(n, kc);                              /* pele — iš karto */
 }
 addEventListener('keydown',e=>{ if(e.key==='Escape' && cpId) cpClose(); });
 /* Lentelė užsidaro paspaudus ŠALIA — bet ne tempiant žemėlapį ir ne keičiant
