@@ -1901,6 +1901,129 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
   .node .cnt{cursor:pointer;transition:transform .14s,background .14s}
   .node .cnt:hover{transform:scale(1.12)}
   @media (pointer:coarse){ .node .cnt{min-width:2.4em;height:2.4em} #cpX{width:2em;height:2em} }
+
+  /* ══ APRĖPTIS · PALYGINIMAS · KOMANDŲ JUOSTA ═════════════════════════ */
+  #covBar{position:fixed;top:64px;left:50%;transform:translate(-50%,-8px);z-index:26;
+    display:none;align-items:center;gap:9px;background:#fff;border:1px solid #dde3ea;
+    border-radius:11px;padding:7px 12px;font-size:13px;color:#42506a;
+    box-shadow:0 8px 26px rgba(20,30,55,.14);opacity:0;transition:opacity .25s,transform .25s}
+  #covBar.on{display:flex;opacity:1;transform:translate(-50%,0)}
+  #covBar b{color:#1F7F73;font-size:15px}
+  .covTrack{width:120px;height:6px;background:#e9edf3;border-radius:4px;overflow:hidden;flex:none}
+  .covTrack i{display:block;height:100%;background:linear-gradient(90deg,#2E9E8F,#5fc9b8)}
+  #covBar button{border:none;background:#eef1f6;color:#2B2D6E;border-radius:8px;padding:4px 10px;
+    cursor:pointer;font:inherit;font-size:12.5px;font-weight:700}
+  #covBar #covX{background:transparent;color:#8b97a8;padding:4px 6px}
+  #covPanel,#cmpPanel{position:fixed;top:64px;bottom:14px;right:14px;width:min(440px,92vw);
+    z-index:27;background:#fff;border:1px solid #dde3ea;border-radius:13px;display:none;
+    flex-direction:column;box-shadow:0 16px 44px rgba(20,30,55,.2);overflow:hidden}
+  #cmpPanel{left:14px;right:auto;width:min(460px,92vw)}
+  #covPanel.on,#cmpPanel.on{display:flex}
+  .covHead{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;
+    border-bottom:1px solid #e9edf3;font-size:14px;color:#1b2333}
+  .covHead button{border:none;background:transparent;font-size:15px;color:#8b97a8;cursor:pointer}
+  .covBody,.cmpBody{overflow-y:auto;padding:11px 14px;font-size:13px;line-height:1.55;
+    -webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+  .covRow{border-bottom:1px solid #eef1f5;padding:9px 0}
+  .covSrc{font-size:11px;color:#8b97a8;margin-bottom:3px}
+  .covSent{color:#2a3548;margin-bottom:6px}
+  .covAdd{border:none;background:#e8f4f1;color:#1F7F73;font:inherit;font-size:12px;font-weight:700;
+    border-radius:8px;padding:4px 10px;cursor:pointer}
+  .covAdd:hover{background:#d5ece7}
+  .covEmpty{color:#8b97a8;text-align:center;padding:20px 0}
+  .cmpSrcT{font-weight:800;font-size:12px;letter-spacing:.6px;text-transform:uppercase;
+    color:#5b6b80;margin:8px 0 6px}
+  .cmpBody p{margin:0 0 10px}
+  .cmpS{cursor:default}
+  .cmpS.ok,.cmpS.ap{cursor:pointer}
+  .cmpS.ok:hover,.cmpS.ap:hover{background:#eef4ff}
+  .cmpS.ap{text-decoration:underline dotted rgba(150,104,42,.6)}
+  .cmpS.dim{opacity:.38}
+  .cmpS.svc{opacity:.3;font-size:11.5px}
+  .cmpS.hl{background:#fff3cd;box-shadow:0 0 0 2px #f0d795;border-radius:3px}
+  #cpSrc{position:absolute;top:.5em;right:2.5em;width:1.55em;height:1.55em;display:flex;
+    align-items:center;justify-content:center;border:none;border-radius:50%;cursor:pointer;
+    font:inherit;font-size:.92em;line-height:1;color:inherit;background:rgba(128,128,128,.16)}
+  #cpSrc:hover{background:rgba(128,128,128,.3)}
+  #cmdPal{position:fixed;inset:0;z-index:40;display:none;background:rgba(10,16,26,.34);
+    -webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
+  #cmdPal.on{display:block}
+  #cmdBox{position:absolute;left:50%;top:16vh;transform:translateX(-50%);width:min(520px,92vw);
+    background:#fff;border-radius:14px;box-shadow:0 26px 70px rgba(10,18,32,.4);overflow:hidden}
+  #cmdInp{width:100%;border:none;outline:none;font:inherit;font-size:15.5px;padding:14px 16px;
+    border-bottom:1px solid #e9edf3;color:#1b2333;background:transparent}
+  #cmdList{max-height:46vh;overflow-y:auto;padding:6px}
+  .cmdIt{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 11px;
+    border-radius:9px;cursor:pointer;font-size:13.5px;color:#1b2333}
+  .cmdIt.on{background:#eef2fb}
+  .cmdG{font-size:11px;color:#8b97a8;white-space:nowrap}
+  .cmdNone{padding:14px;color:#8b97a8;font-size:13px;text-align:center}
+  @media (max-width:700px){
+    #covPanel,#cmpPanel{left:8px;right:8px;width:auto}
+    #covBar{width:calc(100vw - 20px);flex-wrap:wrap}
+  }
+  body[data-theme="cosmos"] #covBar, body[data-theme="cosmos"] #covPanel,
+  body[data-theme="cosmos"] #cmpPanel, body[data-theme="cosmos"] #cmdBox{
+    background:#101722;border-color:#263140;color:#c9d6e2}
+  body[data-theme="cosmos"] #cmdInp{color:#e8f1f8;border-color:#263140}
+  body[data-theme="cosmos"] .cmdIt{color:#dbe6f0}
+  body[data-theme="cosmos"] .cmdIt.on{background:#1b2635}
+  body[data-theme="cosmos"] .covSent{color:#c9d6e2}
+
+  /* ══ MOKYMASIS · PAVADINIMAI · PAIEŠKA VISUOSE ═══════════════════════ */
+  .node.mmHid{position:relative}
+  .node.mmHid > *{visibility:hidden}
+  .node.mmHid::after{content:attr(data-mico) "  · · ·";visibility:visible;position:absolute;
+    inset:0;display:flex;align-items:center;justify-content:center;
+    font-size:.95em;letter-spacing:2px;opacity:.55;cursor:pointer}
+  .node.mmHid{border-style:dashed !important}
+  #lrnPanel{position:fixed;top:64px;bottom:14px;right:14px;width:min(400px,92vw);
+    z-index:27;background:#fff;border:1px solid #dde3ea;border-radius:13px;display:none;
+    flex-direction:column;box-shadow:0 16px 44px rgba(20,30,55,.2);overflow:hidden}
+  #lrnPanel.on{display:flex}
+  .lrnTabs{display:flex;gap:4px;padding:8px 12px 0}
+  .lrnTab{flex:1;border:none;background:#eef1f6;color:#42506a;font:inherit;font-size:13px;
+    font-weight:700;border-radius:9px 9px 0 0;padding:8px;cursor:pointer}
+  .lrnTab.on{background:#2B2D6E;color:#fff}
+  .lrnSec{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#7a8798;
+    font-weight:700;margin:12px 0 6px}
+  .lrnRow{display:flex;flex-wrap:wrap;gap:6px}
+  .lrnChip{border:1px solid #dde3ea;background:#f7f9fc;color:#2a3548;font:inherit;font-size:12.5px;
+    font-weight:600;border-radius:9px;padding:6px 11px;cursor:pointer}
+  .lrnChip:hover{background:#eef2fb}
+  .lrnChip.act{background:#2B2D6E;border-color:#2B2D6E;color:#fff}
+  .lrnChip.ok{background:#e8f4f1;border-color:#8fcdc2;color:#1F7F73}
+  .lrnChip.no{background:#fdeceb;border-color:#eeb4b1;color:#b8433f}
+  .lrnMut{font-size:11.5px;color:#8b97a8;margin-top:12px;line-height:1.5}
+  .lrnBig{font-size:15.5px;font-weight:700;color:#1b2333;line-height:1.4;margin:4px 0 10px}
+  .lrnAns{border-top:1px solid #e9edf3;padding-top:8px;margin-bottom:10px}
+  .qzRow{margin-bottom:7px;font-size:13px}
+  .qzRow b{display:block;color:#1b2333}
+  .qzRow span{color:#5d6a7d;font-size:12px}
+  .tcDot{width:.62em;height:.62em;border-radius:50%;background:#E8A33D;margin-left:6px;
+    flex:none;cursor:pointer;box-shadow:0 0 0 2.5px rgba(232,163,61,.25);align-self:flex-start}
+  .tcOld{font-size:12.5px;color:#5d6a7d;margin-bottom:6px}
+  .tcKids{max-height:130px;overflow-y:auto;font-size:12px;color:#42506a;margin-bottom:8px}
+  .tcKid{margin-bottom:2px}
+  .tcItem{display:block;width:100%;text-align:left;border:1px solid #e2e7ef;background:#f9fafc;
+    font:inherit;font-size:13px;border-radius:8px;padding:7px 10px;margin-bottom:5px;cursor:pointer}
+  .tcItem:hover{background:#eef2fb}
+  .sScope{display:flex;gap:5px;margin:7px 0 2px}
+  .sScope button{flex:1;border:1px solid #dde3ea;background:#f7f9fc;color:#5d6a7d;font:inherit;
+    font-size:12px;font-weight:700;border-radius:8px;padding:5px;cursor:pointer}
+  .sScope button.on{background:#2B2D6E;border-color:#2B2D6E;color:#fff}
+  .sMapT{font-size:11px;font-weight:700;letter-spacing:.6px;color:#7a8798;margin:9px 2px 4px}
+  @media (max-width:700px){ #lrnPanel{left:8px;right:8px;width:auto} }
+  body[data-theme="cosmos"] #lrnPanel{background:#101722;border-color:#263140;color:#c9d6e2}
+  body[data-theme="cosmos"] .lrnChip{background:#17202e;border-color:#263140;color:#c9d6e2}
+  body[data-theme="cosmos"] .lrnBig{color:#e8f1f8}
+
+  /* ══ GRETINIMO ŽENKLIUKAI ═══════════════════════════════════════════ */
+  .node .cmpB{margin-left:6px;display:inline-flex;align-items:center;justify-content:center;
+    min-width:1.5em;height:1.5em;border-radius:7px;font-size:.82em;font-weight:800;flex:none}
+  .node .cmpB.cs{color:#1F7F73;background:rgba(46,158,143,.16)}
+  .node .cmpB.cp{color:#96682a;background:rgba(232,163,61,.18)}
+  .node .cmpB.cx{color:#b8433f;background:rgba(232,97,93,.18);box-shadow:inset 0 0 0 1.5px rgba(194,74,70,.5)}
 </style>
 </head>
 <body>
@@ -2167,6 +2290,7 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
         <button class="tbItem" data-a="rels">Sąsajų sąrašas…</button>
         <button class="tbItem" data-a="png">Eksportuoti PNG</button>
         <button class="tbItem" data-a="json">Eksportuoti JSON</button>
+        <button class="tbItem" data-a="md">Eksportuoti Markdown</button>
       </div>
     </div>
   </div>
@@ -2182,6 +2306,7 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
           <span id="sCount"></span>
           <button id="sClear" aria-label="Išvalyti">✕</button>
         </div>
+        <div class="sScope"><button id="sThis" class="on">Šiame žemėlapyje</button><button id="sAll">Visuose išsaugotuose</button></div>
         <div id="sLens"></div>
         <div id="sFilters"></div>
         <div id="sResults"></div>
@@ -2250,7 +2375,7 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
       <button class="themeOpt optCard lay" data-l="mtx"><svg class="pv" viewBox="0 0 112 78"><g fill="none" stroke="currentColor" stroke-width="1" opacity=".38"><rect x="9" y="9" width="94" height="60" rx="5"/><path d="M39 9v60M71 9v60M9 29h94M9 49h94"/></g><g fill="currentColor" opacity=".82"><rect x="13" y="13" width="22" height="11" rx="2.5"/><rect x="13" y="33" width="22" height="11" rx="2.5"/><rect x="13" y="53" width="22" height="11" rx="2.5"/></g><g fill="currentColor" opacity=".45"><rect x="44" y="14" width="23" height="9" rx="2.5"/><rect x="76" y="14" width="23" height="9" rx="2.5"/><rect x="44" y="34" width="23" height="9" rx="2.5"/><rect x="76" y="34" width="23" height="9" rx="2.5"/><rect x="44" y="54" width="23" height="9" rx="2.5"/><rect x="76" y="54" width="23" height="9" rx="2.5"/></g></svg><span class="cap">Matrica</span></button>
       
       <button class="themeOpt optCard lay" data-l="loci"><svg class="pv" viewBox="0 0 112 78"><path d="M20 18h34q9 0 9 9t-9 9H30q-9 0-9 9t9 9h42" fill="none" stroke="currentColor" stroke-width="1.3" opacity=".42" stroke-dasharray="3 4"/><g fill="currentColor" opacity=".78"><rect x="12" y="12" width="18" height="11" rx="3"/><rect x="44" y="12" width="18" height="11" rx="3"/><rect x="22" y="30" width="18" height="11" rx="3"/><rect x="22" y="48" width="18" height="11" rx="3"/><rect x="54" y="48" width="18" height="11" rx="3"/><rect x="80" y="48" width="18" height="11" rx="3"/></g></svg><span class="cap">Maršrutas</span></button>
-      <span class="gridNote">Linijinio kryptis nustatoma ⚙ mygtuku. Maršrutas — įsiminimo režimas: kortelės eilės tvarka erdvėje. Spynelė juostoje: <b>užrakinta</b> — struktūra laikosi tiesiai, <b>atrakinta</b> — korteles galima judinti laisvai.</span>
+      <span class="gridNote">Linijinio kryptis nustatoma ⚙ mygtuku. Maršrutas — įsiminimo režimas: kortelės eilės tvarka erdvėje. Spynelė juostoje: <b>užrakinta</b> — struktūra laikosi tiesiai, <b>atrakinta</b> — korteles galima judinti laisvai. Visos komandos — <b>Ctrl+K</b>.</span>
     </div>
   </div>
   <button class="tb" id="layLockBtn" title="Užrakinti / atrakinti išdėstymą" aria-pressed="false">
@@ -2286,6 +2411,11 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
     <svg viewBox="0 0 24 24" fill="none"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" stroke="currentColor" stroke-width="1.7"/><path d="M19.4 13.5c.04-.33.06-.66.06-1s-.02-.67-.06-1l2.02-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.6 7.6 0 0 0-1.73-1l-.36-2.54a.5.5 0 0 0-.5-.43h-3.84a.5.5 0 0 0-.5.43l-.36 2.54c-.63.24-1.21.58-1.73 1l-2.39-.96a.5.5 0 0 0-.6.22L2.64 9.28a.5.5 0 0 0 .12.64L4.78 11.5c-.04.33-.06.66-.06 1s.02.67.06 1L2.76 15.08a.5.5 0 0 0-.12.64l1.92 3.32a.5.5 0 0 0 .6.22l2.39-.96c.52.42 1.1.76 1.73 1l.36 2.54a.5.5 0 0 0 .5.43h3.84a.5.5 0 0 0 .5-.43l.36-2.54c.63-.24 1.21-.58 1.73-1l2.39.96a.5.5 0 0 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.64L19.4 13.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
   </button>
   <button class="tb tbBack" id="backLanding" data-tip="Grįžti į pradžios puslapį" style="display:none"><span>←</span><span class="bkDiv"></span><span>Į pradžią</span></button>
+  </div>
+  <div class="tGroup">
+    <button class="tb" id="learnBtn" data-tip="Mokymasis — slėpimas ir klausimynas" aria-label="Mokymasis">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 4 2.8 8.4 12 12.8l9.2-4.4L12 4Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M6.2 10.6v5c0 1.2 2.6 2.6 5.8 2.6s5.8-1.4 5.8-2.6v-5" stroke="currentColor" stroke-width="1.7"/><path d="M21.2 8.4v5.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+    </button>
   </div>
   <input type="file" id="tbFile" accept=".json,application/json" style="display:none">
 </div>
@@ -3895,6 +4025,7 @@ function addChild(parent,text){
   const child={ id, label:text, cls:(parent.id==='root'?'n-tools':'n-key'), note:'', children:[], _p:parent, _c:false };
   parent.children=parent.children||[]; parent.children.push(child);
   OBJ[id]=child; parent._c=false;
+  try{ mmTitleFlag(parent); }catch(e){}
   renumberAll(); render();
 }
 function openAddDialog(parent){
@@ -3958,6 +4089,7 @@ function mmReparent(child,parent){
   old.children.splice(i,1);
   parent.children=parent.children||[];
   parent.children.push(child);
+  try{ mmTitleFlag(parent); }catch(e){}
   parent._c=false;                                  // naujas vaikas turi iš karto matytis
   /* rankinės pozicijos nuimam — perkelta šaka išsidėsto pagal naują tėvą */
   (function w(n){ delete manual[n.id]; (n.children||[]).forEach(w); })(child);
@@ -4065,7 +4197,12 @@ function render(){
     let relN=0; try{ relN=mmRelFor(n.id).length; }catch(e){}
     if(relN && n.cls!=='n-center')
       html+='<span class="relB'+(relActive.has(n.id)?' on':'')+'" title="Sąsajų: '+relN+' — spustelėk, kad įjungtum gijas">⇄'+relN+'</span>';
+    if(n.tchk) html+='<span class="tcDot" title="Pavadinimą verta peržiūrėti — turinys po kortele pasikeitė"></span>';
+    if(n.cmpTag) html+='<span class="cmpB '+(n.cmpTag==='sutampa'?'cs':n.cmpTag==='papildo'?'cp':'cx')
+      +'" title="Gretinimas: '+n.cmpTag+'">'+(n.cmpTag==='sutampa'?'=':n.cmpTag==='papildo'?'+':'≠')+'</span>';
     el.innerHTML=html; if(n._c&&kc) el.classList.add('collapsed');
+    if(window.LRN && LRN.on && LRN.hidden.has(n.id) && !LRN.revealed.has(n.id)){
+      el.classList.add('mmHid'); el.dataset.mico=LRN.glyph(n); }
     /* Ženkliukas +N / – — išskleidimo mygtukas (kortelės kūnas atveria lentelę) */
     const cb=el.querySelector('.cnt');
     if(cb && kc){
@@ -4078,6 +4215,11 @@ function render(){
     if(rb){
       ['pointerdown','pointerup'].forEach(t=>rb.addEventListener(t,ev=>ev.stopPropagation()));
       rb.onclick=ev=>{ ev.stopPropagation(); mmToggleRel(n.id, rb); };
+    }
+    const td=el.querySelector('.tcDot');
+    if(td){
+      ['pointerdown','pointerup'].forEach(t=>td.addEventListener(t,ev=>ev.stopPropagation()));
+      td.onclick=ev=>{ ev.stopPropagation(); mmTitleFix(n); };
     }
     // rankiniu būdu nustatytas plotis (tekstas wrapinasi) ir dydis (scale)
     if(n.w){ el.style.width=n.w+'px'; el.style.whiteSpace='normal';
@@ -4233,6 +4375,10 @@ function render(){
         const tgt = document.elementFromPoint(e.clientX, e.clientY);
         const onNoteIco = tgt && tgt.classList && tgt.classList.contains('note-ico');
         const onSetIco = tgt && tgt.classList && tgt.classList.contains('set-ico');
+        /* mokymosi režimu paslėptos kortelės paspaudimas ją atidengia / užslepia */
+        if(window.LRN && LRN.on && LRN.hidden.has(n.id) && !onSetIco && !onNoteIco){
+          LRN.toggleCard(n); return;
+        }
         // Kai jau pažymėta bent viena kortelė — tolesnis PAPRASTAS paspaudimas žymi/atžymi
         if(branchSelIds.size && !onSetIco && !onNoteIco){
           const ids=collectBranch(n).map(g=>g.id);
@@ -4950,6 +5096,13 @@ function cpOpen(n){
   cpBox.querySelector('.cpT').textContent=n.label||'';
   cpBox.querySelector('.cpB').innerHTML=body;
   cpBox.querySelector('#cpX').onclick=e=>{ e.stopPropagation(); cpClose(); };
+  /* „Rodyti šaltinyje" — tik kai žemėlapis turi išsaugotą šaltinį */
+  if(typeof mmSrcAll==='function' && mmSrcAll()){
+    const sb=document.createElement('button'); sb.id='cpSrc'; sb.textContent='¶';
+    sb.title='Rodyti šaltinyje — originalo vieta, iš kurios ši kortelė';
+    sb.onclick=e=>{ e.stopPropagation(); const id=cpId; cpClose(); mmCompareOpen(id); };
+    cpBox.appendChild(sb);
+  }
   if(!cpStyle()) return;
   /* pradinė padėtis — truputį mažesnė, kad atsivertų sklandžiai */
   const p0=pos[cpId];
@@ -5623,6 +5776,7 @@ function showToast(msg){
   clearTimeout(t._h); t._h=setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(10px)'; },2200);
 }
 function cleanTree(n){ return {id:n.id,label:n.label,cls:n.cls,icon:n.icon,img:n.img,note:n.note,ts:n.ts,rel:n.rel,st:n.st,
+  srcs:n.srcs,tchk:n.tchk,cmpTag:n.cmpTag,
   customColor:n.customColor,w:n.w,scale:n.scale,_c:!!n._c,children:(n.children||[]).map(cleanTree)}; }
 function saveMap(){
   let arr=[]; try{ arr=JSON.parse(localStorage.getItem('mm_saved_maps')||'[]'); }catch(e){}
@@ -5726,9 +5880,10 @@ document.getElementById('saveMap').onclick=saveMap;
     else if(a==='png'){
       const url=mapThumb(1400,900); const l=document.createElement('a');
       l.href=url; l.download=(DATA.label||'zemelapis')+'.png'; l.click(); showToast('PNG eksportuotas');
-    } else {
+    } else if(a==='md'){ if(window.mmExportMd) mmExportMd(); }
+    else {
       const clean=n=>({id:n.id,label:n.label,cls:n.cls,icon:n.icon,img:n.img,note:n.note,ts:n.ts,customColor:n.customColor,
-        children:(n.children||[]).map(clean)});
+        srcs:n.srcs,cmpTag:n.cmpTag,children:(n.children||[]).map(clean)});
       const blob=new Blob([JSON.stringify(clean(DATA),null,2)],{type:'application/json'});
       const l=document.createElement('a'); l.href=URL.createObjectURL(blob);
       l.download=(DATA.label||'zemelapis')+'.json'; l.click(); showToast('JSON eksportuotas');
@@ -6627,9 +6782,16 @@ U$('go').onclick=async()=>{
     if(selectedFile.name.match(/\.(txt|md)$/i)){
       source=await selectedFile.text();
     } else {
-      clearInterval(timer); U$('busy').classList.remove('on');
-      alert('PDF ir DOCX apdorojimas dar ruošiamas. Kol kas įklijuok tekstą į „Tekstas" skiltį.');
-      return;
+      try{
+        const bt=U$('busyText'); if(bt) bt.textContent='Skaitau dokumentą…';
+        const ex=await mmExtractDoc(selectedFile);
+        source=ex.text;
+        showToast('Atpažinta: '+(ex.pages?ex.pages+' psl., ':'')+ex.paras+' pastraipos');
+      }catch(err){
+        clearInterval(timer); U$('busy').classList.remove('on');
+        alert('Nepavyko perskaityti dokumento: '+((err&&err.message)||err));
+        return;
+      }
     }
   } else {
     clearInterval(timer); U$('busy').classList.remove('on');
@@ -6657,6 +6819,10 @@ U$('go').onclick=async()=>{
       const ok=await window.mmGenerateFromText(source,{
         src:U$('optSrc').checked, links:U$('optLinks').checked, ai:useAI
       });
+      /* Šaltinis keliauja kartu su žemėlapiu — iš jo skaičiuojama aprėptis
+         ir veikia palyginimo vaizdas. */
+      if(ok){ try{ DATA.srcs=[{t:(DATA.label||'Šaltinis'), x:source}]; }catch(e){}
+        setTimeout(()=>{ try{ if(window.mmCoverageShow) mmCoverageShow(true); }catch(e){} }, 1100); }
       if(!ok) alert('Nepavyko atpažinti struktūros. Įklijuok bent kelias pastraipas teksto — geriausiai su antraštėmis ir skyriais.');
     }catch(err){
       console.error(err);
@@ -6869,7 +7035,8 @@ function sSnippet(n){
   function paint(){
     buildFilters();
     if(!SQ && !SF){ out.innerHTML='<div class="sEmpty">Įrašykite žodį ar frazę arba pasirinkite teksto elemento tipą viršuje.</div>'; cnt.textContent=''; return; }
-    if(!hits.length){ out.innerHTML='<div class="sEmpty">Nieko nerasta.</div>'; cnt.textContent='0'; return; }
+    const _ext=(typeof extHtml==='function')?extHtml():'';
+    if(!hits.length){ out.innerHTML='<div class="sEmpty">'+(SALL?'Šiame žemėlapyje nieko':'Nieko nerasta.')+'</div>'+_ext; cnt.textContent='0'; return; }
     cnt.textContent=hits.length+(hits.length<10?' vt.':'');
     out.innerHTML=hits.map((n,i)=>{
       const col=n.customColor||colorOf[n.cls]||'#8892a3';
@@ -6880,7 +7047,7 @@ function sSnippet(n){
         (path?'<span class="sPath">'+sEscHtml(path)+'</span>':'')+
         (snip?'<span class="sSnip">'+hiText(snip)+'</span>':'')+
         '</span></button>';
-    }).join('');
+    }).join('')+((typeof extHtml==='function')?extHtml():'');
   }
   function go(i){
     if(!hits.length) return;
@@ -6891,6 +7058,50 @@ function sSnippet(n){
     highlightNodes([n.id]);                      // priartina + uždega kortelę
   }
   function run(){ collect(); cur=-1; paint(); }
+  /* ── paieška per VISUS išsaugotus žemėlapius ── */
+  let SALL=false;
+  const bThis=document.getElementById('sThis'), bAll=document.getElementById('sAll');
+  if(bThis&&bAll){
+    bThis.onclick=()=>{ SALL=false; bThis.classList.add('on'); bAll.classList.remove('on'); run(); };
+    bAll.onclick=()=>{ SALL=true; bAll.classList.add('on'); bThis.classList.remove('on'); run(); };
+  }
+  function extPlain(s){ const d=document.createElement('div'); d.innerHTML=s||''; return d.textContent||''; }
+  function extHits(){
+    if(!SALL || !SQ) return [];
+    let arr=[]; try{ arr=JSON.parse(localStorage.getItem('mm_saved_maps')||'[]'); }catch(e){}
+    const nq=mmDia(SQ), out=[];
+    arr.forEach(rec=>{
+      if(!rec.data || rec.title===DATA.label) return;
+      const found=[];
+      (function w(n){
+        if(found.length<6 && n.label && mmDia(n.label+' '+extPlain(n.note)).indexOf(nq)>=0)
+          found.push({id:n.id, label:n.label});
+        (n.children||[]).forEach(w);
+      })(rec.data);
+      if(found.length) out.push({mapId:rec.id, title:rec.title, hits:found});
+    });
+    return out;
+  }
+  function extHtml(){
+    const ext=extHits(); if(!ext.length) return '';
+    return ext.map(g=>'<div class="sMapT">🗺 '+sEscHtml(g.title)+' · '+g.hits.length+'</div>'
+      +g.hits.map(f=>'<button class="sItem sItemExt" data-map="'+g.mapId+'" data-nid="'+f.id+'">'
+        +'<span class="sDot" style="background:#8E9BAE"></span><span class="sTxt"><span class="sLbl">'
+        +hiHtml(sEscHtml(f.label))+'</span></span></button>').join('')).join('')
+      +(SF?'<div class="sMapT" style="opacity:.6">Tipo filtras veikia tik šiame žemėlapyje</div>':'');
+  }
+  function extOpen(mapId,nid){
+    if(!confirm('Atverti kitą žemėlapį? Neišsaugoti dabartinio pakeitimai bus prarasti.')) return;
+    close(true);
+    if(!openSavedMap(mapId)) return;
+    setTimeout(()=>{
+      const path=[]; let hitN=null;
+      (function w(n,anc){ if(n.id===nid){ hitN=n; anc.forEach(a=>a._c=false); }
+        (n.children||[]).forEach(c=>w(c,anc.concat([n]))); })(DATA,[]);
+      render();
+      if(hitN) setTimeout(()=>{ try{ highlightNodes([nid]); }catch(e){} }, 250);
+    }, 300);
+  }
 
   function open(){
     panel.classList.add('open'); btn.classList.add('tbActive');
@@ -6918,6 +7129,7 @@ function sSnippet(n){
   });
   out.addEventListener('click',e=>{
     const b=e.target.closest('.sItem'); if(!b) return;
+    if(b.classList.contains('sItemExt')){ extOpen(b.dataset.map, b.dataset.nid); return; }
     const i=hits.findIndex(n=>n.id===b.dataset.id);
     if(i>=0) go(i);
   });
@@ -7514,6 +7726,827 @@ function mmNodeRole(n){
    DATA keičiamas vietoje (Object.assign), todėl objekto tapatybė nepasikeičia —
    pokytį atpažįstam pagal pavadinimą ir kortelių skaičių. */
 function mmTreeSig(){ var n=0; (function w(x){ n++; (x.children||[]).forEach(w); })(DATA); return (DATA.label||'')+'#'+n; }
+
+/* ══════════ ŠALTINIO SAKINIŲ VARIKLIS ═══════════════════════════════════
+   Bendras pagrindas aprėpties rodikliui (F1), palyginimo vaizdui (F3) ir
+   gretinimui (F9). Šaltiniai guli DATA.srcs=[{t:pavadinimas,x:tekstas}].
+   Kiekvienas sakinys bandomas priskirti kortelei pagal terminų sutapimą —
+   tuo pačiu principu, kuriuo veikia papildymo vietos parinkimas. */
+function mmSrcAll(){ return (DATA.srcs && DATA.srcs.length) ? DATA.srcs : null; }
+function mmSentSplit(text){
+  const out=[]; const paras=String(text||'').replace(/\r/g,'').split(/\n{2,}/);
+  let pi=0;
+  paras.forEach(pa=>{
+    pa=pa.trim(); if(!pa) return; pi++;
+    pa.split(/(?<=[.!?…][”“"'»)\]]?)\s+(?=[A-ZĄČĘĖĮŠŲŪŽ„"(0-9])/).forEach(s=>{
+      s=s.replace(/\s+/g,' ').trim(); if(!s) return;
+      const w=s.split(' ').length;
+      /* tarnybinės eilutės: antraštės, giesmės, puslapiai — aprėpties nemažina */
+      const svc = w<3 || /^(GIESM|Giesm|Turinys|©|https?:|\d+\s*psl)/i.test(s) || (w<7 && s===s.toUpperCase());
+      out.push({s:s, p:pi, svc:svc});
+    });
+  });
+  return out;
+}
+function mmSentMap(){
+  const srcs=mmSrcAll(); if(!srcs) return null;
+  const cards=[];
+  (function w(n){ if(n.id!==DATA.id){
+      let t=(n.label||''); try{ t+=' '+sPlainNote(n); }catch(e){}
+      cards.push({id:n.id, set:new Set(mmTerms(t)), norm:mmDia(t).replace(/\s+/g,' ')}); }
+    (n.children||[]).forEach(w); })(DATA);
+  const res=[];
+  srcs.forEach((sc,si)=>{ mmSentSplit(sc.x).forEach(o=>{
+    o.src=si;
+    if(!o.svc){
+      /* 1) PAŽODINIS kelias — mūsų žemėlapiai teksto nesantraukina, tad
+         dažniausias atvejis: sakinys guli kortelėje toks, koks buvo */
+      const ns=mmDia(o.s).replace(/[.!?…]+$/,'').replace(/\s+/g,' ').trim();
+      if(ns.length>=12){
+        const hitC=cards.find(c=>c.norm.indexOf(ns)>=0);
+        if(hitC){ o.cardId=hitC.id; o.ratio=1; res.push(o); return; }
+      }
+      /* 2) terminų kelias — perfrazuotam tekstui */
+      const ts=mmTerms(o.s); let best=null, br=0;
+      if(ts.length>=2){ cards.forEach(c=>{ let hit=0; ts.forEach(t=>{ if(c.set.has(t)) hit++; });
+        const r=hit/ts.length; if(r>br){ br=r; best=c.id; } }); }
+      if(br>=0.6){ o.cardId=best; o.ratio=br; }
+      else if(br>=0.45 && ts.length>=3){ o.cardId=best; o.ratio=br; o.approx=1; }
+    }
+    res.push(o);
+  }); });
+  const cnt=res.filter(o=>!o.svc), used=cnt.filter(o=>o.cardId);
+  return {sents:res, total:cnt.length, used:used.length,
+          pct: cnt.length ? Math.round(used.length/cnt.length*100) : 0};
+}
+
+/* ══════════ F1 · APRĖPTIES RODIKLIS ═════════════════════════════════════
+   Skaičius, kuris paverčia „nieko neprarasta" įrodomu: kiek šaltinio sakinių
+   iš tikrųjų pateko į žemėlapį. Likusius galima pridėti vienu paspaudimu —
+   vieta parenkama tuo pačiu varikliu kaip papildant žemėlapį. */
+let covM=null;
+function mmCoverageShow(auto){
+  covM=mmSentMap();
+  if(!covM){ if(!auto) showToast('Šis žemėlapis sukurtas be pridėto šaltinio — aprėpties nėra iš ko skaičiuoti'); return; }
+  let bar=document.getElementById('covBar');
+  if(!bar){ bar=document.createElement('div'); bar.id='covBar'; document.body.appendChild(bar); }
+  const left=covM.total-covM.used;
+  bar.innerHTML='<b>'+covM.pct+' %</b><span class="covTrack"><i style="width:'+covM.pct+'%"></i></span>'
+    +'<span class="covTx">šaltinio teksto sudėta į žemėlapį</span>'
+    +(left?'<button id="covMore">Peržiūrėti likusius ('+left+')</button>':'<span class="covTx">— viskas sudėta ✓</span>')
+    +'<button id="covX" aria-label="Uždaryti">✕</button>';
+  bar.classList.add('on');
+  document.getElementById('covX').onclick=()=>{ bar.classList.remove('on'); mmCovPanelClose(); };
+  const m=document.getElementById('covMore');
+  if(m) m.onclick=mmCovPanelOpen;
+}
+function mmCovPanelClose(){ const p=document.getElementById('covPanel'); if(p) p.classList.remove('on'); }
+function mmCovPanelOpen(){
+  if(!covM) covM=mmSentMap(); if(!covM) return;
+  let p=document.getElementById('covPanel');
+  if(!p){ p=document.createElement('div'); p.id='covPanel'; document.body.appendChild(p); }
+  const rows=covM.sents.map((o,i)=>{
+    if(o.svc||o.cardId) return '';
+    return '<div class="covRow"><div class="covSrc">'+((mmSrcAll()[o.src]||{}).t||'Šaltinis')+' · '+o.p+' pastraipa</div>'
+      +'<div class="covSent">'+mmEsc(o.s)+'</div>'
+      +'<button class="covAdd" data-i="'+i+'">Pridėti į žemėlapį</button></div>';
+  }).join('');
+  p.innerHTML='<div class="covHead"><b>Į žemėlapį nepatekę sakiniai</b>'
+    +'<button id="covPX" aria-label="Uždaryti">✕</button></div>'
+    +'<div class="covBody">'+(rows||'<div class="covEmpty">Visi sakiniai sudėti ✓</div>')+'</div>';
+  p.classList.add('on');
+  document.getElementById('covPX').onclick=mmCovPanelClose;
+  p.querySelectorAll('.covAdd').forEach(b=>b.onclick=()=>{
+    const o=covM.sents[+b.dataset.i]; if(!o) return;
+    pushUndo();
+    let host=DATA;
+    try{ const hit=mmBestHost(o.s, mmBuildIndex(null)); if(hit&&hit.node) host=hit.node; }catch(e){}
+    const ws=o.s.split(' ');
+    const kid={ id:'cov'+Date.now().toString(36)+Math.floor(Math.random()*99),
+      label:(ws.slice(0,7).join(' ')+(ws.length>7?'…':'')), cls:'n-key', children:[],
+      note:'<p>'+mmEsc(o.s)+'</p><p class="src">📄 '+mmEsc((mmSrcAll()[o.src]||{}).t||'Šaltinis')+', '+o.p+' pastraipa</p>' };
+    host.children=host.children||[]; host.children.push(kid); host._c=false;
+    try{ mmTitleFlag(host); }catch(e){}
+    try{ indexTree(); renumberAll(); }catch(e){}
+    render();
+    showToast('Pridėta prie: „'+(host.label||'').slice(0,40)+'“');
+    mmCoverageShow(true); mmCovPanelOpen();
+  });
+}
+
+/* ══════════ F3 · PALYGINIMO VAIZDAS ═════════════════════════════════════
+   Kairėje — originalus tekstas, dešinėje — žemėlapis. Paspaudus sakinį
+   užsidega jo kortelė; paspaudus kortelę (kai vaizdas atviras) paryškinamas
+   jos sakinys. Nepatekę sakiniai rodomi blankiai — iš karto matyti, kas liko. */
+function mmCompareOpen(focusId){
+  const m=mmSentMap();
+  if(!m){ showToast('Šis žemėlapis sukurtas be pridėto šaltinio'); return; }
+  let p=document.getElementById('cmpPanel');
+  if(!p){ p=document.createElement('div'); p.id='cmpPanel'; document.body.appendChild(p); }
+  let html='<div class="covHead"><b>Šaltinis šalia žemėlapio</b><button id="cmpX" aria-label="Uždaryti">✕</button></div><div class="cmpBody">';
+  let lastSrc=-1, lastP=0;
+  m.sents.forEach((o,i)=>{
+    if(o.src!==lastSrc){ html+=(lastSrc>=0?'</p>':'')+'<div class="cmpSrcT">'+mmEsc((mmSrcAll()[o.src]||{}).t||'Šaltinis')+'</div><p>'; lastSrc=o.src; lastP=o.p; }
+    else if(o.p!==lastP){ html+='</p><p>'; lastP=o.p; }
+    const cls = o.svc?'cmpS svc':(o.cardId?'cmpS ok'+(o.approx?' ap':''):'cmpS dim');
+    html+='<span class="'+cls+'" data-i="'+i+'"'+(o.cardId?' data-c="'+o.cardId+'"':'')+'>'+mmEsc(o.s)+'</span> ';
+  });
+  html+='</p></div>';
+  p.innerHTML=html; p.classList.add('on');
+  document.body.classList.add('cmpOn');
+  document.getElementById('cmpX').onclick=mmCompareClose;
+  p.querySelectorAll('.cmpS.ok, .cmpS.ap').forEach(el=>el.onclick=()=>{
+    p.querySelectorAll('.cmpS.hl').forEach(x=>x.classList.remove('hl'));
+    el.classList.add('hl');
+    try{ highlightNodes([el.dataset.c]); }catch(e){}
+  });
+  if(focusId){
+    const el=p.querySelector('.cmpS[data-c="'+focusId+'"]');
+    if(el){ el.classList.add('hl'); setTimeout(()=>el.scrollIntoView({block:'center'}),60); }
+    else showToast('Ši kortelė sukurta ne iš šaltinio teksto');
+  }
+}
+function mmCompareClose(){ const p=document.getElementById('cmpPanel'); if(p) p.classList.remove('on'); document.body.classList.remove('cmpOn'); }
+/* kortelės paspaudimas, kai palyginimas atviras → paryškinam jos sakinį */
+document.addEventListener('pointerup',e=>{
+  if(!document.body.classList.contains('cmpOn')) return;
+  const nd=e.target && e.target.closest && e.target.closest('.node'); if(!nd) return;
+  const p=document.getElementById('cmpPanel'); if(!p) return;
+  const el=p.querySelector('.cmpS[data-c="'+nd.dataset.id+'"]'); if(!el) return;
+  p.querySelectorAll('.cmpS.hl').forEach(x=>x.classList.remove('hl'));
+  el.classList.add('hl'); el.scrollIntoView({block:'center',behavior:'smooth'});
+},true);
+addEventListener('keydown',e=>{ if(e.key==='Escape'){ mmCompareClose(); mmCovPanelClose(); } });
+
+/* ══════════ F0 · KOMANDŲ JUOSTA (Ctrl+K) ════════════════════════════════
+   Vienas laukelis, iš kurio pasiekiama BET KURI platformos funkcija.
+   Nuo šiol naujos funkcijos į įrankių juostą nededamos — jos gauna vietą čia,
+   o į matomą juostą pakyla tik įrodžiusios kasdienį naudingumą. */
+function mmDia(s){ const M={'ą':'a','č':'c','ę':'e','ė':'e','į':'i','š':'s','ų':'u','ū':'u','ž':'z'};
+  return String(s||'').toLowerCase().replace(/[ąčęėįšųūž]/g,c=>M[c]||c); }
+function mmCmdList(){
+  const C=[], add=(n,g,run,k)=>C.push({n:n,g:g,run:run,k:k||''});
+  const q=s=>document.querySelector(s), click=s=>{ const e=q(s); if(e) e.click(); };
+  add('Naujas minčių žemėlapis','Rinkmenos',()=>click('#tbNewMenu .tbItem'));
+  add('Dublikuoti šį žemėlapį','Rinkmenos',()=>click('#tbNewMenu .tbItem:nth-child(2)'));
+  add('Atidaryti iš išsaugotų','Rinkmenos',()=>click('#tbOpenMenu .tbItem'));
+  add('Atidaryti iš kompiuterio','Rinkmenos',()=>click('#tbOpenMenu .tbItem:nth-child(2)'));
+  add('Išsaugoti žemėlapį','Rinkmenos',()=>{ try{ saveMap(); }catch(e){} });
+  add('Papildyti žemėlapį','Rinkmenos',()=>click('#tbAdd'));
+  add('Spausdinti','Rinkmenos',()=>window.print());
+  add('Eksportuoti PNG','Rinkmenos',()=>click('#tbShareMenu [data-a="png"]'));
+  add('Eksportuoti JSON','Rinkmenos',()=>click('#tbShareMenu [data-a="json"]'));
+  add('Eksportuoti Markdown','Rinkmenos',()=>{ if(window.mmExportMd) mmExportMd(); else showToast('Markdown eksportas dar neįdiegtas'); });
+  add('Sąsajų sąrašas','Rinkmenos',()=>{ try{ mmShowRelReport(); }catch(e){} });
+  add('Rodyti aprėptį','Rinkmenos',()=>mmCoverageShow(false));
+  add('Palyginti su šaltiniu','Rinkmenos',()=>mmCompareOpen());
+  add('Gretinimo ataskaita','Rinkmenos',()=>{ if(window.mmCmpReport) mmCmpReport(); else showToast('Gretinimas dar neįdiegtas'); });
+  add('Paieška','Paieška',()=>click('#tbSearch'),'Ctrl+F');
+  add('Paieška visuose žemėlapiuose','Paieška',()=>{ click('#tbSearch'); setTimeout(()=>{ const t=q('#sAll'); if(t) t.click(); },60); });
+  add('Anuliuoti','Istorija',()=>{ try{ doUndo(); }catch(e){} },'Ctrl+Z');
+  add('Grąžinti','Istorija',()=>{ try{ doRedo(); }catch(e){} });
+  add('Pritaikyti ekranui','Mastelis',()=>{ userZoomed=false; fitAll(true); });
+  [['50 %','0.5'],['75 %','0.75'],['100 %','1'],['150 %','1.5'],['200 %','2']].forEach(z=>
+    add('Mastelis '+z[0],'Mastelis',()=>click('#tbZoomMenu [data-z="'+z[1]+'"]')));
+  [['Standartinė','standard'],['Cosmos','cosmos'],['Naktinis miestas','night'],['Street Art','street'],['Paveikslas','paveikslas']]
+    .forEach(t=>add('Tema · '+t[0],'Vaizdas',()=>{ try{ applyTheme(t[1]); render(); }catch(e){} }));
+  Object.keys(LAY_NAMES).forEach(id=>add('Išdėstymas · '+LAY_NAMES[id],'Vaizdas',()=>{ try{ applyLayout(id); }catch(e){} }));
+  add('Užrakinti / atrakinti išdėstymą','Vaizdas',()=>{ try{ toggleLayLock(); }catch(e){} });
+  Object.keys(GAMA_NAMES).forEach(id=>add('Spalvų gama · '+GAMA_NAMES[id],'Vaizdas',()=>{ try{ applyGamaSel(id); }catch(e){} }));
+  add('Išskleisti viską','Vaizdas',()=>click('#tbExpand'));
+  add('Peržiūra (vedžiojimas)','Vaizdas',()=>{ try{ startPresent(); }catch(e){} });
+  add('Nustatymai','Vaizdas',()=>click('#mapSettings'));
+  add('Slėpimo režimas','Mokymasis',()=>{ if(window.LRN) LRN.open('hide'); else showToast('Dar neįdiegta'); });
+  add('Klausimynas','Mokymasis',()=>{ if(window.LRN) LRN.open('quiz'); else showToast('Dar neįdiegta'); });
+  add('Pavadinimų priežiūra','Vaizdas',()=>{ if(window.mmTitleCare) mmTitleCare(); else showToast('Dar neįdiegta'); });
+  return C;
+}
+let cmdSel=0, cmdItems=[];
+function mmCmdOpen(){
+  try{ cpClose(); }catch(e){}
+  document.querySelectorAll('.tbMenu.open,.themeMenu.open').forEach(m=>m.classList.remove('open'));
+  let p=document.getElementById('cmdPal');
+  if(!p){ p=document.createElement('div'); p.id='cmdPal';
+    p.innerHTML='<div id="cmdBox"><input id="cmdInp" type="text" placeholder="Ką norite padaryti?" autocomplete="off" spellcheck="false"><div id="cmdList"></div></div>';
+    document.body.appendChild(p);
+    p.addEventListener('pointerdown',e=>{ if(e.target===p) mmCmdClose(); });
+    const inp=p.querySelector('#cmdInp');
+    inp.addEventListener('input',()=>mmCmdPaint(inp.value));
+    inp.addEventListener('keydown',e=>{
+      if(e.key==='ArrowDown'){ e.preventDefault(); cmdSel=Math.min(cmdSel+1,cmdItems.length-1); mmCmdMark(); }
+      else if(e.key==='ArrowUp'){ e.preventDefault(); cmdSel=Math.max(cmdSel-1,0); mmCmdMark(); }
+      else if(e.key==='Enter'){ e.preventDefault(); mmCmdRun(cmdSel); }
+      else if(e.key==='Escape'){ e.preventDefault(); mmCmdClose(); }
+    });
+  }
+  p.classList.add('on');
+  const inp=p.querySelector('#cmdInp'); inp.value=''; mmCmdPaint('');
+  setTimeout(()=>inp.focus(),30);
+}
+function mmCmdClose(){ const p=document.getElementById('cmdPal'); if(p) p.classList.remove('on'); }
+function mmCmdPaint(qs){
+  const all=mmCmdList(), nq=mmDia(qs).trim();
+  let rec=[]; try{ rec=JSON.parse(localStorage.getItem('mm_cmd_recent')||'[]'); }catch(e){}
+  if(!nq){
+    const rc=rec.map(n=>all.find(c=>c.n===n)).filter(Boolean);
+    cmdItems=rc.concat(all.filter(c=>rc.indexOf(c)<0)).slice(0,8);
+  } else {
+    cmdItems=all.map(c=>{ const s=mmDia(c.n).indexOf(nq); return {c:c, s:s}; })
+      .filter(o=>o.s>=0).sort((a,b)=>a.s-b.s).map(o=>o.c).slice(0,8);
+    if(!cmdItems.length){
+      /* poseka: visos raidės iš eilės, nebūtinai greta */
+      cmdItems=all.filter(c=>{ let i=0; const t=mmDia(c.n);
+        for(const ch of nq){ i=t.indexOf(ch,i); if(i<0) return false; i++; } return true; }).slice(0,8);
+    }
+  }
+  cmdSel=0;
+  const L=document.getElementById('cmdList');
+  L.innerHTML=cmdItems.map((c,i)=>'<div class="cmdIt'+(i===0?' on':'')+'" data-i="'+i+'">'
+    +'<span>'+mmEsc(c.n)+'</span><span class="cmdG">'+(c.k?c.k+' · ':'')+c.g+'</span></div>').join('')
+    ||'<div class="cmdNone">Nieko nerasta</div>';
+  L.querySelectorAll('.cmdIt').forEach(el=>{
+    el.onclick=()=>mmCmdRun(+el.dataset.i);
+    el.onmouseenter=()=>{ cmdSel=+el.dataset.i; mmCmdMark(); };
+  });
+}
+function mmCmdMark(){ document.querySelectorAll('#cmdList .cmdIt').forEach((el,i)=>el.classList.toggle('on',i===cmdSel)); }
+function mmCmdRun(i){
+  const c=cmdItems[i]; if(!c) return;
+  mmCmdClose();
+  let rec=[]; try{ rec=JSON.parse(localStorage.getItem('mm_cmd_recent')||'[]'); }catch(e){}
+  rec=[c.n].concat(rec.filter(n=>n!==c.n)).slice(0,5);
+  try{ localStorage.setItem('mm_cmd_recent', JSON.stringify(rec)); }catch(e){}
+  setTimeout(()=>{ try{ c.run(); }catch(e){ showToast('Nepavyko: '+e.message); } }, 40);
+}
+document.addEventListener('keydown',e=>{
+  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){
+    const t=e.target;
+    if(t && (t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable)) return;
+    e.preventDefault();
+    const p=document.getElementById('cmdPal');
+    if(p && p.classList.contains('on')) mmCmdClose(); else mmCmdOpen();
+  }
+});
+/* ══════════ F8 · MARKDOWN EKSPORTAS ═════════════════════════════════════
+   Hierarchija → antraštės ir sąrašai; užrašinės — pastraipomis; sąsajos „↳"
+   virsta [[nuorodomis]], kurias supranta Obsidian. */
+function mmExportMd(){
+  const lines=[];
+  const plain=html=>{
+    const d=document.createElement('div'); d.innerHTML=html||'';
+    d.querySelectorAll('.addMark').forEach(x=>x.remove());
+    const out=[];
+    const els=d.children.length?Array.prototype.slice.call(d.children):[d];
+    els.forEach(el=>{
+      let t=(el.textContent||'').replace(/\s+/g,' ').trim(); if(!t) return;
+      if(el.classList && el.classList.contains('src')) out.push('*'+t+'*');
+      else if(t.charAt(0)==='\u21b3'){
+        let done=false;
+        (function w(n){ if(done||!n.label) { (n.children||[]).forEach(w); return; }
+          if(t.indexOf(n.label)>=0 && n.id!==DATA.id){ out.push('→ [['+n.label+']]'); done=true; }
+          (n.children||[]).forEach(w); })(DATA);
+        if(!done) out.push(t);
+      } else out.push(t);
+    });
+    return out;
+  };
+  (function w(n,d){
+    const lbl=(n.label||'').replace(/\s+/g,' ').trim();
+    if(d===0) lines.push('# '+lbl);
+    else if(d===1) lines.push('','## '+lbl);
+    else if(d===2) lines.push('','### '+lbl);
+    else lines.push('  '.repeat(d-3)+'- '+lbl);
+    const nt=plain(n.note);
+    if(d<=2){ nt.forEach(t=>lines.push('',t)); }
+    else nt.forEach(t=>lines.push('  '.repeat(d-3)+'  '+t));
+    (n.children||[]).forEach(c=>w(c,d+1));
+  })(DATA,0);
+  const blob=new Blob([lines.join('\n')+'\n'],{type:'text/markdown;charset=utf-8'});
+  const l=document.createElement('a'); l.href=URL.createObjectURL(blob);
+  l.download=(DATA.label||'zemelapis')+'.md'; l.click();
+  showToast('Markdown eksportuotas — tinka Obsidian ir Notion');
+}
+window.mmExportMd=mmExportMd;
+
+/* ══════════ F2 · PDF ir DOCX SKAITYMAS ══════════════════════════════════
+   Be jokių išorinių bibliotekų — rinkmena lieka savarankiška ir veikia be
+   interneto. DOCX: ZIP + document.xml. PDF: objektų sąrašas, FlateDecode per
+   DecompressionStream, teksto operatoriai (Tj/TJ) ir ToUnicode žemėlapiai —
+   todėl lietuviška diakritika išlieka. Skenuotas PDF be teksto sluoksnio
+   atpažįstamas ir apie tai pasakoma aiškiai. */
+async function mmInflate(u8){
+  for(const f of ['deflate','deflate-raw']){
+    try{
+      const st=new Blob([u8]).stream().pipeThrough(new DecompressionStream(f));
+      return new Uint8Array(await new Response(st).arrayBuffer());
+    }catch(e){}
+  }
+  return null;
+}
+async function mmDocxText(buf){
+  const u=new Uint8Array(buf), dv=new DataView(buf);
+  let e=-1;
+  for(let i=u.length-22;i>=0 && i>u.length-70000;i--){
+    if(dv.getUint32(i,true)===0x06054b50){ e=i; break; } }
+  if(e<0) throw new Error('tai ne DOCX rinkmena');
+  const cnt=dv.getUint16(e+10,true), cdOff=dv.getUint32(e+16,true);
+  const td=new TextDecoder('utf-8');
+  let p=cdOff, data=null;
+  for(let k=0;k<cnt;k++){
+    if(dv.getUint32(p,true)!==0x02014b50) break;
+    const meth=dv.getUint16(p+10,true), csz=dv.getUint32(p+20,true),
+      nl=dv.getUint16(p+28,true), el=dv.getUint16(p+30,true), cl=dv.getUint16(p+32,true),
+      lho=dv.getUint32(p+42,true);
+    const name=td.decode(u.subarray(p+46,p+46+nl));
+    p=p+46+nl+el+cl;
+    if(name!=='word/document.xml') continue;
+    const lnl=dv.getUint16(lho+26,true), lel=dv.getUint16(lho+28,true);
+    const cd=u.subarray(lho+30+lnl+lel, lho+30+lnl+lel+csz);
+    data = meth===0 ? cd : await mmInflate(cd);
+    break;
+  }
+  if(!data) throw new Error('document.xml nerastas');
+  const doc=new DOMParser().parseFromString(td.decode(data),'application/xml');
+  const ps=[];
+  Array.prototype.slice.call(doc.getElementsByTagName('*')).forEach(el=>{
+    if(el.localName!=='p') return;
+    let t='';
+    Array.prototype.slice.call(el.getElementsByTagName('*')).forEach(r=>{
+      if(r.localName==='t') t+=r.textContent;
+      else if(r.localName==='br'||r.localName==='tab') t+=' ';
+    });
+    t=t.replace(/\s+/g,' ').trim(); if(t) ps.push(t);
+  });
+  if(!ps.length) throw new Error('dokumente teksto nerasta');
+  return {text:ps.join('\n\n'), paras:ps.length, pages:null};
+}
+async function mmPdfText(buf){
+  const u=new Uint8Array(buf);
+  const lat=new TextDecoder('latin1').decode(u);
+  if(lat.slice(0,5)!=='%PDF-') throw new Error('tai ne PDF rinkmena');
+  const objs={};
+  { const re=/(\d+)\s+\d+\s+obj\b/g; let m;
+    const idx=[];
+    while((m=re.exec(lat))) idx.push({n:+m[1], b:re.lastIndex});
+    idx.forEach(o=>{ const end=lat.indexOf('endobj', o.b);
+      objs[o.n]={dict:lat.slice(o.b, end<0?o.b+600:Math.min(end,o.b+4000)), b:o.b, e:end<0?o.b+600:end}; });
+  }
+  const getStream=async n=>{
+    const o=objs[n]; if(!o) return null;
+    const si=lat.indexOf('stream', o.b); if(si<0||si>o.e) return null;
+    let ds=si+6; if(lat[ds]==='\r') ds++; if(lat[ds]==='\n') ds++;
+    const se=lat.lastIndexOf('endstream', o.e);
+    if(se<=ds) return null;
+    const raw=u.subarray(ds,se);
+    if(/\/FlateDecode/.test(o.dict)) return await mmInflate(raw);
+    if(/\/Filter/.test(o.dict)) return null;      /* kiti filtrai nepalaikomi */
+    return raw;
+  };
+  /* puslapiai medžio tvarka */
+  const pages=[];
+  const kidsOf=d=>{ const mm=/\/Kids\s*\[([^\]]*)\]/.exec(d||''); if(!mm) return [];
+    return (mm[1].match(/\d+(?=\s+\d+\s+R)/g)||[]).map(Number); };
+  const seen=new Set();
+  const walk=n=>{ if(seen.has(n)) return; seen.add(n);
+    const o=objs[n]; if(!o) return;
+    if(/\/Type\s*\/Page(?![a-zA-Z])/.test(o.dict)) pages.push(n);
+    else kidsOf(o.dict).forEach(walk); };
+  const cat=Object.keys(objs).find(n=>/\/Type\s*\/Catalog/.test(objs[n].dict));
+  if(cat){ const pm=/\/Pages\s+(\d+)\s+\d+\s+R/.exec(objs[cat].dict); if(pm) walk(+pm[1]); }
+  if(!pages.length) Object.keys(objs).map(Number).sort((a,b)=>a-b)
+    .forEach(n=>{ if(/\/Type\s*\/Page(?![a-zA-Z])/.test(objs[n].dict)) pages.push(n); });
+  if(!pages.length) throw new Error('puslapių nerasta');
+  /* ToUnicode žemėlapiai */
+  const cmapCache={};
+  const hex2str=hx=>{ let s=''; for(let i=0;i+4<=hx.length;i+=4) s+=String.fromCharCode(parseInt(hx.slice(i,i+4),16));
+    if(hx.length===2) s=String.fromCharCode(parseInt(hx,16)); return s; };
+  async function fontMap(fn){
+    if(cmapCache[fn]!==undefined) return cmapCache[fn];
+    let map=null; const fo=objs[fn];
+    if(fo){
+      const tm=/\/ToUnicode\s+(\d+)\s+\d+\s+R/.exec(fo.dict);
+      if(tm){
+        const st=await getStream(+tm[1]);
+        if(st){
+          const s=new TextDecoder('latin1').decode(st); map={};
+          let bm;
+          const bfc=/beginbfchar([\s\S]*?)endbfchar/g;
+          while((bm=bfc.exec(s))){
+            let lm; const lr=/<([0-9A-Fa-f]+)>\s*<([0-9A-Fa-f]+)>/g;
+            while((lm=lr.exec(bm[1]))) map[parseInt(lm[1],16)]=hex2str(lm[2]);
+          }
+          const bfr=/beginbfrange([\s\S]*?)endbfrange/g;
+          while((bm=bfr.exec(s))){
+            let lm; const lr=/<([0-9A-Fa-f]+)>\s*<([0-9A-Fa-f]+)>\s*<([0-9A-Fa-f]+)>/g;
+            while((lm=lr.exec(bm[1]))){
+              const a=parseInt(lm[1],16), b=parseInt(lm[2],16), c=parseInt(lm[3],16);
+              for(let x=a;x<=b && x-a<600;x++) map[x]=String.fromCodePoint(c+(x-a));
+            }
+          }
+          map.__two = /\/Subtype\s*\/Type0/.test(fo.dict);
+        }
+      }
+    }
+    cmapCache[fn]=map; return map;
+  }
+  function pageFonts(pn){
+    const d=objs[pn].dict;
+    let rd='';
+    const rm=/\/Resources\s+(\d+)\s+\d+\s+R/.exec(d);
+    if(rm && objs[+rm[1]]) rd=objs[+rm[1]].dict; else rd=d;
+    const fi=rd.indexOf('/Font'); if(fi<0) return {};
+    const sub=rd.slice(fi, fi+1600), fonts={};
+    let x; const fm=/\/([A-Za-z][\w.]*)\s+(\d+)\s+\d+\s+R/g;
+    while((x=fm.exec(sub))) fonts[x[1]]=+x[2];
+    return fonts;
+  }
+  const decodeStr=(s,map)=>{
+    if(!map){ return s; }
+    let out='';
+    if(map.__two){
+      for(let i=0;i+1<s.length;i+=2){
+        const c=(s.charCodeAt(i)<<8)|s.charCodeAt(i+1);
+        out += (map[c]!==undefined)?map[c]:'';
+      }
+    } else {
+      for(let i=0;i<s.length;i++){
+        const c=s.charCodeAt(i);
+        out += (map[c]!==undefined)?map[c]:(c>=32?s[i]:'');
+      }
+    }
+    return out;
+  };
+  const pageParas=[];
+  for(let pi=0;pi<pages.length;pi++){
+    const pd=objs[pages[pi]].dict;
+    let crefs=[];
+    const cm=/\/Contents\s+(\d+)\s+\d+\s+R/.exec(pd);
+    if(cm) crefs=[+cm[1]];
+    else{ const ca=/\/Contents\s*\[([^\]]*)\]/.exec(pd);
+      if(ca) crefs=(ca[1].match(/\d+(?=\s+\d+\s+R)/g)||[]).map(Number); }
+    let cs='';
+    for(const r of crefs){ const st=await getStream(r); if(st) cs+=new TextDecoder('latin1').decode(st)+'\n'; }
+    if(!cs){ pageParas.push({page:pi+1, lines:[]}); continue; }
+    const fonts=pageFonts(pages[pi]);
+    let curMap=null, lines=[], line='', lastY=null, toks=[];
+    const flush=()=>{ const t=line.replace(/\s+/g,' ').trim(); if(t) lines.push(t); line=''; };
+    let i=0; const N=cs.length;
+    while(i<N){
+      const c=cs[i];
+      if(c==='('){
+        let s='', depth=1; i++;
+        while(i<N && depth>0){
+          let ch=cs[i];
+          if(ch==='\\'){
+            const nx=cs[i+1];
+            if(nx==='n'||nx==='r') s+=' ';
+            else if(nx==='t') s+=' ';
+            else if(nx>='0'&&nx<='7'){
+              let oct=nx, j=i+2;
+              while(j<N && cs[j]>='0'&&cs[j]<='7'&&oct.length<3){ oct+=cs[j]; j++; }
+              s+=String.fromCharCode(parseInt(oct,8)); i=j; continue;
+            } else s+=nx;
+            i+=2; continue;
+          }
+          if(ch==='(') depth++;
+          else if(ch===')'){ depth--; if(!depth){ i++; break; } }
+          if(depth) s+=ch;
+          i++;
+        }
+        line+=decodeStr(s,curMap);
+        continue;
+      }
+      if(c==='<' && cs[i+1]!=='<'){
+        const e2=cs.indexOf('>',i);
+        if(e2>0){ const hx=cs.slice(i+1,e2).replace(/\s+/g,'');
+          let s='';
+          if(curMap && curMap.__two){ for(let k=0;k+4<=hx.length;k+=4){ const code=parseInt(hx.slice(k,k+4),16); s+=(curMap[code]!==undefined)?curMap[code]:''; } }
+          else { for(let k=0;k+2<=hx.length;k+=2){ const code=parseInt(hx.slice(k,k+2),16);
+            s+= curMap ? ((curMap[code]!==undefined)?curMap[code]:'') : (code>=32?String.fromCharCode(code):''); } }
+          line+=s; i=e2+1; continue; }
+      }
+      if(/[\sA-Za-z0-9.+\-*'"\/\[\]]/.test(c)){
+        const m=/^[^\s()<>\[\]{}\/%]+|^\/[^\s()<>\[\]{}\/%]+|^\[|^\]/.exec(cs.slice(i,i+64));
+        if(m && m[0].trim()){
+          const tk=m[0]; toks.push(tk); if(toks.length>8) toks.shift();
+          if(tk==='Tf'){ const fnm=toks[toks.length-3];
+            if(fnm && fnm[0]==='/'){ const fr=fonts[fnm.slice(1)];
+              curMap = fr!==undefined ? await fontMap(fr) : null; } }
+          else if(tk==='Td'||tk==='TD'){
+            const ty=parseFloat(toks[toks.length-2]);
+            if(isFinite(ty) && Math.abs(ty)>0.1) flush();
+          }
+          else if(tk==='Tm'){
+            const ty=parseFloat(toks[toks.length-2]);
+            if(lastY===null || !isFinite(ty) || Math.abs(ty-lastY)>0.1) flush();
+            if(isFinite(ty)) lastY=ty;
+          }
+          else if(tk==='T*'||tk==="'"||tk==='"'||tk==='ET') flush();
+          else if(/^-?\d+(\.\d+)?$/.test(tk)){
+            const v=parseFloat(tk);
+            if(v<-180 && toks[toks.length-2]!=='Tf') line+=' ';
+          }
+          i+=m[0].length; continue;
+        }
+      }
+      i++;
+    }
+    flush();
+    pageParas.push({page:pi+1, lines:lines});
+  }
+  /* eilutės → pastraipos (su kėlimo brūkšnio suliejimu) */
+  const paras=[]; let cur='', curPage=1;
+  pageParas.forEach(pg=>{ pg.lines.forEach(t=>{
+    t=t.normalize('NFC').replace(/\u00AD/g,'');
+    if(!cur){ cur=t; curPage=pg.page; return; }
+    if(/[-‐]$/.test(cur)) cur=cur.replace(/[-‐]$/,'')+t;
+    else if(/[.!?…:]["'”“)\]]?$/.test(cur) && /^[A-ZĄČĘĖĮŠŲŪŽ0-9„"]/.test(t)){
+      paras.push({p:cur, page:curPage}); cur=t; curPage=pg.page; }
+    else cur+=' '+t;
+  }); });
+  if(cur) paras.push({p:cur, page:curPage});
+  const text=paras.map(o=>o.p).join('\n\n');
+  if(text.replace(/\s+/g,'').length<40)
+    throw new Error('teksto sluoksnio nėra — tai greičiausiai skenuotas PDF (nuotraukos)');
+  return {text:text, paras:paras.length, pages:pageParas.length};
+}
+async function mmExtractDoc(file){
+  const buf=await file.arrayBuffer();
+  if(/\.pdf$/i.test(file.name)) return await mmPdfText(buf);
+  if(/\.docx?$/i.test(file.name)) return await mmDocxText(buf);
+  throw new Error('nepalaikomas formatas');
+}
+
+/* ══════════ F9 · DVIEJŲ ŠALTINIŲ GRETINIMAS ═════════════════════════════
+   Nauja medžiaga dedama PRIE atitinkamų kortelių, o kiekviena nauja kortelė
+   pažymima: sutampa (=) · papildo (+) · prieštarauja (≠). Prieštaravimai
+   surenkami į spausdinamą ataskaitą. */
+function mmCmpTagNew(before){
+  const news=[]; (function w(x){ if(!before.has(x.id)) news.push(x); (x.children||[]).forEach(w); })(DATA);
+  const NEG=/(nėra|nebuvo|nebus|niekada|negalima|nereikia|priešingai|netiesa|klaidinga|draudžiama|\sne\s)/i;
+  const txt=n=>{ let t=n.label||''; try{ t+=' '+sPlainNote(n); }catch(e){} return t; };
+  news.forEach(n=>{
+    if(!n._p) return;
+    const sib=(n._p.children||[]).filter(s=>before.has(s.id)).map(txt).join(' ')+' '+(n._p.label||'');
+    const ts=mmTerms(txt(n)), hs=new Set(mmTerms(sib));
+    let hit=0; ts.forEach(t=>{ if(hs.has(t)) hit++; });
+    const r=ts.length?hit/ts.length:0;
+    let tag='papildo';
+    if(r>=0.75) tag='sutampa';
+    else if(r>=0.45 && (NEG.test(' '+txt(n)+' ')!==NEG.test(' '+sib+' '))) tag='prieštarauja';
+    n.cmpTag=tag;
+  });
+  render();
+  const c={sutampa:0,papildo:0,'prieštarauja':0};
+  news.forEach(n=>{ if(n.cmpTag) c[n.cmpTag]++; });
+  showToast('Gretinimas: '+c.sutampa+' sutampa · '+c.papildo+' papildo · '+c['prieštarauja']+' prieštarauja'
+    +(c['prieštarauja']?' — ataskaita per Ctrl+K':''));
+}
+function mmCmpReport(){
+  const rows=[]; (function w(x){ if(x.cmpTag) rows.push(x); (x.children||[]).forEach(w); })(DATA);
+  if(!rows.length){ showToast('Gretinimo žymių nėra — papildykite žemėlapį pažymėję „Gretinti su esamu turiniu"'); return; }
+  const w=window.open('','_blank'); if(!w){ showToast('Naršyklė užblokavo langą'); return; }
+  const T={sutampa:'Sutampa',papildo:'Papildo','prieštarauja':'Prieštarauja'};
+  let html='<html><head><meta charset="utf-8"><title>Gretinimo ataskaita — '+mmEsc(DATA.label||'')+'</title>'
+    +'<style>body{font-family:Segoe UI,Arial,sans-serif;max-width:180mm;margin:14mm auto;color:#1b2333;line-height:1.5}'
+    +'h1{font-size:16pt}h2{font-size:12pt;margin:16px 0 6px}.r{margin:4px 0;padding-left:12px;border-left:3px solid #ccc}'
+    +'.x{border-color:#C24A46}.s{border-color:#2E9E8F}.p{border-color:#E8A33D}.h{color:#7a8798;font-size:9pt}</style></head><body>'
+    +'<h1>Gretinimo ataskaita · '+mmEsc(DATA.label||'')+'</h1>';
+  ['prieštarauja','papildo','sutampa'].forEach(tag=>{
+    const g=rows.filter(n=>n.cmpTag===tag); if(!g.length) return;
+    html+='<h2>'+T[tag]+' ('+g.length+')</h2>';
+    g.forEach(n=>{ html+='<div class="r '+(tag==='prieštarauja'?'x':tag==='sutampa'?'s':'p')+'"><b>'
+      +mmEsc(n.label||'')+'</b><div class="h">prie: '+mmEsc((n._p&&n._p.label)||'')+'</div></div>'; });
+  });
+  html+='<script>print()<\/script></body></html>';
+  w.document.write(html); w.document.close();
+}
+window.mmCmpReport=mmCmpReport;
+
+/* ══════════ F4 · SLĖPIMO REŽIMAS ir F7 · KLAUSIMYNAS ════════════════════
+   Mokymosi ciklas: nuo „padariau žemėlapį" iki „moku". Slėpimas yra VAIZDO
+   režimas — nekeičia nė vieno kortelės lauko, nepatenka į anuliavimo istoriją
+   ir nėra išsaugomas: išjungus žemėlapis atrodo lygiai taip, kaip atrodė. */
+window.LRN={ on:false, hidden:new Set(), revealed:new Set(),
+  glyph:function(n){
+    let r=null; try{ r=window.mmNodeRole(n); }catch(e){}
+    const G={'n-verse':'❝','n-quote':'❞','n-source':'↗','n-def':'≡','n-formula':'∑',
+      'n-example':'❖','n-data':'#','n-question':'?','n-task':'✎','n-rule':'§',
+      'n-warn':'⚠','n-step':'→','n-action':'✔'};
+    return G[r]||n.icon||'·';
+  },
+  apply:function(){
+    document.querySelectorAll('#world .node').forEach(el=>{
+      const id=el.dataset.id;
+      const hid=this.on && this.hidden.has(id) && !this.revealed.has(id);
+      el.classList.toggle('mmHid', hid);
+      if(hid){ const n=OBJ[id]; if(n) el.dataset.mico=this.glyph(n); }
+    });
+    this.prog();
+  },
+  prog:function(){
+    const el=document.getElementById('lrnProg'); if(!el) return;
+    if(!this.on || !this.hidden.size){ el.textContent=''; return; }
+    let rev=0; this.hidden.forEach(id=>{ if(this.revealed.has(id)) rev++; });
+    el.textContent='Atidengta '+rev+' iš '+this.hidden.size;
+  },
+  hideByDepth:function(d){
+    this.hidden=new Set(); this.revealed=new Set();
+    (function w(n,dep){ if(dep>=d) LRN.hidden.add(n.id);
+      (n.children||[]).forEach(c=>w(c,dep+1)); })(DATA,0);
+    this.hidden.delete(DATA.id);
+    this.on=true; this.apply();
+    showToast('Paslėpta kortelių: '+this.hidden.size+' — bandyk prisiminti, paspaudimas atidengia');
+  },
+  hideByRole:function(role){
+    this.hidden=new Set(); this.revealed=new Set();
+    (function w(n){ let r=null; try{ r=window.mmNodeRole(n); }catch(e){}
+      if(r===role && n.id!==DATA.id) LRN.hidden.add(n.id);
+      (n.children||[]).forEach(w); })(DATA);
+    if(!this.hidden.size){ showToast('Tokio tipo kortelių žemėlapyje nėra'); return; }
+    this.on=true; this.apply();
+    showToast('Paslėpta kortelių: '+this.hidden.size);
+  },
+  toggleCard:function(n){
+    if(!this.hidden.has(n.id)) return;
+    if(this.revealed.has(n.id)) this.revealed.delete(n.id); else this.revealed.add(n.id);
+    this.apply();
+  },
+  exit:function(){
+    this.on=false; this.hidden.clear(); this.revealed.clear(); this.apply();
+    const p=document.getElementById('lrnPanel'); if(p) p.classList.remove('on');
+    const b=document.getElementById('learnBtn'); if(b) b.classList.remove('tbActive');
+  },
+  /* ── skydelis ── */
+  open:function(tab){
+    let p=document.getElementById('lrnPanel');
+    if(!p){ p=document.createElement('div'); p.id='lrnPanel'; document.body.appendChild(p); }
+    const roles={};
+    (function w(n){ let r=null; try{ r=window.mmNodeRole(n); }catch(e){}
+      if(r && n.id!==DATA.id) roles[r]=(roles[r]||0)+1; (n.children||[]).forEach(w); })(DATA);
+    const RN={'n-verse':'Rašto eilutės','n-quote':'Citatos','n-source':'Šaltiniai','n-def':'Apibrėžimai',
+      'n-formula':'Formulės','n-example':'Pavyzdžiai','n-data':'Faktai','n-question':'Klausimai',
+      'n-task':'Užduotys','n-rule':'Taisyklės','n-warn':'Įspėjimai','n-step':'Patarimai','n-action':'Išvados'};
+    const chips=Object.keys(roles).map(r=>'<button class="lrnChip" data-r="'+r+'">'+(RN[r]||r)+' · '+roles[r]+'</button>').join('')
+      || '<span class="lrnMut">Tipų šiame žemėlapyje neatpažinta</span>';
+    p.innerHTML='<div class="covHead"><b>🎓 Mokymasis</b><button id="lrnX" aria-label="Uždaryti">✕</button></div>'
+      +'<div class="lrnTabs"><button class="lrnTab" data-t="hide">Slėpimas</button><button class="lrnTab" data-t="quiz">Klausimynas</button></div>'
+      +'<div class="covBody" id="lrnBody"></div>';
+    p.classList.add('on');
+    document.getElementById('learnBtn').classList.add('tbActive');
+    document.getElementById('lrnX').onclick=()=>LRN.exit();
+    const paintHide=()=>{
+      document.getElementById('lrnBody').innerHTML=
+        '<div class="lrnSec">Paslėpti pagal gylį</div>'
+        +'<div class="lrnRow"><button class="lrnChip" data-d="1">Visas šakas</button>'
+        +'<button class="lrnChip" data-d="2">Nuo 2 lygio</button>'
+        +'<button class="lrnChip" data-d="3">Nuo 3 lygio</button></div>'
+        +'<div class="lrnSec">Paslėpti pagal tipą</div>'
+        +'<div class="lrnRow">'+chips+'</div>'
+        +'<div class="lrnSec" id="lrnProg"></div>'
+        +'<div class="lrnRow"><button class="lrnChip act" id="lrnAll">Atidengti viską</button>'
+        +'<button class="lrnChip" id="lrnOff">Baigti mokymąsi</button></div>'
+        +'<div class="lrnMut">Paspaudimas ant paslėptos kortelės ją atidengia; dar kartą — vėl paslepia. '
+        +'Ženkliukas +N toliau išskleidžia šakas. Išjungus režimą žemėlapis lieka nepakitęs.</div>';
+      p.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>LRN.hideByDepth(+b.dataset.d));
+      p.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>LRN.hideByRole(b.dataset.r));
+      document.getElementById('lrnAll').onclick=()=>{ LRN.hidden.forEach(id=>LRN.revealed.add(id)); LRN.apply(); };
+      document.getElementById('lrnOff').onclick=()=>LRN.exit();
+      LRN.prog();
+    };
+    const paintQuiz=()=>{ LRN.quizStart(); };
+    p.querySelectorAll('.lrnTab').forEach(b=>b.onclick=()=>{
+      p.querySelectorAll('.lrnTab').forEach(x=>x.classList.toggle('on',x===b));
+      (b.dataset.t==='hide'?paintHide:paintQuiz)();
+    });
+    const t=p.querySelector('.lrnTab[data-t="'+(tab||'hide')+'"]'); if(t) t.click();
+  },
+  /* ── klausimynas ── */
+  qs:[], qi:0, unknown:[],
+  quizStart:function(only){
+    let qs=[];
+    (function w(n){ let r=null; try{ r=window.mmNodeRole(n); }catch(e){}
+      if((r==='n-question'||/^\d+([–-]\d+)?\s*kl\./.test(n.label||'')) && (n.children||[]).length)
+        qs.push(n);
+      (n.children||[]).forEach(w); })(DATA);
+    if(!qs.length) qs=(DATA.children||[]).filter(b=>(b.children||[]).length);
+    if(only) qs=qs.filter(n=>only.indexOf(n.id)>=0);
+    this.qs=qs; this.qi=0; this.unknown=[];
+    this.quizPaint();
+  },
+  quizPaint:function(){
+    const B=document.getElementById('lrnBody'); if(!B) return;
+    if(!this.qs.length){ B.innerHTML='<div class="lrnMut">Klausimų nerasta — žemėlapis be klausimų kortelių ir be šakų.</div>'; return; }
+    if(this.qi>=this.qs.length){
+      const bad=this.unknown.length, ok=this.qs.length-bad;
+      B.innerHTML='<div class="lrnSec">Rezultatas</div>'
+        +'<div class="lrnBig">Žinojai '+ok+' iš '+this.qs.length+'</div>'
+        +'<div class="lrnRow">'+(bad?'<button class="lrnChip act" id="qzBad">Kartoti tik nežinotus ('+bad+')</button>':'')
+        +'<button class="lrnChip" id="qzAgain">Iš naujo</button>'
+        +'<button class="lrnChip" id="qzPrint">Spausdinti klausimyną</button></div>';
+      const b1=document.getElementById('qzBad'); if(b1) b1.onclick=()=>this.quizStart(this.unknown);
+      document.getElementById('qzAgain').onclick=()=>this.quizStart();
+      document.getElementById('qzPrint').onclick=()=>this.quizPrint();
+      return;
+    }
+    const n=this.qs[this.qi];
+    const isQ=/\?/.test(n.label||'');
+    const q=isQ ? n.label : 'Kas pasakyta: „'+n.label+'“?';
+    B.innerHTML='<div class="lrnSec">Klausimas '+(this.qi+1)+' iš '+this.qs.length+'</div>'
+      +'<div class="lrnBig">'+mmEsc(q)+'</div>'
+      +'<div id="qzA" class="lrnAns" hidden></div>'
+      +'<div class="lrnRow" id="qzBtns"><button class="lrnChip act" id="qzShow">Rodyti atsakymą</button></div>';
+    try{ highlightNodes([n.id]); }catch(e){}
+    document.getElementById('qzShow').onclick=()=>{
+      const A=document.getElementById('qzA');
+      A.innerHTML=(n.children||[]).map(c=>{
+        let t=''; try{ t=sPlainNote(c).slice(0,160); }catch(e){}
+        return '<div class="qzRow"><b>'+mmEsc(c.label||'')+'</b>'+(t?'<span>'+mmEsc(t)+'</span>':'')+'</div>';
+      }).join('');
+      A.hidden=false;
+      document.getElementById('qzBtns').innerHTML=
+        '<button class="lrnChip ok" id="qzY">Žinojau</button><button class="lrnChip no" id="qzN">Nežinojau</button>';
+      document.getElementById('qzY').onclick=()=>{ this.qi++; this.quizPaint(); };
+      document.getElementById('qzN').onclick=()=>{ this.unknown.push(this.qs[this.qi].id); this.qi++; this.quizPaint(); };
+    };
+  },
+  quizPrint:function(){
+    const w=window.open('','_blank'); if(!w){ showToast('Naršyklė užblokavo langą'); return; }
+    let html='<html><head><meta charset="utf-8"><title>Klausimynas — '+mmEsc(DATA.label||'')+'</title>'
+      +'<style>body{font-family:Segoe UI,Arial,sans-serif;max-width:180mm;margin:14mm auto;color:#1b2333;line-height:1.5}'
+      +'h1{font-size:16pt}h2{font-size:11pt;margin:14px 0 4px}.a{color:#42506a;margin:2px 0 2px 14px}</style></head><body>'
+      +'<h1>Klausimynas · '+mmEsc(DATA.label||'')+'</h1>';
+    this.qs.forEach((n,i)=>{
+      const isQ=/\?/.test(n.label||'');
+      html+='<h2>'+(i+1)+'. '+mmEsc(isQ?n.label:('Kas pasakyta: „'+n.label+'“?'))+'</h2>';
+      (n.children||[]).forEach(c=>{ html+='<div class="a">— '+mmEsc(c.label||'')+'</div>'; });
+    });
+    html+='<script>print()<\/script></body></html>';
+    w.document.write(html); w.document.close();
+  }
+};
+document.getElementById('learnBtn').addEventListener('click',()=>{
+  const p=document.getElementById('lrnPanel');
+  if(p && p.classList.contains('on')){ p.classList.remove('on');
+    document.getElementById('learnBtn').classList.remove('tbActive'); }
+  else LRN.open('hide');
+});
+
+/* ══════════ F6 · PAVADINIMŲ PRIEŽIŪRA ═══════════════════════════════════
+   Metodikos šerdis: pavadinimas gimsta iš vaikų. Kai vaikai pasikeičia,
+   kortelė gauna TYLŲ ženklą — ne įspėjimą, o pasiūlymą peržiūrėti. */
+function mmTitleFlag(parent){
+  if(!parent || parent===DATA || !parent.children || parent.children.length<2) return;
+  parent.tchk=1;
+}
+function mmTitleSuggest(n){
+  const stop=new Set(['kad','kaip','kodėl','kas','apie','arba','bet','ir','į','iš','su','be','per','tai','yra','buvo','labai','taip','dėl']);
+  const f={};
+  (n.children||[]).forEach(c=>String(c.label||'').toLowerCase().replace(/[^a-ząčęėįšųūž\s]/g,' ')
+    .split(/\s+/).forEach(w=>{ if(w.length>=4 && !stop.has(w)) f[w]=(f[w]||0)+1; }));
+  const top=Object.keys(f).sort((a,b)=>f[b]-f[a]).slice(0,3);
+  if(!top.length) return n.label||'';
+  const s=top.join(' · ');
+  return s.charAt(0).toUpperCase()+s.slice(1);
+}
+function mmTitleFix(n){
+  const ov=document.createElement('div'); ov.className='addOverlay';
+  const kids=(n.children||[]).map(c=>'<div class="tcKid">— '+mmEsc(c.label||'')+'</div>').join('');
+  ov.innerHTML='<div class="addBox"><div class="addTitle">Pavadinimą verta peržiūrėti</div>'
+    +'<div class="tcOld">Dabar: <b>'+mmEsc(n.label||'')+'</b></div>'
+    +'<div class="tcKids">'+kids+'</div>'
+    +'<input class="addInp" type="text" value="'+mmEsc(mmTitleSuggest(n))+'">'
+    +'<div class="addBtns"><button class="addCancel">Palikti</button><button class="addOk">Pakeisti</button></div></div>';
+  document.body.appendChild(ov);
+  const close=()=>ov.remove();
+  ov.querySelector('.addCancel').onclick=()=>{ n.tchk=0; close(); render(); };
+  ov.querySelector('.addOk').onclick=()=>{ const v=ov.querySelector('.addInp').value.trim();
+    if(v){ pushUndo(); n.label=v; } n.tchk=0; close(); render(); };
+  ov.addEventListener('pointerdown',e=>{ if(e.target===ov) close(); });
+}
+function mmTitleCare(){
+  const flagged=[]; (function w(x){ if(x.tchk) flagged.push(x); (x.children||[]).forEach(w); })(DATA);
+  if(!flagged.length){ showToast('Visų kortelių pavadinimai atitinka turinį ✓'); return; }
+  const ov=document.createElement('div'); ov.className='addOverlay';
+  ov.innerHTML='<div class="addBox"><div class="addTitle">Pavadinimai, kuriuos verta peržiūrėti ('+flagged.length+')</div>'
+    +flagged.map((x,i)=>'<button class="tcItem" data-i="'+i+'">'+mmEsc(x.label||'')+'</button>').join('')
+    +'<div class="addBtns"><button class="addCancel">Uždaryti</button></div></div>';
+  document.body.appendChild(ov);
+  const close=()=>ov.remove();
+  ov.querySelector('.addCancel').onclick=close;
+  ov.addEventListener('pointerdown',e=>{ if(e.target===ov) close(); });
+  ov.querySelectorAll('.tcItem').forEach(b=>b.onclick=()=>{ close(); mmTitleFix(flagged[+b.dataset.i]); });
+}
+window.mmTitleCare=mmTitleCare;
+
+/* liečiamiesiems: ilgas ⚙ palaikymas atveria komandų juostą */
+(function(){
+  const g=document.getElementById('mapSettings'); if(!g) return;
+  let t=null;
+  g.addEventListener('pointerdown',e=>{ if(e.pointerType!=='touch') return;
+    t=setTimeout(()=>{ t=null; mmCmdOpen(); },600); });
+  ['pointerup','pointercancel','pointerleave'].forEach(ev=>g.addEventListener(ev,()=>{ if(t){ clearTimeout(t); t=null; } }));
+})();
 function mmAllText(){
   var out=[], n=0;
   (function w(x){ if(n>4000) return; n++;
@@ -7575,6 +8608,20 @@ function mmAddInit(){
         $('addFileName').hidden=false; $('addFileName').textContent='🖼 '+f.name; sync(); };
       r.readAsDataURL(f); return;
     }
+    if(/\.(pdf|docx?)$/i.test(f.name)){
+      $('addFileName').hidden=false; $('addFileName').textContent='📄 '+f.name+' · skaitoma…';
+      f.arrayBuffer().then(async buf=>{
+        try{
+          const ex=/\.pdf$/i.test(f.name)? await mmPdfText(buf) : await mmDocxText(buf);
+          f.__text=ex.text; pickedFile=f;
+          $('addFileName').textContent='📄 '+f.name+' · '+ex.paras+' pastr.'+(ex.pages?(' · '+ex.pages+' psl.'):'');
+        }catch(err){
+          $('addFileName').textContent='⚠ '+f.name+' — '+((err&&err.message)||err);
+        }
+        sync();
+      });
+      return;
+    }
     if(/\.(txt|md)$/i.test(f.name)){
       const r=new FileReader();
       r.onload=e=>{ f.__text=String(e.target.result||''); pickedFile=f;
@@ -7620,7 +8667,10 @@ function mmAddInit(){
     if(src.length<40){ showToast('Per mažai teksto'); return; }
     $('addGo').disabled=true; $('addHint').textContent='Dėlioju korteles…';
     try{
+      const beforeIds=new Set(); (function w(x){ beforeIds.add(x.id); (x.children||[]).forEach(w); })(DATA);
       const ok=await window.mmGenerateFromText(src,{add:true, color:color, mark:mark, src:true, links:false});
+      if(ok){ try{ (DATA.srcs=DATA.srcs||[]).push({t:(pickedFile&&pickedFile.name)||'Papildymas', x:src}); }catch(e){}
+        if($('addCmp')&&$('addCmp').checked){ try{ mmCmpTagNew(beforeIds); }catch(e){} } }
       if(ok){ close(); $('addText').value=''; pickedFile=null; $('addFileName').hidden=true;
         /* išsaugom tyliai, o paskui grąžinam savo pranešimą — kitaip „išsaugota“
            užgožtų svarbesnę žinią, kiek kortelių pridėta */
@@ -7655,8 +8705,8 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
       <div class="apDrop" id="addDrop">
         <span class="apDropIco">⇪</span>
         <span class="apDropTx"><b>Nutempkite failą</b> arba <u>pasirinkite</u></span>
-        <span class="apDropSub">TXT · MD · paveikslėlis (PNG, JPG)</span>
-        <input type="file" id="addFile" accept=".txt,.md,image/*" hidden>
+        <span class="apDropSub">PDF · DOCX · TXT · MD · paveikslėlis</span>
+        <input type="file" id="addFile" accept=".txt,.md,.pdf,.docx,image/*" hidden>
       </div>
       <div class="apFile" id="addFileName" hidden></div>
 
@@ -7670,6 +8720,10 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
           <span class="apChkBody"><b>Kiekvienoje kortelėje palikti prierašą</b>
             <span>Į kiekvienos naujos kortelės užrašinę bus įrašyta žyma</span></span></label>
         <input type="text" id="addMark" class="apInp" value="Papildyta" aria-label="Prierašo tekstas">
+
+        <label class="apChk"><input type="checkbox" id="addCmp">
+          <span class="apChkBody"><b>Gretinti su esamu turiniu</b>
+            <span>Naujos kortelės pažymimos: sutampa (=) · papildo (+) · prieštarauja (≠). Prieštaravimai — spausdinamoje ataskaitoje</span></span></label>
       </div>
     </div>
     <div class="apFoot">
