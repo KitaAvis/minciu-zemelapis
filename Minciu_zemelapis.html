@@ -1895,6 +1895,67 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
   @media (max-width:1180px), (pointer:coarse){
     .node .fitB{min-width:44px;height:44px}
   }
+  /* ══ API RAKTO DIALOGAS ═══════════════════════════════════════════════
+     Naudoja tas pačias .ap* klases, todėl visos penkios temos veikia savaime.
+     Laukas — type="password": prompt() rodydavo raktą atviru tekstu ekrane. */
+  #akWrap{position:fixed;inset:0;z-index:210;display:none}
+  #akWrap.on{display:block}
+  #akBack{position:absolute;inset:0;background:rgba(8,12,20,.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+  #akPanel{position:absolute;top:50%;left:50%;transform:translate(-50%,-48%) scale(.98);opacity:0;
+    width:min(520px,calc(100vw - 32px));max-height:calc(100vh - 64px);display:flex;flex-direction:column;
+    background:linear-gradient(180deg,#fff,#F7F9FC);border:1px solid rgba(20,32,54,.12);border-radius:18px;
+    box-shadow:0 24px 70px -20px rgba(10,16,28,.55),0 2px 6px rgba(16,24,40,.08);
+    transition:opacity .2s ease,transform .24s cubic-bezier(.25,1.1,.4,1);overflow:hidden}
+  #akWrap.on #akPanel{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  #akInp{font-family:ui-monospace,Consolas,monospace;letter-spacing:1px}
+  .akState{margin:2px 0 6px;padding:9px 11px;border-radius:11px;font-size:11.8px;line-height:1.45;
+    background:rgba(46,158,143,.09);border:1px solid rgba(46,158,143,.24);color:#2C3A4B}
+  .akState b{color:#186A60}
+  .akState.warn{background:rgba(232,163,61,.12);border-color:rgba(201,138,43,.35)}
+  .akState.warn b{color:#7A5510}
+  .akChk{display:flex;gap:9px;align-items:flex-start;margin:10px 0 2px;cursor:pointer;
+    font-size:11.5px;line-height:1.5;color:#3B4658}
+  .akChk input{flex:none;margin-top:2px;width:17px;height:17px;accent-color:#1C7C70}
+  .akChk b{display:block;font-size:12.3px;color:#141C2B;margin-bottom:1px}
+  .akWhy{margin:11px 0 2px;padding:9px 11px;border-radius:11px;font-size:11.3px;line-height:1.5;
+    background:rgba(20,32,54,.045);border:1px solid rgba(20,32,54,.09);color:#4B5766}
+  .akWhy b{color:#141C2B}
+  #akForget{margin-right:auto}
+  #akForget[hidden]{display:none}
+  body[data-theme="cosmos"] #akPanel{background:linear-gradient(180deg,#131C2A,#0D141F);border-color:rgba(140,180,220,.22)}
+  body[data-theme="cosmos"] .akChk{color:#B9CBDC}
+  body[data-theme="cosmos"] .akChk b{color:#E9F1F8}
+  body[data-theme="cosmos"] .akState{color:#B9CBDC;background:rgba(46,158,143,.12);border-color:rgba(46,158,143,.3)}
+  body[data-theme="cosmos"] .akState b{color:#6FD8C6}
+  body[data-theme="cosmos"] .akState.warn{background:rgba(240,178,74,.14);border-color:rgba(240,178,74,.34)}
+  body[data-theme="cosmos"] .akState.warn b{color:#F0B24A}
+  body[data-theme="cosmos"] .akWhy{color:#AFC0D2;background:rgba(160,190,225,.06);border-color:rgba(140,180,220,.18)}
+  body[data-theme="cosmos"] .akWhy b{color:#E9F1F8}
+  body[data-theme="cosmos"] #akInp{background:rgba(160,190,225,.08);border-color:rgba(140,180,220,.24);color:#DCE7F2}
+  body[data-theme="street"] #akPanel{background:#241F19;border-color:#4a4136}
+  body[data-theme="street"] .akChk{color:#D8CFBB}
+  body[data-theme="street"] .akChk b{color:#F5F0E6}
+  body[data-theme="street"] .akState{color:#E4DCCB;background:rgba(245,197,24,.10);border-color:rgba(245,197,24,.3)}
+  body[data-theme="street"] .akState b{color:#F5C518}
+  body[data-theme="street"] .akState.warn{background:rgba(240,120,24,.16);border-color:rgba(240,120,24,.4)}
+  body[data-theme="street"] .akState.warn b{color:#F5A54A}
+  body[data-theme="street"] .akWhy{color:#D0C6B0;background:rgba(245,240,230,.05);border-color:#4a4136}
+  body[data-theme="street"] .akWhy b{color:#F5F0E6}
+  body[data-theme="street"] #akInp{background:#1E1A15;border-color:#4a4136;color:#F5F0E6}
+  body[data-theme="night"] #akPanel{background:#efe7d3;border-color:#3b3226}
+  body[data-theme="night"] #akInp{background:#fbf6e8;border-color:#b6a887;color:#241c14}
+  body[data-theme="night"] .akChk{color:#3A3025}
+  body[data-theme="night"] .akChk b{color:#241c14}
+  body[data-theme="night"] .akWhy{color:#4A4034;background:rgba(36,28,20,.05);border-color:#b6a887}
+  body[data-theme="paveikslas"] #akPanel{background:#EFE3C4;border-color:#8A7A57}
+  body[data-theme="paveikslas"] #akInp{background:#F7EFD9;border-color:#8A7A57;color:#2A2317}
+  body[data-theme="paveikslas"] .akChk{color:#3F3627}
+  body[data-theme="paveikslas"] .akChk b{color:#2A2317}
+  body[data-theme="paveikslas"] .akWhy{color:#4E4433;background:rgba(42,35,23,.05);border-color:#8A7A57}
+  @media (max-width:1180px), (pointer:coarse){
+    #akInp{font-size:15px;min-height:44px}
+    .akChk input{width:22px;height:22px}
+  }
   /* ══ RAKURSO REŽIMAS ══════════════════════════════════════════════════
      Skydelis naudoja esamas .ap* klases, todėl visos penkios temos veikia
      savaime. Sava tik tai, ko kitur nėra: rakurso teksto laukas, būsenos
@@ -6938,9 +6999,31 @@ dz.addEventListener('drop',e=>{
   }
 
   /* ---------- DI pavadinimai (vartotojo raktas, saugomas TIK jo naršyklėje) ---------- */
+  /* ══ API RAKTO SAUGYKLA ═══════════════════════════════════════════════
+     Pagal nutylėjimą raktas gyvena TIK atmintyje ir dingsta uždarius skirtuką:
+     diske jo nelieka, tad naršyklės duomenų ieškančios programos jo neranda.
+     Įrašymas į `localStorage` yra atskiras, aiškiai pažymėtas pasirinkimas —
+     patogumas už kainą, o ne tylus numatytasis elgesys.
+     Raktas niekada nepatenka nei į žemėlapį (`cleanTree`), nei į eksportus,
+     nei į kodą; vienintelis adresas, kuriuo jis siunčiamas — api.anthropic.com. */
   const KEY_LS='mm_ai_key';
-  window.mmGetAIKey=()=>{ try{ return localStorage.getItem(KEY_LS)||''; }catch(e){ return ''; } };
-  window.mmSetAIKey=k=>{ try{ k?localStorage.setItem(KEY_LS,k):localStorage.removeItem(KEY_LS); }catch(e){} };
+  let KEY_MEM='';
+  window.mmGetAIKey=()=>{
+    if(KEY_MEM) return KEY_MEM;
+    try{ return localStorage.getItem(KEY_LS)||''; }catch(e){ return ''; }
+  };
+  /* persist=true — įrašom ir į diską; kitaip diske nelieka nieko */
+  window.mmSetAIKey=(k,persist)=>{
+    KEY_MEM=k||'';
+    try{ if(k&&persist) localStorage.setItem(KEY_LS,k); else localStorage.removeItem(KEY_LS); }catch(e){}
+  };
+  window.mmForgetAIKey=()=>{ KEY_MEM=''; try{ localStorage.removeItem(KEY_LS); }catch(e){} };
+  /* 'nera' | 'seansas' (tik atmintyje) | 'diske' */
+  window.mmKeyWhere=()=>{
+    let d=''; try{ d=localStorage.getItem(KEY_LS)||''; }catch(e){}
+    if(d) return 'diske';
+    return KEY_MEM ? 'seansas' : 'nera';
+  };
 
   async function aiLabels(items){
     const key=window.mmGetAIKey(); if(!key||!items.length) return null;
@@ -8119,9 +8202,8 @@ function renderGloss(n){
 document.addEventListener('change',function(e){
   var t=e.target; if(!t||t.id!=='optAI'||!t.checked) return;
   if(window.mmGetAIKey&&window.mmGetAIKey()) return;
-  var k=prompt('Įklijuok savo Claude API raktą (sk-ant-...).\n\nJis saugomas TIK tavo naršyklėje ir siunčiamas tik į api.anthropic.com.\nUž naudojimą moki pagal savo Anthropic paskyrą.');
-  if(k&&k.trim()){ window.mmSetAIKey(k.trim()); }
-  else { t.checked=false; }
+  if(!window.mmKeyDialog){ t.checked=false; return; }
+  window.mmKeyDialog().then(function(okk){ if(!okk) t.checked=false; });
 });
 
 
@@ -8664,6 +8746,7 @@ function mmCmdList(){
   add('Išsaugoti žemėlapį','Rinkmenos',()=>{ try{ saveMap(); }catch(e){} });
   add('Papildyti žemėlapį','Rinkmenos',()=>click('#tbAdd'));
   add('Rakursas — perdėlioti pagal klausimą','Rinkmenos',()=>click('#tbFocus'));
+  add('Claude API raktas — įvesti arba pašalinti','Nustatymai',()=>window.mmKeyDialog&&window.mmKeyDialog());
   add('Spausdinti','Rinkmenos',()=>window.print());
   add('Eksportuoti PNG','Rinkmenos',()=>click('#tbShareMenu [data-a="png"]'));
   add('Eksportuoti JSON','Rinkmenos',()=>click('#tbShareMenu [data-a="json"]'));
@@ -9573,13 +9656,13 @@ function mmRkInit(){
 
     if(!window.mmGetAIKey || !window.mmGetAIKey()){
       say('<b>Reikia Claude API rakto</b>Vertinimą atlieka modelis, todėl be rakto '
-        + 'perdėlioti neįmanoma. Raktas saugomas tik tavo naršyklėje ir siunčiamas tik į api.anthropic.com.'
+        + 'perdėlioti neįmanoma. Pagal nutylėjimą raktas lieka tik atmintyje ir dingsta '
+        + 'užvėrus skirtuką; siunčiamas tik į api.anthropic.com.'
         + '<button class="rkKeyBtn" id="rkKeyBtn">Įvesti raktą</button>', 'err');
       var kb=document.getElementById('rkKeyBtn');
-      if(kb) kb.onclick=function(){
-        var k=prompt('Įklijuok savo Claude API raktą (sk-ant-...).\n\nJis saugomas TIK tavo naršyklėje '
-          + 'ir siunčiamas tik į api.anthropic.com.\nUž naudojimą moki pagal savo Anthropic paskyrą.');
-        if(k&&k.trim()){ window.mmSetAIKey(k.trim()); clearSay(); }
+      if(kb) kb.onclick=async function(){
+        var okk=await window.mmKeyDialog();
+        if(okk) clearSay();
       };
       return;
     }
@@ -9634,6 +9717,71 @@ function mmRkInit(){
   };
   sync();
 }
+/* ══════════ API RAKTO DIALOGAS ═══════════════════════════════════════════
+   Pakeičia prompt(): tas rodydavo raktą atviru tekstu, negalėdavo pasiūlyti
+   pasirinkimo „neįrašyti į diską" ir neturėjo kur padėti mygtuko raktui
+   pašalinti. Grąžina pažadą (true — raktas įrašytas). */
+let akResolve=null;
+function mmKeyDialog(){
+  const wrap=document.getElementById('akWrap'); if(!wrap) return Promise.resolve(false);
+  const inp=document.getElementById('akInp'), go=document.getElementById('akGo'),
+        rem=document.getElementById('akRemember'), st=document.getElementById('akState'),
+        forget=document.getElementById('akForget'), hint=document.getElementById('akHint');
+  const where=window.mmKeyWhere();
+  inp.value=''; go.disabled=true; hint.textContent='';
+  if(where==='diske'){
+    st.className='akState warn';
+    st.innerHTML='<b>Raktas įrašytas šiame kompiuteryje.</b> Jis laikomas naršyklės saugykloje '
+      +'atviru tekstu. Jei nenori, kad taip būtų, pašalink jį ir įvesk iš naujo be varnelės.';
+    rem.checked=true;
+  } else if(where==='seansas'){
+    st.className='akState';
+    st.innerHTML='<b>Raktas veikia tik šiame seanse.</b> Diske jo nėra — užvėrus skirtuką dings.';
+    rem.checked=false;
+  } else {
+    st.className='akState';
+    st.innerHTML='<b>Rakto nėra.</b> Jį rasi adresu console.anthropic.com &rarr; API keys. '
+      +'Saugiausia sukurti atskirą raktą su išlaidų riba — tada net pamestas jis daug nepadarytų.';
+    rem.checked=false;
+  }
+  forget.hidden = (where==='nera');
+  wrap.classList.add('on'); wrap.setAttribute('aria-hidden','false');
+  setTimeout(()=>inp.focus(),60);
+  return new Promise(res=>{ akResolve=res; });
+}
+function mmKeyInit(){
+  const wrap=document.getElementById('akWrap'); if(!wrap) return;
+  const inp=document.getElementById('akInp'), go=document.getElementById('akGo'),
+        rem=document.getElementById('akRemember'), hint=document.getElementById('akHint');
+  function done(v){
+    wrap.classList.remove('on'); wrap.setAttribute('aria-hidden','true');
+    inp.value='';                                  /* lauko neišlaikom nė sekundės ilgiau */
+    const r=akResolve; akResolve=null; if(r) r(v);
+  }
+  inp.addEventListener('input',()=>{ go.disabled=!inp.value.trim(); });
+  inp.addEventListener('keydown',e=>{ if(e.key==='Enter'&&!go.disabled) go.click(); });
+  go.onclick=()=>{
+    const k=inp.value.trim(); if(!k) return;
+    window.mmSetAIKey(k, rem.checked);
+    try{ showToast(rem.checked ? 'Raktas įrašytas šiame kompiuteryje'
+                               : 'Raktas veikia šiame seanse — diske neįrašytas'); }catch(e){}
+    done(true);
+  };
+  document.getElementById('akForget').onclick=()=>{
+    window.mmForgetAIKey();
+    try{ showToast('Raktas pašalintas — nei atmintyje, nei diske'); }catch(e){}
+    hint.textContent='Pašalinta';
+    done(false);
+  };
+  document.getElementById('akCancel').onclick=()=>done(false);
+  document.getElementById('akClose').onclick=()=>done(false);
+  document.getElementById('akBack').onclick=()=>done(false);
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'&&wrap.classList.contains('on')) done(false); });
+}
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',mmKeyInit); else mmKeyInit();
+window.mmKeyDialog=mmKeyDialog;
+
 function rkKindTxt(k){ return k==='klausimas'?'klausimas':k==='teiginys'?'teiginys':'sąvoka'; }
 function rkEsc(s){ return String(s==null?'':s).replace(/[&<>]/g,function(c){
   return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]; }); }
@@ -9687,6 +9835,38 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
       <span class="apHint" id="addHint">Įklijuokite tekstą arba pasirinkite failą</span>
       <button class="apNo" id="addCancel">Atsisakyti</button>
       <button class="apGo" id="addGo" disabled>Papildyti</button>
+    </div>
+  </div>
+</div>
+<div id="akWrap" aria-hidden="true">
+  <div id="akBack"></div>
+  <div id="akPanel" role="dialog" aria-modal="true" aria-labelledby="akTitle">
+    <div class="apHead">
+      <span class="apIco">&#9919;</span>
+      <div class="apTx"><b id="akTitle">Claude API raktas</b>
+        <span>Reikalingas tik toms funkcijoms, kurias atlieka modelis</span></div>
+      <button class="apX" id="akClose" aria-label="Uždaryti">&#10005;</button>
+    </div>
+    <div class="apBody">
+      <div class="akState" id="akState"></div>
+      <label class="apLbl" for="akInp">Raktas</label>
+      <input type="password" id="akInp" class="apInp" autocomplete="off" spellcheck="false"
+        placeholder="sk-ant-..." aria-describedby="akWhy">
+      <label class="akChk"><input type="checkbox" id="akRemember">
+        <span><b>Prisiminti šiame kompiuteryje</b>
+        Nepažymėjus raktas lieka tik atmintyje ir dingsta uždarius skirtuką — diske jo
+        nelieka. Pažymėjus jis įrašomas į naršyklės saugyklą atviru tekstu ir išlieka,
+        kol pats jį pašalinsi.</span></label>
+      <div class="akWhy" id="akWhy">
+        Raktas siunčiamas tik į <b>api.anthropic.com</b>. Jis nepatenka nei į žemėlapį, nei į
+        eksportus, nei į programos kodą. Už naudojimą moki pagal savo Anthropic paskyrą.
+      </div>
+    </div>
+    <div class="apFoot">
+      <button class="apNo" id="akForget">Pašalinti raktą</button>
+      <span class="apHint" id="akHint"></span>
+      <button class="apNo" id="akCancel">Atsisakyti</button>
+      <button class="apGo" id="akGo" disabled>Įrašyti</button>
     </div>
   </div>
 </div>
