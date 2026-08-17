@@ -1726,7 +1726,9 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
   body[data-theme="paveikslas"] .mineTx.filled{border-left-color:#8A3E17}
   @media (max-width:1180px), (pointer:coarse){
     .node .mineB{min-width:44px;height:44px}
-    .mineQ{padding:9px 12px;font-size:12px}
+    /* pirštui taikinys negali būti žemesnis nei 40px — vien šriftas ir
+       vidiniai tarpai duoda tik 32px, tad aukštis nurodomas atskirai */
+    .mineQ{padding:9px 13px;font-size:12.5px;min-height:42px}
     .mineTx{font-size:15px}
   }
 
@@ -4906,15 +4908,19 @@ function openNote(n){
 
 /* ═══ MANO MINTYS ══════════════════════════════════════════════════════
    Vienintelis laukas žemėlapyje, kurio generatorius nepildo niekada.
-   Trys klausimai — pagalba užstrigus, ne privalomos skiltys: paspaudus
-   klausimas įrašomas kaip pradžia, o rašyti galima ir laisvai.
+   Klausimai — pagalba užstrigus, ne privalomos skiltys: paspaudus klausimas
+   įrašomas kaip pradžia, o rašyti galima ir laisvai.
    Klausimai remiasi mokymosi tyrimais (Dunlosky ir kt., 2013): priežasties
    ieškojimas ir sąsaja su turimomis žiniomis įvertinti kaip patikimai
-   veikiantys, o perskaitymas iš naujo — kaip mažai naudingas. */
+   veikiantys, o perskaitymas iš naujo — kaip mažai naudingas.
+   Ketvirtasis („Kas man čia neaišku?") skirtas ne atsakymui, o SPRAGAI
+   įvardyti: neaiškumas, užrašytas žodžiais, nustoja būti miglotas jausmas
+   ir tampa konkrečiu klausimu, į kurį galima grįžti. */
 const MINE_Q=[
   ['Kodėl man tai svarbu?','Kodėl man tai svarbu: '],
   ['Su kuo tai siejasi?',  'Siejasi su: '],
-  ['Kur pritaikyčiau?',    'Pritaikyčiau: ']
+  ['Kur pritaikyčiau?',    'Pritaikyčiau: '],
+  ['Kas man čia neaišku?', 'Neaišku: ']
 ];
 function renderMine(n){
   const box=document.getElementById('nMine'); if(!box) return;
@@ -4924,7 +4930,7 @@ function renderMine(n){
   wrap.innerHTML='<div class="mineHead">Mano mintys</div><div class="mineQs">'
     + MINE_Q.map((q,i)=>'<button type="button" class="mineQ" data-i="'+i+'">'+q[0]+'</button>').join('')
     + '</div><textarea class="mineTx" id="mineTx" rows="3" '
-    + 'placeholder="Neprivaloma — įrašyk savais žodžiais, jei nori"></textarea>';
+    + 'placeholder="Atsakius savais žodžiais, mintis įsimenama tvirčiausiai"></textarea>';
   box.appendChild(wrap);
   const tx=box.querySelector('#mineTx');
   tx.value = n.mine || '';
