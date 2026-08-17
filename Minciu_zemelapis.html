@@ -1604,6 +1604,14 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
   .sChip:hover{background:#eef2f7;border-color:#c3cddb}
   .sChip b{font-size:10px;font-weight:800;opacity:.6}
   .sChip.on{background:#1b2333;border-color:#1b2333;color:#fff}
+  /* sava žyma — ne teksto tipas, todėl ir spalva ta pati kaip ✎ lauko */
+  .sChipMine{color:#4A3E86;background:rgba(109,91,208,.10);border-color:rgba(109,91,208,.30);margin-left:3px}
+  .sChipMine:hover{background:rgba(109,91,208,.18);border-color:rgba(109,91,208,.45)}
+  .sChipMine.on{background:#6D5BD0;border-color:#6D5BD0;color:#fff}
+  body[data-theme="cosmos"] .sChipMine{color:#CFC6FF;background:rgba(179,164,255,.12);border-color:rgba(179,164,255,.34)}
+  body[data-theme="cosmos"] .sChipMine.on{background:#9D8CFF;border-color:#9D8CFF;color:#0A1016}
+  body[data-theme="street"] .sChipMine{color:#F3E7C4;background:rgba(245,197,24,.12);border-color:rgba(245,197,24,.36)}
+  body[data-theme="street"] .sChipMine.on{background:#F5C518;border-color:#F5C518;color:#141210}
   .sChip.on b{opacity:.75}
   body[data-theme="cosmos"] #sFilters{border-bottom-color:rgba(140,180,220,.18)}
   body[data-theme="cosmos"] .sChip{background:rgba(160,190,225,.09);border-color:rgba(140,180,220,.26);color:#CBD8E6}
@@ -3146,7 +3154,35 @@ function layLocked(id){ id=id||curLayout;
 const LAY_NAMES={r:'Radialinis',cmap:'Sąvokų žemėlapis',h:'Vertikalus',v:'Horizontalus',lin:'Linijinis',
   cyc:'Ciklas',fish:'Priežasčių medis',mtx:'Matrica',loci:'Maršrutas'};
 let LOCK={}, DECOR=null;
-const VK=n=>(!n._c&&n.children&&n.children.length)?n.children:null;
+/* ══ IZOLIACIJA ═══════════════════════════════════════════════════════════
+   Kai `MM_ISO` yra aibė, žemėlapyje rodomos TIK joje esančios kortelės.
+   Įdedama būtent į VK, nes visi devyni išdėstymai matomus vaikus ima iš čia —
+   taip filtras veikia vienodai visur ir be atskiro kodo kiekvienam.
+   Izoliacija NUGALI suskleidimą: jei ieškoma kortelė guli giliai suskleistoje
+   šakoje, kelias iki jos atsiveria savaime — kitaip filtras rodytų tuštumą. */
+let MM_ISO=null;
+function mmIsoOn(){ return !!MM_ISO; }
+const VK=n=>{
+  if(MM_ISO){ const k=(n.children||[]).filter(c=>MM_ISO.has(c.id)); return k.length?k:null; }
+  return (!n._c&&n.children&&n.children.length)?n.children:null;
+};
+/* Kortelė laikoma „neaiškia", kai savoje mintyje yra eilutė, prasidedanti
+   žodžiu „Neaišku" — būtent tokią pradžią įrašo klausimo mygtukas. Tikrinama
+   eilutės pradžia, o ne bet kur tekste: žodis viduryje sakinio reikštų ką kita. */
+const RX_UNCLEAR=/^[\s\u2022\-–]*neai[šs]ku\b/im;
+function mmIsUnclear(n){ return RX_UNCLEAR.test(n.mine||''); }
+function mmUnclearNodes(){
+  const out=[]; (function w(n){ if(n.id!==DATA.id && mmIsUnclear(n)) out.push(n);
+    (n.children||[]).forEach(w); })(DATA); return out;
+}
+/* Aibė = rastos kortelės + visas kelias iki šaknies (be tėvų žemėlapis
+   subyrėtų į atskiras korteles ir nesimatytų, KUR tas neaiškumas yra). */
+function mmIsoSet(nodes){
+  const s=new Set([DATA.id]);
+  nodes.forEach(n=>{ let p=n; while(p){ s.add(p.id); p=p._p; } });
+  return s;
+}
+window.mmIsUnclear=mmIsUnclear; window.mmUnclearNodes=mmUnclearNodes;
 const LW=id=>(WMAP[id]||420), LH=id=>(HMAP[id]||120);
 function layout(){
   LOCK={}; DECOR=null;
@@ -4261,8 +4297,9 @@ function render(){
   // pritaikom rankiniu būdu pastumtas pozicijas
   for(const id in manual){ if(pos[id]){ pos[id].x=manual[id].x; pos[id].y=manual[id].y; } }
   [...world.querySelectorAll('.node')].forEach(e=>e.remove()); edgesSvg.innerHTML='';
-  (function edge(n){ const p=pos[n.id]; if(!p||n._c||!n.children) return;
-    n.children.forEach(c=>{ const cp=pos[c.id]; if(!cp)return; paintEdge(p,cp,c); edge(c);});})(DATA);
+  (function edge(n){ const p=pos[n.id]; if(!p||(!MM_ISO&&n._c)||!n.children) return;
+    n.children.forEach(c=>{ const cp=pos[c.id]; if(!cp)return;
+      if(MM_ISO&&!MM_ISO.has(c.id)) return; paintEdge(p,cp,c); edge(c);});})(DATA);
   paintDecor();
   REL_CACHE=null;                       /* pastabos galėjo pasikeisti — perskaičiuojam sąsajas */
   try{ paintRelations(); }catch(e){}
@@ -4282,7 +4319,9 @@ function render(){
     if(SQ&&sNodeHit(n)) el.classList.add('sMatch');
     if(n.ts) html+='<span class="tsbadge">'+n.ts+'</span>';
     const kc=(n.children||[]).length;
-    if(kc) html+='<span class="cnt">'+(n._c?'+'+kc:'–')+'</span>';
+    /* Izoliacijoje „+N" nerodomas: tai atrinktas vaizdas, ne naršoma medžio
+       šaka, ir paspaudimas nieko nekeistų — tylus mygtukas blogiau nei jokio. */
+    if(kc && !MM_ISO) html+='<span class="cnt">'+(n._c?'+'+kc:'–')+'</span>';
     /* sąsajų ženkliukas — tik kai kortelė sąsajų TURI; skaičius kaip pas +N */
     let relN=0; try{ relN=mmRelFor(n.id).length; }catch(e){}
     if(relN && n.cls!=='n-center')
@@ -4498,7 +4537,8 @@ function render(){
     el.addEventListener('contextmenu',e=>{ e.preventDefault(); e.stopPropagation(); cpOpen(n); });
 
     world.appendChild(el);
-    if(!n._c&&n.children) n.children.forEach(draw);
+    if(MM_ISO){ (n.children||[]).forEach(c=>{ if(MM_ISO.has(c.id)) draw(c); }); }
+    else if(!n._c&&n.children) n.children.forEach(draw);
   })(DATA);
   applyCustomColors();  // pritaikom individualias spalvas po piešimo
   fitCenterText();      // centrinis pavadinimas privalo tilpti į apskritimą
@@ -4949,7 +4989,8 @@ function renderMine(n){
   });
   tx.addEventListener('blur',()=>{
     const val = tx.value.trim() ? tx.value : undefined;
-    if(val !== onFocus){
+    const changed = (val !== onFocus);      /* užfiksuojam PRIEŠ atnaujinant onFocus */
+    if(changed){
       /* atšaukimo įrašas turi laikyti SENĄ reikšmę, o snapshot() ima dabartinę,
          todėl trumpam grąžinam senąją, užfiksuojam ir tik tada įrašom naują */
       n.mine = onFocus; try{ pushUndo(); }catch(e){}
@@ -4957,6 +4998,10 @@ function renderMine(n){
     }
     const now=!!(n.mine||'').trim();
     if(now !== had){ had=now; render(); }
+    /* Filtro „Neaišku" skaičius priklauso nuo TEKSTO, ne tik nuo to, ar laukas
+       tuščias: „Neaišku…" galima pridėti prie jau esamo įrašo, ir tada laukas
+       kaip buvo, taip ir lieka užpildytas. */
+    if(changed){ try{ window.mmSearchRefresh(); }catch(e){} }
   });
   box.querySelectorAll('.mineQ').forEach(b=>{
     b.addEventListener('click',()=>{
@@ -4969,6 +5014,7 @@ function renderMine(n){
       n.mine = tx.value;
       tx.classList.add('filled');
       if(!had){ had=true; render(); }        // ženkliukas atsiranda iš karto
+      try{ window.mmSearchRefresh(); }catch(e){}   // „Neaišku" kapsulė — iškart
       tx.focus();                            // focus nustatys onFocus į naują reikšmę
       tx.setSelectionRange(tx.value.length, tx.value.length);
     });
@@ -7156,13 +7202,15 @@ function sSnippet(n){
     render();                                   // perdažo korteles su paryškinimu
     if(curNote && notes.classList.contains('open')) openNote(curNote);
   }
+  const UNCLEAR_F='__mine-unclear';   /* ne teksto tipas — sava žyma */
   function collect(){
     hits=[];
     if(!SQ && !SF) return;
     (function walk(n){
       var okQ = !SQ || sNodeHit(n);
       var okF = true;
-      if(SF){ try{ okF = (window.mmNodeRole(n)===SF); }catch(e){ okF=false; } }
+      if(SF===UNCLEAR_F){ okF = mmIsUnclear(n); }
+      else if(SF){ try{ okF = (window.mmNodeRole(n)===SF); }catch(e){ okF=false; } }
       if(okQ && okF && n.id!==DATA.id) hits.push(n);
       (n.children||[]).forEach(walk);
     })(DATA);
@@ -7200,11 +7248,20 @@ function sSnippet(n){
       chips+='<button class="sChip'+(SF===r[0]?' on':'')+'" data-f="'+r[0]+'" title="Rodyti tik šio tipo korteles">'
            + (r[3]?r[3]+' ':'') + r[1] + ' <b>'+c+'</b></button>';
     });
+    /* „Neaišku" — atskira rūšis: tai ne teksto tipas, o TAVO žyma, todėl ji
+       ir atrodo kitaip (violetinė, kaip ✎), ir stovi eilės gale. Rodoma tik
+       tada, kai tokių kortelių yra — kaip ir teksto tipai. */
+    var un=0; try{ un=mmUnclearNodes().length; }catch(e){}
+    if(un) chips+='<button class="sChip sChipMine'+(SF===UNCLEAR_F?' on':'')+'" data-f="'+UNCLEAR_F+'"'
+           + ' title="Rodyti tik korteles, kuriose įrašei „Neaišku…" — kitos laikinai pasitraukia">'
+           + '✎ Neaišku <b>'+un+'</b></button>';
     if(!chips){ wrap.innerHTML=''; return; }
     wrap.innerHTML='<button class="sChip'+(SF?'':' on')+'" data-f="">Visi</button>'+chips;
     wrap.querySelectorAll('.sChip').forEach(function(b){
       b.onclick=function(){
-        SF = b.dataset.f || null;
+        var f = b.dataset.f || null;
+        SF = (f && f===SF) ? null : f;        /* antras paspaudimas išjungia */
+        applyIso();
         run();
         if(SF && hits.length){ highlightNodes(hits.map(function(n){ return n.id; })); }  /* visi vienu metu užsidega */
       };
@@ -7236,6 +7293,29 @@ function sSnippet(n){
     highlightNodes([n.id]);                      // priartina + uždega kortelę
   }
   function run(){ collect(); cur=-1; paint(); }
+  /* Izoliacija įjungiama/išjungiama VIENOJE vietoje, kad nė vienas išėjimo
+     kelias (kapsulė, „Visi", ✕, Esc, skydelio uždarymas) nepaliktų žemėlapio
+     apkarpyto. Po perpiešimo vaizdas pritaikomas — likusios kelios kortelės
+     kitaip liktų kabėti buvusio didelio žemėlapio kampe. */
+  function applyIso(){
+    var want = (SF===UNCLEAR_F) ? mmIsoSet(mmUnclearNodes()) : null;
+    if(!want && !MM_ISO) return;
+    MM_ISO = want;
+    render();
+    setTimeout(function(){ fitAll(true); }, 60);
+  }
+  /* Užrašinė ir paieška gali būti atidarytos VIENU METU: įrašius „Neaišku…"
+     kapsulės skaičius privalo pasitaisyti tuoj pat, o ne kitą kartą atidarius
+     paiešką. Kviečiama iš „Mano minčių" lauko, kai reikšmė pasikeitė. */
+  window.mmSearchRefresh=function(){
+    if(!panel.classList.contains('open')) return;
+    if(SF===UNCLEAR_F){
+      var n=0; try{ n=mmUnclearNodes().length; }catch(e){}
+      if(!n) SF=null;        /* ištrynus paskutinį įrašą filtras nebeturi ko rodyti */
+      applyIso();             /* perskaičiuoja aibę arba grąžina pilną vaizdą */
+    }
+    run();
+  };
   /* ── paieška per VISUS išsaugotus žemėlapius ── */
   let SALL=false;
   const bThis=document.getElementById('sThis'), bAll=document.getElementById('sAll');
@@ -7291,6 +7371,9 @@ function sSnippet(n){
   function close(clear){
     panel.classList.remove('open'); btn.classList.remove('tbActive');
     document.body.classList.remove('searching');
+    /* Uždarius paiešką žemėlapis PRIVALO grįžti į pilną vaizdą: kitaip
+       liktų apkarpytas, o valdiklio, kuriuo tai atšaukti, nebematyti. */
+    if(SF===UNCLEAR_F){ SF=null; applyIso(); }
     if(clear!==false){ inp.value=''; setQuery(''); hits=[]; cur=-1; paint(); }
   }
   btn.addEventListener('click',e=>{ e.stopPropagation();
