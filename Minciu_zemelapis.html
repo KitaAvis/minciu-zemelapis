@@ -1676,6 +1676,52 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
   body[data-theme="night"] #nGrow .grCard{background:#efe7d3;border-color:#3b3226}
   body[data-theme="paveikslas"] #nGrow .grCard{background:#EFE3C4;border-color:#8A7A57}
 
+  /* ══ MANO MINTYS — vartotojo įvertinimas ══════════════════════════════
+     Laukas, kurio generatorius NIEKADA nepildo. Jo paskirtis — grąžinti
+     žmogui tą darbo dalį, kurią programa atlieka už jį: nuspręsti, kodėl
+     mintis svarbi ir su kuo ji siejasi. Tuščias laukas privalo būti tylus
+     (jokio raginimo), užpildytas — aiškiai atskiriamas nuo šaltinio teksto. */
+  #nMine{padding:12px 20px 14px;flex:none;border-top:1px solid #eef1f5}
+  #nMine:empty{display:none}
+  .mineHead{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:800;letter-spacing:.5px;
+    text-transform:uppercase;color:#8a93a3;margin:0 0 8px}
+  .mineQs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+  .mineQ{font:inherit;font-size:11.5px;line-height:1;padding:6px 10px;border-radius:999px;cursor:pointer;
+    color:#4A3E86;background:rgba(109,91,208,.10);border:1px solid rgba(109,91,208,.28);
+    transition:background .15s,transform .12s}
+  .mineQ:hover{background:rgba(109,91,208,.20);transform:translateY(-1px)}
+  .mineTx{display:block;width:100%;box-sizing:border-box;min-height:64px;resize:vertical;
+    font:inherit;font-size:13.2px;line-height:1.55;color:#27304a;
+    padding:10px 12px;border-radius:10px;border:1px dashed #d3d8e2;background:#fbfcfe}
+  .mineTx::placeholder{color:#9aa3b2}
+  .mineTx:focus{outline:none;border-style:solid;border-color:#6D5BD0;background:#fff;
+    box-shadow:0 0 0 3px rgba(109,91,208,.14)}
+  .mineTx.filled{border-style:solid;border-color:#e2e5ee;border-left:3px solid #6D5BD0;background:#fbfaff}
+  /* ženkliukas ant kortelės — BUVIMĄ rodom visada, turinį tik atsidarius */
+  .node .mineB{margin-left:8px;display:inline-flex;align-items:center;justify-content:center;
+    min-width:38px;height:38px;padding:0 9px;border-radius:11px;order:-1;
+    font-size:17px;font-weight:700;line-height:1;
+    color:#4A3E86;background:rgba(109,91,208,.14);box-shadow:inset 0 0 0 1.5px rgba(109,91,208,.5)}
+  body[data-theme="cosmos"] #nMine{border-top-color:#223046}
+  body[data-theme="cosmos"] .mineTx{color:#D8E2EC;background:rgba(255,255,255,.04);border-color:#2A3648}
+  body[data-theme="cosmos"] .mineTx.filled{background:rgba(157,140,255,.09);border-left-color:#B3A4FF;border-color:#2A3648}
+  body[data-theme="cosmos"] .mineQ{color:#CFC6FF;background:rgba(179,164,255,.12);border-color:rgba(179,164,255,.34)}
+  body[data-theme="cosmos"] .node .mineB{color:#B3A4FF;background:rgba(179,164,255,.12);box-shadow:inset 0 0 0 1.5px rgba(179,164,255,.5)}
+  body[data-theme="street"] #nMine{border-top-color:#35302a}
+  body[data-theme="street"] .mineTx{color:#E4DCCB;background:#241F19;border-color:#4a4136}
+  body[data-theme="street"] .mineTx.filled{background:#2A2318;border-left-color:#F5C518;border-color:#4a4136}
+  body[data-theme="street"] .mineQ{color:#F3E7C4;background:rgba(245,197,24,.12);border-color:rgba(245,197,24,.36)}
+  body[data-theme="street"] .node .mineB{color:#F5C518;background:rgba(245,197,24,.12);box-shadow:inset 0 0 0 1.5px rgba(245,197,24,.5)}
+  body[data-theme="night"] .mineTx{background:#efe7d3;color:#241c14;border-color:#3b3226}
+  body[data-theme="night"] .mineTx.filled{border-left-color:#6D4B12}
+  body[data-theme="paveikslas"] .mineTx{background:#EFE3C4;color:#33291B;border-color:#8A7A57}
+  body[data-theme="paveikslas"] .mineTx.filled{border-left-color:#8A3E17}
+  @media (max-width:1180px), (pointer:coarse){
+    .node .mineB{min-width:44px;height:44px}
+    .mineQ{padding:9px 12px;font-size:12px}
+    .mineTx{font-size:15px}
+  }
+
   /* ══ PAPILDYTI ŽEMĖLAPĮ ═══════════════════════════════════════════════ */
   #addWrap{position:fixed;inset:0;z-index:200;display:none}
   #addWrap.on{display:block}
@@ -2585,6 +2631,7 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
     <button id="nClose">✕</button>
   </div>
   <div id="nBody"></div>
+  <div id="nMine"></div>
   <div id="nGrow"></div>
   <div id="nGloss"></div>
   <div id="nEditArea">
@@ -4201,6 +4248,10 @@ function render(){
     let relN=0; try{ relN=mmRelFor(n.id).length; }catch(e){}
     if(relN && n.cls!=='n-center')
       html+='<span class="relB'+(relActive.has(n.id)?' on':'')+'" title="Sąsajų: '+relN+' — spustelėk, kad įjungtum gijas">⇄'+relN+'</span>';
+    /* mano minčių ženkliukas — pasyvus, gesto neužima (kortelės paspaudimas
+       veikia kaip veikė); rodo tik, kad šioje kortelėje jau esi pagalvojęs */
+    if((n.mine||'').trim())
+      html+='<span class="mineB" title="Čia esi įrašęs savo mintį">✎︎</span>';
     if(n.tchk) html+='<span class="tcDot" title="Pavadinimą verta peržiūrėti — turinys po kortele pasikeitė"></span>';
     if(n.cmpTag) html+='<span class="cmpB '+(n.cmpTag==='sutampa'?'cs':n.cmpTag==='papildo'?'cp':'cx')
       +'" title="Gretinimas: '+n.cmpTag+'">'+(n.cmpTag==='sutampa'?'=':n.cmpTag==='papildo'?'+':'≠')+'</span>';
@@ -4809,9 +4860,75 @@ function openNote(n){
   document.getElementById('nEditArea').classList.remove('open');
   document.getElementById('nBody').style.display='block';
   notes.classList.add('open');
+  renderMine(n);
   renderGrow(n);
   renderGloss(n);
   decorateGloss(n);
+}
+
+/* ═══ MANO MINTYS ══════════════════════════════════════════════════════
+   Vienintelis laukas žemėlapyje, kurio generatorius nepildo niekada.
+   Trys klausimai — pagalba užstrigus, ne privalomos skiltys: paspaudus
+   klausimas įrašomas kaip pradžia, o rašyti galima ir laisvai.
+   Klausimai remiasi mokymosi tyrimais (Dunlosky ir kt., 2013): priežasties
+   ieškojimas ir sąsaja su turimomis žiniomis įvertinti kaip patikimai
+   veikiantys, o perskaitymas iš naujo — kaip mažai naudingas. */
+const MINE_Q=[
+  ['Kodėl man tai svarbu?','Kodėl man tai svarbu: '],
+  ['Su kuo tai siejasi?',  'Siejasi su: '],
+  ['Kur pritaikyčiau?',    'Pritaikyčiau: ']
+];
+function renderMine(n){
+  const box=document.getElementById('nMine'); if(!box) return;
+  box.innerHTML='';
+  if(!n) return;
+  const wrap=document.createElement('div');
+  wrap.innerHTML='<div class="mineHead">Mano mintys</div><div class="mineQs">'
+    + MINE_Q.map((q,i)=>'<button type="button" class="mineQ" data-i="'+i+'">'+q[0]+'</button>').join('')
+    + '</div><textarea class="mineTx" id="mineTx" rows="3" '
+    + 'placeholder="Neprivaloma — įrašyk savais žodžiais, jei nori"></textarea>';
+  box.appendChild(wrap);
+  const tx=box.querySelector('#mineTx');
+  tx.value = n.mine || '';
+  tx.classList.toggle('filled', !!tx.value.trim());
+  /* Ženkliuką perpiešiam tik tada, kai pasikeičia BUVIMAS (tuščia ↔ užpildyta) —
+     kitaip render() suktųsi per kiekvieną paspaustą klavišą.
+     `had` privalo būti kintamas: užrašinė lieka atidaryta ir po render(), tad
+     ta pati eilutė gali būti užpildyta ir vėl ištrinta be pakartotinio atidarymo;
+     su pastovia reikšme ženkliukas antrą kartą nebedingtų. */
+  let had=!!(n.mine||'').trim();
+  let onFocus=n.mine;                       // reikšmė prieš redagavimą — atšaukimui
+  tx.addEventListener('focus',()=>{ onFocus=n.mine; });
+  tx.addEventListener('input',()=>{
+    n.mine = tx.value;
+    tx.classList.toggle('filled', !!tx.value.trim());
+  });
+  tx.addEventListener('blur',()=>{
+    const val = tx.value.trim() ? tx.value : undefined;
+    if(val !== onFocus){
+      /* atšaukimo įrašas turi laikyti SENĄ reikšmę, o snapshot() ima dabartinę,
+         todėl trumpam grąžinam senąją, užfiksuojam ir tik tada įrašom naują */
+      n.mine = onFocus; try{ pushUndo(); }catch(e){}
+      n.mine = val; onFocus = val;
+    }
+    const now=!!(n.mine||'').trim();
+    if(now !== had){ had=now; render(); }
+  });
+  box.querySelectorAll('.mineQ').forEach(b=>{
+    b.addEventListener('click',()=>{
+      /* klausimo įrašymas irgi yra pakeitimas — fiksuojam PRIEŠ jį, kol n.mine
+         dar laiko senąją reikšmę, kitaip atšaukimas grąžintų tik iki klausimo */
+      try{ pushUndo(); }catch(e){}
+      const pre=MINE_Q[+b.dataset.i][1];
+      const cur=tx.value;
+      tx.value = cur.trim() ? (cur.replace(/\s*$/,'') + '\n' + pre) : pre;
+      n.mine = tx.value;
+      tx.classList.add('filled');
+      if(!had){ had=true; render(); }        // ženkliukas atsiranda iš karto
+      tx.focus();                            // focus nustatys onFocus į naują reikšmę
+      tx.setSelectionRange(tx.value.length, tx.value.length);
+    });
+  });
 }
 
 /* ═══ ŠAKOS TĘSIMAS IŠ UŽRAŠINĖS ═══════════════════════════════════════
@@ -5403,7 +5520,7 @@ function snapshot(){
   // išsaugom kiekvieno mazgo kintamas savybes
   const s={};
   for(const id in OBJ){ const n=OBJ[id];
-    s[id]={label:n.label,customColor:n.customColor,icon:n.icon,img:n.img,_c:n._c,w:n.w,sc:n.sc,st:n.st,rel:n.rel,fmt:(n.fmt?JSON.stringify(n.fmt):undefined),
+    s[id]={label:n.label,customColor:n.customColor,icon:n.icon,img:n.img,_c:n._c,w:n.w,sc:n.sc,st:n.st,rel:n.rel,mine:n.mine,fmt:(n.fmt?JSON.stringify(n.fmt):undefined),
            mx:(manual[id]?manual[id].x:undefined),my:(manual[id]?manual[id].y:undefined),
            /* SANDARA — kad būtų galima atšaukti ir kortelės perkėlimą į kitą tėvinę kortelę */
            p:(n._p?n._p.id:null), i:(n._p?(n._p.children||[]).indexOf(n):-1)};
@@ -5443,7 +5560,7 @@ function pushUndo(){ undoStack.push(snapshot()); redoStack.length=0; if(undoStac
 function restoreSnap(s){
   for(const id in s){ const n=OBJ[id]; if(!n) continue;
     n.label=s[id].label; n.customColor=s[id].customColor; n.icon=s[id].icon; n.img=s[id].img; n._c=s[id]._c;
-    n.st=s[id].st; n.rel=s[id].rel;
+    n.st=s[id].st; n.rel=s[id].rel; n.mine=s[id].mine;
     n.w=s[id].w; n.sc=s[id].sc;
     n.fmt = s[id].fmt ? JSON.parse(s[id].fmt) : undefined;
     if(s[id].mx===undefined) delete manual[id]; else manual[id]={x:s[id].mx,y:s[id].my};
@@ -5463,7 +5580,7 @@ function doUndo(){
   const s=undoStack.pop();
   for(const id in s){ const n=OBJ[id]; if(!n) continue;
     n.label=s[id].label; n.customColor=s[id].customColor; n.icon=s[id].icon; n.img=s[id].img; n._c=s[id]._c;
-    n.st=s[id].st; n.rel=s[id].rel;
+    n.st=s[id].st; n.rel=s[id].rel; n.mine=s[id].mine;
     n.w=s[id].w; n.sc=s[id].sc;
     n.fmt = s[id].fmt ? JSON.parse(s[id].fmt) : undefined;
     if(s[id].mx!==undefined) manual[id]={x:s[id].mx,y:s[id].my}; else delete manual[id];
@@ -5780,7 +5897,7 @@ function showToast(msg){
   clearTimeout(t._h); t._h=setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(10px)'; },2200);
 }
 function cleanTree(n){ return {id:n.id,label:n.label,cls:n.cls,icon:n.icon,img:n.img,note:n.note,ts:n.ts,rel:n.rel,st:n.st,
-  srcs:n.srcs,tchk:n.tchk,cmpTag:n.cmpTag,
+  srcs:n.srcs,tchk:n.tchk,cmpTag:n.cmpTag,mine:n.mine,
   customColor:n.customColor,w:n.w,scale:n.scale,_c:!!n._c,children:(n.children||[]).map(cleanTree)}; }
 function saveMap(){
   let arr=[]; try{ arr=JSON.parse(localStorage.getItem('mm_saved_maps')||'[]'); }catch(e){}
@@ -6960,16 +7077,27 @@ function hiText(txt){ if(!SQ) return txt;
 function hiHtml(html){ if(!SQ) return html;
   return String(html).split(/(<[^>]*>)/).map(p=> p.charAt(0)==='<' ? p : hiText(p)).join(''); }
 function sPlainNote(n){ return (n.note||'').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim(); }
+/* Savo mintis ieškoma lygiai taip pat kaip pastaba. Praėjus laikui būtent
+   jos ieškoma dažniausiai — ją žmogus rašė pats, tad ir prisimena savais
+   žodžiais, ne šaltinio. */
+function sPlainMine(n){ return (n.mine||'').replace(/\s+/g,' ').trim(); }
 function sNodeHit(n){ if(!SQ) return false;
   const q=SQ.toLowerCase();
-  return (n.label||'').toLowerCase().includes(q) || sPlainNote(n).toLowerCase().includes(q); }
+  return (n.label||'').toLowerCase().includes(q)
+      || sPlainNote(n).toLowerCase().includes(q)
+      || sPlainMine(n).toLowerCase().includes(q); }
 function sPathOf(n){ const a=[]; let p=n._p; while(p){ a.unshift(p.label); p=p._p; }
   return a.length>2 ? a.slice(-2).join(' › ') : a.join(' › '); }
 function sSnippet(n){
-  const t=sPlainNote(n); if(!t) return '';
-  const i=t.toLowerCase().indexOf(SQ.toLowerCase()); if(i<0) return '';
-  const a=Math.max(0,i-46), b=Math.min(t.length,i+SQ.length+70);
-  return (a>0?'…':'')+sEscHtml(t.slice(a,b))+(b<t.length?'…':'');
+  /* Pirmenybė šaltinio pastabai; neradus ten — rodoma sava mintis su ✎ ženklu,
+     kad iš pirmo žvilgsnio matytųsi, jog radinys yra TAVO žodžiai, ne teksto. */
+  const cut=(t,pre)=>{
+    if(!t) return '';
+    const i=t.toLowerCase().indexOf(SQ.toLowerCase()); if(i<0) return '';
+    const a=Math.max(0,i-46), b=Math.min(t.length,i+SQ.length+70);
+    return pre+(a>0?'…':'')+sEscHtml(t.slice(a,b))+(b<t.length?'…':'');
+  };
+  return cut(sPlainNote(n),'') || cut(sPlainMine(n),'✎ ');
 }
 (function(){
   const btn=document.getElementById('tbSearch'), panel=document.getElementById('sPanel');
@@ -7080,7 +7208,7 @@ function sSnippet(n){
       if(!rec.data || rec.title===DATA.label) return;
       const found=[];
       (function w(n){
-        if(found.length<6 && n.label && mmDia(n.label+' '+extPlain(n.note)).indexOf(nq)>=0)
+        if(found.length<6 && n.label && mmDia(n.label+' '+extPlain(n.note)+' '+(n.mine||'')).indexOf(nq)>=0)
           found.push({id:n.id, label:n.label});
         (n.children||[]).forEach(w);
       })(rec.data);
@@ -8040,6 +8168,15 @@ function mmExportMd(){
     const nt=plain(n.note);
     if(d<=2){ nt.forEach(t=>lines.push('',t)); }
     else nt.forEach(t=>lines.push('  '.repeat(d-3)+'  '+t));
+    /* Sava mintis — atskira citata su ✎, kad eksporte NIEKADA nesusiplaktų su
+       šaltinio tekstu. Tuščia „>" eilutė tarp minčių būtina: be jos Markdown
+       sulieja jas į vieną pastraipą ir dingsta riba tarp atskirų atsakymų. */
+    const mine=(n.mine||'').trim();
+    if(mine){
+      const pad = d<=2 ? '' : '  '.repeat(d-3)+'  ';
+      lines.push('', pad+'> ✎ **Mano mintys:**');
+      mine.split(/\n+/).forEach(t=>{ t=t.trim(); if(t) lines.push(pad+'>', pad+'> '+t); });
+    }
     (n.children||[]).forEach(c=>w(c,d+1));
   })(DATA,0);
   const blob=new Blob([lines.join('\n')+'\n'],{type:'text/markdown;charset=utf-8'});
