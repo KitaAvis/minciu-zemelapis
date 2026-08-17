@@ -1741,26 +1741,26 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
   }
 
   /* ══ PAPILDYTI ŽEMĖLAPĮ ═══════════════════════════════════════════════ */
-  #addWrap{position:fixed;inset:0;z-index:200;display:none}
-  #addWrap.on{display:block}
-  #addBack{position:absolute;inset:0;background:rgba(8,12,20,.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
-  #addPanel{position:absolute;top:50%;left:50%;transform:translate(-50%,-48%) scale(.98);opacity:0;
+  #addWrap,#rkWrap{position:fixed;inset:0;z-index:200;display:none}
+  #addWrap.on,#rkWrap.on{display:block}
+  #addBack,#rkBack{position:absolute;inset:0;background:rgba(8,12,20,.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+  #addPanel,#rkPanel{position:absolute;top:50%;left:50%;transform:translate(-50%,-48%) scale(.98);opacity:0;
     width:min(560px,calc(100vw - 32px));max-height:calc(100vh - 64px);display:flex;flex-direction:column;
     background:linear-gradient(180deg,#fff,#F7F9FC);border:1px solid rgba(20,32,54,.12);border-radius:18px;
     box-shadow:0 24px 70px -20px rgba(10,16,28,.55),0 2px 6px rgba(16,24,40,.08);
     transition:opacity .2s ease,transform .24s cubic-bezier(.25,1.1,.4,1);overflow:hidden}
-  #addWrap.on #addPanel{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  #addWrap.on #addPanel,#rkWrap.on #rkPanel{opacity:1;transform:translate(-50%,-50%) scale(1)}
   .apHead{display:flex;align-items:center;gap:12px;padding:16px 16px 13px;border-bottom:1px solid rgba(20,32,54,.08)}
   .apIco{width:34px;height:34px;flex:none;border-radius:11px;display:grid;place-items:center;font-size:19px;font-weight:800;
     background:linear-gradient(145deg,#2E9E8F,#1F7F73);color:#fff;box-shadow:0 3px 10px -3px rgba(31,127,115,.6)}
   .apTx{flex:1;min-width:0;line-height:1.34}
   .apTx b{display:block;font-size:14.5px;font-weight:800;color:#141C2B;letter-spacing:-.2px}
-  .apTx span{display:block;font-size:11.5px;color:#6B7688;margin-top:1px}
+  .apTx span{display:block;font-size:11.5px;color:#59647A;margin-top:1px}
   .apX{flex:none;width:30px;height:30px;border-radius:9px;border:1px solid rgba(20,32,54,.12);background:#fff;
     color:#6B7688;font-size:13px;cursor:pointer;font-family:inherit;transition:background .15s,color .15s}
   .apX:hover{background:#F1F4F9;color:#141C2B}
   .apBody{padding:14px 16px 4px;overflow-y:auto}
-  .apLbl{display:block;font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#7A8698;margin:10px 0 5px}
+  .apLbl{display:block;font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#59647A;margin:10px 0 5px}
   .apSel,.apInp{width:100%;font-family:inherit;font-size:12.5px;font-weight:600;color:#141C2B;
     padding:8px 10px;border-radius:10px;border:1px solid #D6DDE7;background:#fff}
   #addText{width:100%;min-height:120px;max-height:220px;resize:vertical;font-family:inherit;font-size:12.5px;line-height:1.5;
@@ -1783,11 +1783,11 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
   .apChkBody span{display:block;font-size:11px;color:#6B7688;margin-top:1px}
   .apColor{width:38px;height:26px;flex:none;padding:2px;border:1px solid #D6DDE7;border-radius:8px;background:#fff;cursor:pointer}
   .apFoot{display:flex;align-items:center;gap:9px;padding:12px 16px;border-top:1px solid rgba(20,32,54,.08);background:rgba(246,248,252,.7)}
-  .apHint{flex:1;min-width:0;font-size:11px;color:#7A8698}
+  .apHint{flex:1;min-width:0;font-size:11px;color:#59647A}
   .apNo{font-family:inherit;font-size:12px;font-weight:700;color:#6B7688;padding:9px 14px;border-radius:10px;
     border:1px solid rgba(20,32,54,.12);background:#fff;cursor:pointer}
   .apGo{font-family:inherit;font-size:12.5px;font-weight:800;color:#fff;padding:9px 18px;border-radius:10px;border:0;cursor:pointer;
-    background:linear-gradient(145deg,#2E9E8F,#1F7F73);box-shadow:0 3px 12px -4px rgba(31,127,115,.7);
+    background:linear-gradient(145deg,#1C7C70,#12594F);box-shadow:0 3px 12px -4px rgba(18,89,79,.7);
     transition:transform .16s cubic-bezier(.3,1.2,.5,1),box-shadow .16s}
   .apGo:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 6px 18px -5px rgba(31,127,115,.8)}
   .apGo:disabled{opacity:.4;cursor:default;box-shadow:none;transform:none}
@@ -1795,7 +1795,7 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
   .addMark{margin-top:9px;font-size:11px;font-weight:700;color:#8A6B22;background:rgba(232,163,61,.14);
     border-left:3px solid rgba(232,163,61,.75);border-radius:0 7px 7px 0;padding:5px 9px;display:inline-block}
   /* tamsios temos */
-  body[data-theme="cosmos"] #addPanel{background:linear-gradient(180deg,#131C2A,#0D141F);border-color:rgba(140,180,220,.22)}
+  body[data-theme="cosmos"] #addPanel,body[data-theme="cosmos"] #rkPanel{background:linear-gradient(180deg,#131C2A,#0D141F);border-color:rgba(140,180,220,.22)}
   body[data-theme="cosmos"] .apTx b,body[data-theme="cosmos"] .apChkBody b{color:#E9F1F8}
   body[data-theme="cosmos"] .apTx span,body[data-theme="cosmos"] .apChkBody span,body[data-theme="cosmos"] .apHint{color:#93A7BD}
   body[data-theme="cosmos"] #addText,body[data-theme="cosmos"] .apSel,body[data-theme="cosmos"] .apInp,
@@ -1803,11 +1803,141 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
   body[data-theme="cosmos"] .apDrop{background:rgba(160,190,225,.05);border-color:rgba(140,180,220,.3)}
   body[data-theme="cosmos"] .apDropTx{color:#C4D3E2}
   body[data-theme="cosmos"] .apFoot{background:rgba(10,16,26,.5);border-color:rgba(140,180,220,.16)}
-  body[data-theme="street"] #addPanel{background:#241F19;border-color:#4a4136}
+  body[data-theme="street"] #addPanel,body[data-theme="street"] #rkPanel{background:#241F19;border-color:#4a4136}
+  /* Street ir Paveikslas skydeliai turėjo tik antraštės perrašymą, todėl
+     smulkusis tekstas likdavo šviesių temų pilkas ant tamsaus fono
+     (išmatuota: .apAuto 1,55:1, .apHint 1,84:1). */
+  body[data-theme="street"] .apTx span,body[data-theme="street"] .apLbl,
+  body[data-theme="street"] .apHint{color:#C9BFA9}
+  body[data-theme="street"] .apAuto{color:#E4DCCB;background:rgba(245,197,24,.10);border-color:rgba(245,197,24,.3)}
+  body[data-theme="street"] .apAuto b,body[data-theme="street"] .apAutoIco{color:#F5C518}
+  body[data-theme="street"] .apNo{background:#1E1A15;border-color:#4a4136;color:#E4DCCB}
+  /* Poraštė turėjo tik cosmos perrašymą, todėl kitose tamsiose temose likdavo
+     šviesi juosta ant tamsaus skydelio, ir užuominos tekstas nusileisdavo iki
+     1,10:1. Fonas privalo sekti temą, ne tik skydelio korpusas. */
+  body[data-theme="street"] .apFoot{background:rgba(18,15,11,.6);border-color:#4a4136}
+  body[data-theme="night"] .apFoot{background:rgba(222,209,180,.75);border-color:#b6a887}
+  body[data-theme="paveikslas"] .apFoot{background:rgba(222,209,176,.75);border-color:#8A7A57}
+  body[data-theme="night"] .apTx span,body[data-theme="night"] .apLbl,
+  body[data-theme="night"] .apHint{color:#4A4034}
+  body[data-theme="night"] .apNo{background:#fbf6e8;border-color:#b6a887;color:#3A3025}
+  body[data-theme="paveikslas"] .apTx span,body[data-theme="paveikslas"] .apLbl,
+  body[data-theme="paveikslas"] .apHint{color:#4E4433}
+  body[data-theme="paveikslas"] .apNo{background:#F7EFD9;border-color:#8A7A57;color:#3F3627}
+  body[data-theme="cosmos"] .apLbl{color:#93A7BD}
   body[data-theme="street"] .apTx b,body[data-theme="street"] .apChkBody b{color:#F5F0E6}
-  body[data-theme="night"] #addPanel{background:#efe7d3;border-color:#3b3226}
-  body[data-theme="paveikslas"] #addPanel{background:#EFE3C4;border-color:#8A7A57}
+  body[data-theme="night"] #addPanel,body[data-theme="night"] #rkPanel{background:#efe7d3;border-color:#3b3226}
+  body[data-theme="paveikslas"] #addPanel,body[data-theme="paveikslas"] #rkPanel{background:#EFE3C4;border-color:#8A7A57}
 
+  /* Rūšies ženkliukas centrinėje kortelėje. Centre galioja kitas dėsnis nei
+     paprastose kortelėse: ženkliukai traukiami iš flex eilės ir kabinami
+     absoliučiai, kad pavadinimas liktų centruotas. „+N" jau kabo viršuje, tad
+     rūšies ženkliukas ir „+N" dedami į VIENĄ eilutę — taip nereikia spėlioti
+     poslinkių em vienetais ir jie negali užlipti vienas ant kito. */
+  .n-center .cTop, body[data-theme] .n-center .cTop{position:absolute;left:50%;top:9%;
+    transform:translateX(-50%);display:flex;align-items:center;gap:7px;white-space:nowrap;margin:0}
+  .n-center .cTop .cnt, body[data-theme] .n-center .cTop .cnt{position:static;transform:none;margin:0}
+  .node .focusB{display:inline-flex;align-items:center;gap:5px;flex:none;
+    font-size:.4em;height:2.1em;padding:0 .7em;border-radius:.62em;cursor:pointer;
+    font-weight:800;letter-spacing:.4px;text-transform:lowercase;line-height:1;
+    background:transparent;box-shadow:inset 0 0 0 1.5px currentColor;opacity:.85;
+    transition:opacity .15s,transform .15s}
+  .node .focusB:hover{opacity:1;transform:translateY(-1px)}
+  /* Ryšio ženkliukas kortelėje. Rodomas TIK „paneigia" ir „patikslina": kitos
+     reikšmės yra laukiamas atvejis ir nieko nepasako, o ženkliukas ant kiekvienos
+     kortelės virsta triukšmu. */
+  /* Ženkliuko fonas VIENTISAS, ne permatomas atspalvis. Kortelės spalva
+     priklauso nuo temos, gamos ir individualaus dažymo, tad permatomas
+     atspalvis atsiduria ant nenuspėjamo pagrindo: išmatuota 1,22:1 street
+     temoje. Vientisas fonas duoda tą patį kontrastą visur — ir kartu labiau
+     išsiskiria, o tai šio ženklo paskirtis: parodyti, kur medžiaga rakursui
+     prieštarauja. */
+  .node .fitB{margin-left:8px;display:inline-flex;align-items:center;justify-content:center;
+    min-width:38px;height:38px;padding:0 10px;border-radius:11px;order:-1;
+    font-size:19px;font-weight:800;line-height:1;
+    color:#FFFFFF;background:#A8261C;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+  .node .fitB.pt{color:#2A1E05;background:#E8B04A}
+  body[data-theme="cosmos"] .node .fitB{color:#120605;background:#FF9E93}
+  body[data-theme="cosmos"] .node .fitB.pt{color:#1A1305;background:#F0B24A}
+  body[data-theme="street"] .node .fitB{color:#1A0A08;background:#F07878}
+  body[data-theme="street"] .node .fitB.pt{color:#141210;background:#F5C518}
+  body[data-theme="night"] .node .fitB{color:#FFF4F2;background:#A8261C}
+  body[data-theme="night"] .node .fitB.pt{color:#241C14;background:#E8B04A}
+  body[data-theme="paveikslas"] .node .fitB{color:#FFF2EF;background:#9E2B1E}
+  body[data-theme="paveikslas"] .node .fitB.pt{color:#2A2317;background:#DCA85A}
+  /* Užrašinės blokas: kaip ši kortelė siejasi su rakursu */
+  #nFocus{padding:12px 20px 0;flex:none}
+  #nFocus:empty{display:none}
+  .nfBox{padding:10px 12px;border-radius:11px;font-size:12.3px;line-height:1.5;
+    background:rgba(46,158,143,.08);border:1px solid rgba(46,158,143,.22);color:#2C3A4B}
+  .nfBox.neg{background:rgba(200,60,50,.08);border-color:rgba(200,60,50,.26)}
+  .nfHead{display:block;font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;
+    color:#186A60;margin-bottom:3px}
+  .nfBox.neg .nfHead{color:#96271E}
+  body[data-theme="cosmos"] .nfBox{color:#C3D2E0;background:rgba(46,158,143,.12);border-color:rgba(46,158,143,.3)}
+  body[data-theme="cosmos"] .nfHead{color:#6FD8C6}
+  body[data-theme="cosmos"] .nfBox.neg{background:rgba(255,158,147,.12);border-color:rgba(255,158,147,.32)}
+  body[data-theme="cosmos"] .nfBox.neg .nfHead{color:#FF9E93}
+  body[data-theme="street"] .nfBox{color:#E4DCCB;background:rgba(245,197,24,.10);border-color:rgba(245,197,24,.3)}
+  body[data-theme="street"] .nfHead{color:#F5C518}
+  /* Prieštaravimo variantui (.neg) reikia SAVO perrašymo kiekvienai tamsiai
+     temai: be jo lieka šviesių temų raudona ant tamsaus fono (2,26:1). */
+  body[data-theme="street"] .nfBox.neg{background:rgba(240,120,120,.12);border-color:rgba(240,120,120,.34)}
+  body[data-theme="street"] .nfBox.neg .nfHead{color:#F79A9A}
+  body[data-theme="night"] .nfBox{color:#241c14;background:rgba(193,53,43,.10);border-color:rgba(193,53,43,.3)}
+  body[data-theme="night"] .nfHead{color:#7A1B14}
+  body[data-theme="night"] .nfBox.neg{background:rgba(193,53,43,.14);border-color:rgba(193,53,43,.36)}
+  body[data-theme="night"] .nfBox.neg .nfHead{color:#7A1B14}
+  body[data-theme="paveikslas"] .nfBox{color:#2A2317;background:rgba(122,90,40,.10);border-color:rgba(122,90,40,.3)}
+  body[data-theme="paveikslas"] .nfHead{color:#5C3F14}
+  body[data-theme="paveikslas"] .nfBox.neg{background:rgba(158,43,30,.12);border-color:rgba(158,43,30,.34)}
+  body[data-theme="paveikslas"] .nfBox.neg .nfHead{color:#7E2317}
+  @media (max-width:1180px), (pointer:coarse){
+    .node .fitB{min-width:44px;height:44px}
+  }
+  /* ══ RAKURSO REŽIMAS ══════════════════════════════════════════════════
+     Skydelis naudoja esamas .ap* klases, todėl visos penkios temos veikia
+     savaime. Sava tik tai, ko kitur nėra: rakurso teksto laukas, būsenos
+     eilutė ir rezultato santrauka. */
+  #rkText{width:100%;box-sizing:border-box;min-height:74px;resize:vertical;font-family:inherit;
+    font-size:13.5px;line-height:1.5;font-weight:600;color:#141C2B;padding:10px 12px;border-radius:11px;
+    border:1px solid rgba(20,32,54,.16);background:#fff}
+  #rkText:focus{outline:2px solid rgba(46,158,143,.45);outline-offset:1px;border-color:#2E9E8F}
+  #rkText::placeholder{font-weight:500;color:#98A2B2}
+  .rkState{display:none;align-items:flex-start;gap:9px;margin:10px 0 2px;padding:10px 12px;border-radius:11px;
+    font-size:12px;line-height:1.5;background:rgba(46,158,143,.09);border:1px solid rgba(46,158,143,.24);color:#2C3A4B}
+  .rkState.on{display:flex}
+  .rkState.err{background:rgba(200,60,50,.09);border-color:rgba(200,60,50,.3);color:#8E2B24}
+  .rkState b{display:block;color:#186A60;margin-bottom:2px}
+  .rkState.err b{color:#8E2B24}
+  .rkDot{flex:none;width:13px;height:13px;margin-top:2px;border-radius:50%;
+    border:2px solid rgba(46,158,143,.35);border-top-color:#1F7F73;animation:rkSpin .8s linear infinite}
+  .rkState.done .rkDot,.rkState.err .rkDot{animation:none;border-color:transparent;background:none}
+  @keyframes rkSpin{to{transform:rotate(360deg)}}
+  .rkKeyBtn{margin-top:7px;font-family:inherit;font-size:11.5px;font-weight:700;cursor:pointer;
+    padding:7px 12px;border-radius:9px;border:1px solid rgba(20,32,54,.16);background:#fff;color:#186A60}
+  body[data-theme="cosmos"] #rkText{background:rgba(160,190,225,.08);border-color:rgba(140,180,220,.24);color:#DCE7F2}
+  body[data-theme="cosmos"] .rkState{color:#B9CBDC;background:rgba(46,158,143,.12);border-color:rgba(46,158,143,.3)}
+  body[data-theme="cosmos"] .rkState b{color:#6FD8C6}
+  body[data-theme="cosmos"] .rkState.err{color:#F2B8B2;background:rgba(200,60,50,.16);border-color:rgba(200,60,50,.4)}
+  body[data-theme="cosmos"] .rkState.err b{color:#F2B8B2}
+  body[data-theme="cosmos"] .rkKeyBtn{background:rgba(160,190,225,.08);border-color:rgba(140,180,220,.24);color:#6FD8C6}
+  body[data-theme="street"] #rkText{background:#1E1A15;border-color:#4a4136;color:#F5F0E6}
+  body[data-theme="street"] .rkState{color:#E4DCCB;background:rgba(245,197,24,.10);border-color:rgba(245,197,24,.34)}
+  body[data-theme="street"] .rkState b{color:#F5C518}
+  body[data-theme="street"] .rkState.err{color:#F6C9C3;background:rgba(217,59,59,.18);border-color:rgba(217,59,59,.45)}
+  body[data-theme="street"] .rkState.err b{color:#F6C9C3}
+  body[data-theme="street"] .rkKeyBtn{background:#1E1A15;border-color:#4a4136;color:#F5C518}
+  body[data-theme="night"] #rkText{background:#fbf6e8;border-color:#b6a887;color:#241c14}
+  body[data-theme="night"] .rkState{color:#2A2118;background:rgba(193,53,43,.10);border-color:rgba(193,53,43,.3)}
+  body[data-theme="night"] .rkState b{color:#8A2018}
+  body[data-theme="paveikslas"] #rkText{background:#F7EFD9;border-color:#8A7A57;color:#2A2317}
+  body[data-theme="paveikslas"] .rkState{color:#2A2317;background:rgba(122,90,40,.10);border-color:rgba(122,90,40,.3)}
+  body[data-theme="paveikslas"] .rkState b{color:#6B4A18}
+  @media (max-width:1180px), (pointer:coarse){
+    #rkText{font-size:15px;min-height:88px}
+    .rkKeyBtn{min-height:42px}
+  }
   .apAuto{display:flex;gap:9px;align-items:flex-start;margin:2px 0 4px;padding:9px 11px;border-radius:11px;
     background:rgba(46,158,143,.08);border:1px solid rgba(46,158,143,.22);font-size:11.5px;line-height:1.45;color:#3B4658}
   .apAutoIco{flex:none;color:#1F7F73;font-size:13px;line-height:1.3}
@@ -2347,6 +2477,9 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
     <button class="tb" id="tbAdd" data-tip="Papildyti žemėlapį" aria-label="Papildyti žemėlapį">
       <svg viewBox="0 0 24 24" fill="none"><path d="M4 6.5A1.5 1.5 0 0 1 5.5 5H10l1.6 2H18a1.5 1.5 0 0 1 1.5 1.5V12" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M4 8v10.5h9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M17.5 14.5v6M14.5 17.5h6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
     </button>
+    <button class="tb" id="tbFocus" data-tip="Rakursas" aria-label="Perdėlioti pagal rakursą">
+      <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="7" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="2.4" fill="currentColor"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+    </button>
     <div class="tbWrap">
       <button class="tb" id="tbShare" data-tip="Spausdinti / eksportuoti" aria-label="Spausdinti arba eksportuoti">
         <svg viewBox="0 0 24 24" fill="none"><path d="M12 15V4m0 0L8.2 7.8M12 4l3.8 3.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 14v5.5h14V14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
@@ -2649,6 +2782,7 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
     <button id="nClose">✕</button>
   </div>
   <div id="nBody"></div>
+  <div id="nFocus"></div>
   <div id="nMine"></div>
   <div id="nGrow"></div>
   <div id="nGloss"></div>
@@ -4281,7 +4415,9 @@ function fitCenterText(){
      procentais, tad priklauso nuo kortelės dydžio, kurį naudotojas gali keisti. */
   const H=el.clientHeight;
   let res=10;
-  const cn=el.querySelector('.cnt'), mb=el.querySelector('.mineB');
+  /* Viršuje gali būti arba vien „+N", arba rūšies ženkliuko ir „+N" eilutė —
+     matuojam tai, kas tikrai yra, o ne spėjam pagal vieną iš jų. */
+  const cn=el.querySelector('.cTop') || el.querySelector('.cnt'), mb=el.querySelector('.mineB');
   if(cn) res=Math.max(res, cn.offsetTop+cn.offsetHeight+6);
   if(mb) res=Math.max(res, H-mb.offsetTop+6);
   const room=H-2*res;
@@ -4321,7 +4457,22 @@ function render(){
     const kc=(n.children||[]).length;
     /* Izoliacijoje „+N" nerodomas: tai atrinktas vaizdas, ne naršoma medžio
        šaka, ir paspaudimas nieko nekeistų — tylus mygtukas blogiau nei jokio. */
-    if(kc && !MM_ISO) html+='<span class="cnt">'+(n._c?'+'+kc:'–')+'</span>';
+    const cntHtml = (kc && !MM_ISO) ? '<span class="cnt">'+(n._c?'+'+kc:'–')+'</span>' : '';
+    /* RAKURSO RŪŠIS — tik centrinėje kortelėje ir tik kai rakursas nustatytas.
+       Kartu su „+N" į vieną eilutę, kad negalėtų užlipti vienas ant kito. */
+    if(n.cls==='n-center' && n.focus && n.focusKind){
+      const kt = n.focusKind==='klausimas' ? 'klausimas' : n.focusKind==='teiginys' ? 'teiginys' : 'sąvoka';
+      html+='<span class="cTop"><span class="focusB" role="button" tabindex="0"'
+        +' title="Rakursas suprastas kaip '+kt+' — spustelėk, kad pataisytum">◈ '+kt+'</span>'
+        +cntHtml+'</span>';
+    } else html+=cntHtml;
+    /* RYŠYS SU RAKURSU. Rodomas tik ten, kur ženklas ką nors pasako: kortelė,
+       kuri rakursą paneigia arba riboja. Be šito prieštaravimai atsidurtų
+       žemėlapyje neatskiriami nuo patvirtinimų. */
+    if(n.fitRel==='paneigia')
+      html+='<span class="fitB" title="Ši mintis rakursą paneigia arba jam prieštarauja">≠</span>';
+    else if(n.fitRel==='patikslina')
+      html+='<span class="fitB pt" title="Ši mintis rakursą patikslina arba riboja">±</span>';
     /* sąsajų ženkliukas — tik kai kortelė sąsajų TURI; skaičius kaip pas +N */
     let relN=0; try{ relN=mmRelFor(n.id).length; }catch(e){}
     if(relN && n.cls!=='n-center')
@@ -4343,6 +4494,16 @@ function render(){
       ['pointerdown','pointerup'].forEach(t=>cb.addEventListener(t,ev=>ev.stopPropagation()));
       cb.onclick=ev=>{ ev.stopPropagation(); if(typeof cpClose==='function') cpClose();
         n._c=!n._c; render(); setTimeout(fitAll,60); };
+    }
+    /* Ženkliukas atidaro TĄ PATĮ skydelį su jau įrašytu rakursu (5b sk.).
+       stopPropagation būtinas: be jo paspaudimas nukeliautų į kortelės kūną
+       ir kartu suskleistų visą žemėlapį. */
+    const fb=el.querySelector('.focusB');
+    if(fb){
+      ['pointerdown','pointerup'].forEach(t=>fb.addEventListener(t,ev=>ev.stopPropagation()));
+      fb.onclick=ev=>{ ev.stopPropagation(); if(window.mmRkOpen) window.mmRkOpen(); };
+      fb.addEventListener('keydown',ev=>{ if(ev.key==='Enter'||ev.key===' '){
+        ev.preventDefault(); ev.stopPropagation(); if(window.mmRkOpen) window.mmRkOpen(); } });
     }
     const rb=el.querySelector('.relB');
     if(rb){
@@ -4940,10 +5101,32 @@ function openNote(n){
   document.getElementById('nEditArea').classList.remove('open');
   document.getElementById('nBody').style.display='block';
   notes.classList.add('open');
+  renderFocus(n);
   renderMine(n);
   renderGrow(n);
   renderGloss(n);
   decorateGloss(n);
+}
+
+/* ═══ RYŠYS SU RAKURSU ════════════════════════════════════════════════
+   Modelio pagrindimas rodomas ATVAIZDUOJANT, o ne įrašomas į n.note:
+   snapshot() pastabos nesaugo, tad įrašas į note būtų neatšaukiamas, o
+   šaltinio tekstas privalo likti nepaliestas. */
+const FIT_REL_TXT={atsako:'atsako į rakursą', pagrindzia:'pagrindžia rakursą',
+  paneigia:'paneigia rakursą arba jam prieštarauja', patikslina:'patikslina arba riboja rakursą',
+  apie_tai:'kalba apie tą dalyką'};
+function renderFocus(n){
+  const box=document.getElementById('nFocus'); if(!box) return;
+  box.innerHTML='';
+  if(!n || !n.fitRel || n.cls==='n-center') return;
+  const neg = (n.fitRel==='paneigia'||n.fitRel==='patikslina');
+  const esc=s=>String(s==null?'':s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+  const d=document.createElement('div');
+  d.className='nfBox'+(neg?' neg':'');
+  d.innerHTML='<span class="nfHead">Ryšys su rakursu</span>'
+    + '<b>'+esc(FIT_REL_TXT[n.fitRel]||n.fitRel)+'</b>'
+    + (n.fitWhy ? '<br>'+esc(n.fitWhy) : '');
+  box.appendChild(d);
 }
 
 /* ═══ MANO MINTYS ══════════════════════════════════════════════════════
@@ -5610,7 +5793,9 @@ function snapshot(){
   // išsaugom kiekvieno mazgo kintamas savybes
   const s={};
   for(const id in OBJ){ const n=OBJ[id];
-    s[id]={label:n.label,customColor:n.customColor,icon:n.icon,img:n.img,_c:n._c,w:n.w,sc:n.sc,st:n.st,rel:n.rel,mine:n.mine,fmt:(n.fmt?JSON.stringify(n.fmt):undefined),
+    s[id]={label:n.label,customColor:n.customColor,icon:n.icon,img:n.img,_c:n._c,w:n.w,sc:n.sc,st:n.st,rel:n.rel,mine:n.mine,
+           focus:n.focus,focusKind:n.focusKind,focusHow:n.focusHow,focusFrom:n.focusFrom,
+           fitLvl:n.fitLvl,fitRel:n.fitRel,fitWhy:n.fitWhy,fmt:(n.fmt?JSON.stringify(n.fmt):undefined),
            mx:(manual[id]?manual[id].x:undefined),my:(manual[id]?manual[id].y:undefined),
            /* SANDARA — kad būtų galima atšaukti ir kortelės perkėlimą į kitą tėvinę kortelę */
            p:(n._p?n._p.id:null), i:(n._p?(n._p.children||[]).indexOf(n):-1)};
@@ -5651,6 +5836,8 @@ function restoreSnap(s){
   for(const id in s){ const n=OBJ[id]; if(!n) continue;
     n.label=s[id].label; n.customColor=s[id].customColor; n.icon=s[id].icon; n.img=s[id].img; n._c=s[id]._c;
     n.st=s[id].st; n.rel=s[id].rel; n.mine=s[id].mine;
+    n.focus=s[id].focus; n.focusKind=s[id].focusKind; n.focusHow=s[id].focusHow; n.focusFrom=s[id].focusFrom;
+    n.fitLvl=s[id].fitLvl; n.fitRel=s[id].fitRel; n.fitWhy=s[id].fitWhy;
     n.w=s[id].w; n.sc=s[id].sc;
     n.fmt = s[id].fmt ? JSON.parse(s[id].fmt) : undefined;
     if(s[id].mx===undefined) delete manual[id]; else manual[id]={x:s[id].mx,y:s[id].my};
@@ -5671,6 +5858,8 @@ function doUndo(){
   for(const id in s){ const n=OBJ[id]; if(!n) continue;
     n.label=s[id].label; n.customColor=s[id].customColor; n.icon=s[id].icon; n.img=s[id].img; n._c=s[id]._c;
     n.st=s[id].st; n.rel=s[id].rel; n.mine=s[id].mine;
+    n.focus=s[id].focus; n.focusKind=s[id].focusKind; n.focusHow=s[id].focusHow; n.focusFrom=s[id].focusFrom;
+    n.fitLvl=s[id].fitLvl; n.fitRel=s[id].fitRel; n.fitWhy=s[id].fitWhy;
     n.w=s[id].w; n.sc=s[id].sc;
     n.fmt = s[id].fmt ? JSON.parse(s[id].fmt) : undefined;
     if(s[id].mx!==undefined) manual[id]={x:s[id].mx,y:s[id].my}; else delete manual[id];
@@ -5988,6 +6177,12 @@ function showToast(msg){
 }
 function cleanTree(n){ return {id:n.id,label:n.label,cls:n.cls,icon:n.icon,img:n.img,note:n.note,ts:n.ts,rel:n.rel,st:n.st,
   srcs:n.srcs,tchk:n.tchk,cmpTag:n.cmpTag,mine:n.mine,
+  /* RAKURSO REŽIMAS. Šaknyje — pats rakursas, jo rūšis, kaip modelis jį suprato
+     ir iš kurio žemėlapio jis padarytas. Kortelėse — kaip kortelė siejasi su
+     rakursu. Visi septyni PRIVALO būti ir snapshot/restoreSnap/doUndo — kitaip
+     tyliai dingsta išsaugant arba atšaukiant (žr. CLAUDE.md). */
+  focus:n.focus,focusKind:n.focusKind,focusHow:n.focusHow,focusFrom:n.focusFrom,
+  fitLvl:n.fitLvl,fitRel:n.fitRel,fitWhy:n.fitWhy,
   customColor:n.customColor,w:n.w,scale:n.scale,_c:!!n._c,children:(n.children||[]).map(cleanTree)}; }
 function saveMap(){
   let arr=[]; try{ arr=JSON.parse(localStorage.getItem('mm_saved_maps')||'[]'); }catch(e){}
@@ -6005,6 +6200,156 @@ function saveMap(){
     showToast(ok?'Išsaugota (seniausi žemėlapiai pašalinti)':'Nepavyko išsaugoti (per didelis)');
   }
 }
+/* ══════════ RAKURSO REŽIMAS · ŽEMĖLAPIO STATYMAS ═════════════════════════
+   ANTRA METODIKA, ne esamos praplėtimas. Įprastas dėsnis „šaltinio sandara
+   privalo matytis hierarchijoje" čia SĄMONINGAI negalioja: hierarchiją lemia
+   tik tai, kiek tiesiogiai mintis siejasi su rakursu. Kortelė, buvusi
+   ketvirtame lygyje, gali tapti šaka. Nesusijusios mintys išmetamos visai.
+   Galioja nepakitę: išdėstymo dėsniai, pavadinimų dėsniai, šaltinio nuorodos
+   (.src paveldimos su pastaba) ir teksto elementų tipai (skaičiuojami gyvai). */
+
+/* Perdėliojant JAU perdėliotą žemėlapį vertinama PIRMINĖ medžiaga, ne jau
+   atsijota — kitaip antras rakursas rinktųsi tik iš to, kas praėjo pirmąjį,
+   ir medžiaga nyktų negrįžtamai. */
+function rkSource(){
+  if(DATA.focus && DATA.focusFrom){
+    let arr=[]; try{ arr=JSON.parse(localStorage.getItem('mm_saved_maps')||'[]'); }catch(e){}
+    const rec=arr.find(m=>m.id===DATA.focusFrom);
+    if(rec && rec.data) return {root:JSON.parse(JSON.stringify(rec.data)), fromId:DATA.focusFrom, loaded:true};
+  }
+  return {root:DATA, fromId:null, loaded:false};
+}
+function rkPool(root){
+  const out=[]; (function w(n){ if(n!==root) out.push(n); (n.children||[]).forEach(w); })(root);
+  return out;
+}
+/* Originalas išsaugomas PRIEŠ perdėliojimą ir tyliai (be pranešimo): rezultatas
+   kuriamas greta, ne vietoj, todėl grįžti prie pirminio žemėlapio privalo būti
+   galima net tada, kai vartotojas jo pats nebuvo išsaugojęs. */
+function rkStashOriginal(root){
+  let arr=[]; try{ arr=JSON.parse(localStorage.getItem('mm_saved_maps')||'[]'); }catch(e){}
+  const title=root.label||'Žemėlapis';
+  const ex=arr.findIndex(m=>m.title===title);
+  const id = ex>=0 ? arr[ex].id : 'sm'+Date.now();
+  const rec={ id:id, title:title, ts:Date.now(), theme:curTheme, layout:curLayout, gama:curGama,
+              lin:LIN, manual:(root===DATA?manual:{}), data:cleanTree(root) };
+  try{ rec.thumb = (root===DATA) ? mapThumb() : ''; }catch(e){ rec.thumb=''; }
+  if(ex>=0) arr.splice(ex,1);
+  arr.unshift(rec); arr=arr.slice(0,24);
+  try{ localStorage.setItem('mm_saved_maps', JSON.stringify(arr)); }
+  catch(e){ while(arr.length>1){ arr.pop(); try{ localStorage.setItem('mm_saved_maps',JSON.stringify(arr)); break; }catch(e2){} } }
+  return id;
+}
+
+const RK_REL_TXT={atsako:'atsako', pagrindzia:'pagrindžia', paneigia:'paneigia',
+                  patikslina:'patikslina', apie_tai:'apie tai'};
+
+/* Grąžina {ok, zinute, statistika} — pranešimą sudaro kviečiantysis, kad visa
+   kraštinių atvejų logika (6 sk.) gyventų vienoje vietoje. */
+function mmBuildFocusMap(focus, rank, groups){
+  const src=rkSource(), pool=rkPool(src.root);
+  const byId={}; pool.forEach(n=>{ byId[n.id]=n; });
+
+  /* ORIGINALAS IŠSAUGOMAS PIRMIAUSIA — prieš bet kokį medžio lietimą.
+     Toliau kortelėms nuvalomi vaikai, tad vėlesnis išsaugojimas įrašytų jau
+     išardytą struktūrą. Išmatuota: taip buvo prarasta 12 kortelių iš 65. */
+  const origTitle = src.root.label;
+  const fromId = src.loaded ? src.fromId : rkStashOriginal(DATA);
+  /* Atšaukimo įrašas — irgi PRIEŠ bet kokį lietimą. Perdėliojimas yra
+     didžiausias vieno veiksmo pakeitimas visoje programoje, tad Ctrl+Z privalo
+     iš jo išvesti. Momentinė nuotrauka ima dabartinę OBJ būseną, todėl vėliau
+     iškviesta ji užfiksuotų jau perdėliotą medį. */
+  try{ pushUndo(); }catch(e){}
+
+  /* 1. Vertinimai. Nežinomi id ir dubliai atmetami tyliai. */
+  const ver={};
+  (rank.korteles||[]).forEach(c=>{ if(byId[c.id] && !ver[c.id]) ver[c.id]=c; });
+
+  const directs=[], extras=[];
+  pool.forEach(n=>{ const v=ver[n.id]; if(!v) return;
+    if(v.lygis==='tiesioginis') directs.push(n);
+    else if(v.lygis==='papildo') extras.push(n); });
+
+  if(!directs.length && !extras.length)
+    return {ok:false, zinute:'Šiuo rakursu įkeltoje medžiagoje susijusių minčių nerasta. Pabandyk suformuluoti kitaip.'};
+
+  /* Nė vienos tiesioginės, bet yra papildančių — jos pačios tampa pirmu lygiu,
+     kitaip žemėlapis liktų be šakų, nors susijusių minčių rasta. */
+  if(!directs.length){ extras.splice(0).forEach(n=>directs.push(n)); }
+
+  const keep={}; directs.concat(extras).forEach(n=>{ keep[n.id]=1; });
+
+  /* 2. Laukai kortelėse. Senos rakurso žymos nuvalomos — kortelė gali ateiti
+        iš ankstesnio perdėliojimo su kitu rakursu. */
+  pool.forEach(n=>{ n.fitLvl=undefined; n.fitRel=undefined; n.fitWhy=undefined; });
+  directs.concat(extras).forEach(n=>{ const v=ver[n.id];
+    n.fitLvl=v.lygis==='tiesioginis'?'tiesioginis':'papildo';
+    n.fitRel=v.rysys||undefined;
+    n.fitWhy=(v.kodel||'').trim()||undefined; });
+
+  /* 3. Tėvai papildančioms. „prie" gali rodyti į kitą papildančią — tai leistina,
+        bet grandinė gali užsisukti į ratą arba nurodyti į išmestą kortelę; abiem
+        atvejais kortelė kabinama prie centro, o ne metama (6 sk.). */
+  const parentOf={};
+  extras.forEach(n=>{ const p=(ver[n.id].prie||'').trim();
+    parentOf[n.id] = (p && keep[p] && p!==n.id) ? p : null; });
+  extras.forEach(n=>{ let cur=parentOf[n.id], g=0;
+    while(cur && g++<200){ if(cur===n.id){ parentOf[n.id]=null; break; } cur=parentOf[cur]||null; }
+    if(g>=200) parentOf[n.id]=null; });
+
+  /* 4. Statom medį. Visų atrinktų kortelių vaikai nuvalomi — sena šaltinio
+        sandara čia nebegalioja. */
+  directs.concat(extras).forEach(n=>{ n.children=[]; });
+  const roots=directs.slice();
+  extras.forEach(n=>{ const p=parentOf[n.id];
+    if(p && (byId[p])) (byId[p].children=byId[p].children||[]).push(n);
+    else roots.push(n); });
+
+  /* 5. Potemės — tik iš pirmo lygio kortelių ir tik jei modelis jų rado. */
+  let level1=roots, grouped=0;
+  if(groups && groups.length){
+    const used={}, made=[];
+    groups.forEach(g=>{ const kids=(g.korteles||[]).map(id=>byId[id])
+        .filter(n=>n && keep[n.id] && roots.indexOf(n)>=0 && !used[n.id]);
+      if(kids.length<2) return;
+      kids.forEach(n=>{ used[n.id]=1; });
+      made.push({id:mmNewId(), label:String(g.pavadinimas).trim(), cls:'n-theme',
+                 children:kids, fitLvl:'tiesioginis', fitRel:'apie_tai'});
+      grouped+=kids.length; });
+    if(made.length) level1=made.concat(roots.filter(n=>!used[n.id]));
+  }
+
+  /* 6. Šaknis. Centrinėje kortelėje — pats rakursas, pažodžiui.
+        (Originalas jau išsaugotas funkcijos pradžioje.) */
+  DATA.children=level1;
+  DATA.label=focus;
+  DATA.cls='n-center';
+  DATA.focus=focus;
+  DATA.focusKind=rank.rakursas.rusis;
+  DATA.focusHow=rank.rakursas.kaip_supratau||'';
+  DATA.focusFrom=fromId;
+  DATA.note=DATA.note||'';
+  (function open(n){ n._c=false; (n.children||[]).forEach(open); })(DATA);
+
+  /* 7. Indeksas. Išmestos kortelės paliekamos OBJ'e, kad atšaukimas galėtų jas
+        grąžinti — restoreStruct atkuria tik tai, kas pasiekiama nuo šaknies,
+        todėl likę įrašai savaime neatgyja. */
+  const prev={}; Object.keys(OBJ).forEach(id=>{ prev[id]=OBJ[id]; });
+  manual={};
+  indexTree();
+  Object.keys(prev).forEach(id=>{ if(!OBJ[id]) OBJ[id]=prev[id]; });
+  renumberAll();
+  render();
+  setTimeout(()=>{ try{ fitAll(true); }catch(e){} }, 80);
+
+  /* 8. Statistika pranešimui (6 sk. kraštiniai atvejai). */
+  const kept=directs.length+extras.length, all=pool.length;
+  const neg=directs.concat(extras).filter(n=>n.fitRel==='paneigia'||n.fitRel==='patikslina').length;
+  return {ok:true, statistika:{rasta:kept, viso:all, paneigia:neg, potemiu:grouped,
+          rusis:rank.rakursas.rusis, kaip:DATA.focusHow, originalas:origTitle}};
+}
+window.mmBuildFocusMap=mmBuildFocusMap;
+
 /* ===== ATIDARYMAS iš Saved Maps: #map=<id> ===== */
 function openSavedMap(id){
   let arr=[]; try{ arr=JSON.parse(localStorage.getItem('mm_saved_maps')||'[]'); }catch(e){}
@@ -6626,6 +6971,155 @@ dz.addEventListener('drop',e=>{
     const map={}; out.forEach(o=>{ if(o&&typeof o.i==='number'&&o.pavadinimas) map[o.i]=String(o.pavadinimas).trim(); });
     return map;
   }
+
+  /* ══════════ RAKURSO REŽIMAS · DI VERTINIMAS ═══════════════════════════
+     Ranžiravimą atlieka MODELIS, ne raktažodžiai. Projekto klaidų žurnalas
+     (v43, tikras matavimas su 70 studijos komentarų): pagal aiškią nuorodą
+     pataikyta 15 iš 15, o pagal turinį — tiksliai 1, į teisingą šaką 6, pro
+     šalį 8. Klausimas „ar ši mintis ATSAKO" dar sunkesnis nei „ar ji APIE TĄ
+     PATĮ": kortelė gali turėti visus klausimo žodžius ir neatsakyti nieko.
+     Todėl jokio IDF, kosinuso ar žodžių sutapimo čia nėra ir negali atsirasti. */
+
+  const RK_KINDS={klausimas:'klausimas', teiginys:'teiginys', savoka:'sąvoka'};
+
+  /* Vertinimo kriterijus PRISITAIKO prie rakurso rūšies. Be to vienas žodis,
+     vertinamas kaip klausimas, priverstų modelį prisigalvoti atsakymą, kurio
+     medžiagoje nėra. */
+  function rkCriterion(kind){
+    if(kind==='klausimas') return 'ar kortelė ATSAKO į šį klausimą (bent iš dalies)';
+    if(kind==='teiginys')  return 'ar kortelė PAGRINDŽIA, PANEIGIA arba PATIKSLINA šį teiginį';
+    return 'ar kortelė KALBA APIE šį dalyką';
+  }
+
+  /* Bendra visoms užklausoms dalis. Skaidant į dalis kartojama KIEKVIENOJE —
+     kitaip antra dalis vertinama kitu matu nei pirma, ir rezultatas nebe
+     palyginamas (to reikalauja užduoties 4 sk.). */
+  function rkSystem(){
+    return 'Tu vertini, kiek kiekviena minčių žemėlapio kortelė siejasi su vartotojo nurodytu RAKURSU. '
+      + 'Atsakai lietuviškai.\n'
+      + 'RAKURSO RŪŠYS ir vertinimo kriterijus kiekvienai:\n'
+      + '- klausimas (klaustukas arba klausiamasis žodis): ar kortelė ATSAKO į jį;\n'
+      + '- teiginys (pilnas sakinys be klaustuko): ar kortelė jį PAGRINDŽIA, PANEIGIA arba PATIKSLINA;\n'
+      + '- sąvoka (žodis ar keli be veiksmažodžio): ar kortelė KALBA APIE tą dalyką.\n'
+      + 'Rūšį nustatai TU, pagal prasmę. Klaustuko buvimas nėra patikimas požymis: '
+      + '„Paaiškink, kodėl tvanas laikomas faktu" yra klausimas be klaustuko.\n\n'
+      + 'SVARBIAUSIA TAISYKLĖ. Mintis, kuri pateiktam teiginiui PRIEŠTARAUJA, jį RIBOJA ar '
+      + 'nurodo išimtį, yra LABAI SUSIJUSI ir PRIVALO patekti į rezultatą su rysys "paneigia". '
+      + '„nesusijes" reiškia tik „ne apie tai", ir NIEKADA „nesutinka". '
+      + 'Prieštaravimo išmetimas yra klaida, o ne atsargumas: kitaip vartotojas gauna vien save '
+      + 'patvirtinančią medžiagą.\n\n'
+      + 'LYGIAI:\n'
+      + '- "tiesioginis" — mintis siejasi su rakursu tiesiogiai (atsako, pagrindžia, paneigia, '
+      + 'arba yra pagrindinis pasakymas apie sąvoką). Ji taps pirmo lygio šaka;\n'
+      + '- "papildo" — mintis detalizuoja, pagrindžia ar iliustruoja KITĄ kortelę; lauke "prie" '
+      + 'nurodyk tos kortelės id (geriausia — tiesioginės);\n'
+      + '- "nesusijes" — mintis ne apie tai. Tik ši į rezultatą nepateks.\n\n'
+      + 'RYŠIAI: "atsako", "pagrindzia", "paneigia", "patikslina", "apie_tai". '
+      + '"paneigia" ir "patikslina" yra pilnaverčiai ryšiai, ne atmetimo priežastis.\n'
+      + 'Vertink TIK tai, kas kortelėje parašyta. Nepridėk nieko iš savo žinių.';
+  }
+
+  const RK_CARD_SCHEMA={type:'object',
+    properties:{id:{type:'string'},
+      lygis:{type:'string',enum:['tiesioginis','papildo','nesusijes']},
+      rysys:{type:'string',enum:['atsako','pagrindzia','paneigia','patikslina','apie_tai']},
+      prie:{type:'string'},
+      kodel:{type:'string'}},
+    required:['id','lygis','rysys','prie','kodel'],additionalProperties:false};
+
+  async function rkCall(body){
+    const key=window.mmGetAIKey(); if(!key) throw new Error('Nėra API rakto');
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+      headers:{'content-type':'application/json','x-api-key':key,
+        'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify(body)});
+    if(!r.ok) throw new Error('API '+r.status+': '+(await r.text()).slice(0,200));
+    const d=await r.json();
+    if(d.stop_reason==='refusal') throw new Error('DI atmetė užklausą');
+    const txt=(d.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
+    return JSON.parse(txt);
+  }
+
+  /* Kortelės aprašas modeliui: pavadinimas ir pastabos santrauka be HTML ir be
+     tarnybinių eilučių (šaltinio žymos, sąsajos) — jos nieko nepasako apie tai,
+     ar mintis atsako į klausimą, tik ėda vietą užklausoje. */
+  function rkCardText(n){
+    const d=document.createElement('div'); d.innerHTML=n.note||'';
+    d.querySelectorAll('.src,.addMark,.relBox').forEach(x=>x.remove());
+    const t=(d.textContent||'').replace(/\s+/g,' ').trim();
+    return t.slice(0,420);
+  }
+
+  /* Pagrindinė funkcija. Grąžina {rakursas:{rusis,kaip_supratau}, korteles:[…]}.
+     Kortelių daug → skaidoma dalimis po RK_CHUNK, o rakursas, jo rūšis ir
+     kriterijus kartojami kiekvienoje dalyje. */
+  const RK_CHUNK=70;
+  async function aiRankByFocus(focus, cards, onProgress){
+    if(!window.mmGetAIKey()) throw new Error('Nėra API rakto');
+    if(!cards.length) throw new Error('Žemėlapyje nėra kortelių');
+    const parts=[]; for(let i=0;i<cards.length;i+=RK_CHUNK) parts.push(cards.slice(i,i+RK_CHUNK));
+    let kind=null, how='', out=[];
+
+    for(let p=0;p<parts.length;p++){
+      if(onProgress) onProgress(p, parts.length);
+      const list=parts[p].map(n=>({id:n.id, pavadinimas:n.label, turinys:rkCardText(n)}));
+      const known = kind
+        ? '\nRAKURSO RŪŠIS jau nustatyta ankstesnėje dalyje: "'+kind+'". Naudok TĄ PAČIĄ rūšį ir '
+          + 'TĄ PATĮ kriterijų: '+rkCriterion(kind)+'. Rūšies nekeisk.'
+        : '';
+      const props={korteles:{type:'array',items:RK_CARD_SCHEMA}};
+      const req=['korteles'];
+      if(!kind){
+        props.rakursas={type:'object',
+          properties:{rusis:{type:'string',enum:['klausimas','teiginys','savoka']},
+                      kaip_supratau:{type:'string'}},
+          required:['rusis','kaip_supratau'],additionalProperties:false};
+        req.unshift('rakursas');
+      }
+      const d=await rkCall({
+        model:'claude-opus-5', max_tokens:8000, system:rkSystem(),
+        messages:[{role:'user',content:
+          'RAKURSAS: '+focus+'\n'+known
+          +'\n\nĮvertink kiekvieną kortelę (dalis '+(p+1)+' iš '+parts.length+'). '
+          +'Grąžink įrašą KIEKVIENAI pateiktai kortelei — nė vienos nepraleisk.\n'
+          +'Jei lygis ne "papildo", lauke "prie" rašyk tuščią eilutę.\n\n'
+          +JSON.stringify(list,null,1)}],
+        output_config:{format:{type:'json_schema',schema:{
+          type:'object',properties:props,required:req,additionalProperties:false}}}
+      });
+      if(!kind && d.rakursas){ kind=d.rakursas.rusis; how=String(d.rakursas.kaip_supratau||'').trim(); }
+      (d.korteles||[]).forEach(c=>{ if(c&&c.id) out.push(c); });
+    }
+    return {rakursas:{rusis:kind||'savoka', kaip_supratau:how}, korteles:out};
+  }
+
+  /* Potemės. Pirmo lygio mintys gali sudaryti prasmingas grupes — bet grupavimas
+     galimas tik tada, kai VISOS tiesioginės mintys jau žinomos, todėl tai atskira,
+     maža užklausa. Nepavykus grupavimui žemėlapis statomas be potemių: tai
+     pagerinimas, ne būtinybė (užduoties 3 sk. „gali gauti"). */
+  async function aiFocusGroups(focus, kind, directs){
+    if(directs.length<5) return [];
+    const d=await rkCall({
+      model:'claude-opus-5', max_tokens:4000,
+      system:'Tu grupuoji minčių žemėlapio korteles į prasmingas potemes. Atsakai lietuviškai.\n'
+        +'DĖSNIAI: (1) grupuok TIK pagal rakursą — ne pagal šaltinio skyrius; (2) potemės pavadinimas '
+        +'3–7 žodžiai, be kabučių, be galinio taško, APIBENDRINA visas grupės korteles; '
+        +'(3) grupė turi turėti bent 2 korteles; (4) kortelė gali būti tik vienoje grupėje; '
+        +'(5) jei prasmingų grupių nėra, grąžink tuščią sąrašą — dirbtinis grupavimas blogiau nei jokio.',
+      messages:[{role:'user',content:'RAKURSAS ('+kind+'): '+focus
+        +'\n\nSugrupuok šias pirmo lygio mintis:\n'+JSON.stringify(directs,null,1)}],
+      output_config:{format:{type:'json_schema',schema:{
+        type:'object',properties:{grupes:{type:'array',items:{type:'object',
+          properties:{pavadinimas:{type:'string'},korteles:{type:'array',items:{type:'string'}}},
+          required:['pavadinimas','korteles'],additionalProperties:false}}},
+        required:['grupes'],additionalProperties:false}}}
+    });
+    return (d.grupes||[]).filter(g=>g&&g.pavadinimas&&(g.korteles||[]).length>=2);
+  }
+
+  window.aiRankByFocus=aiRankByFocus;
+  window.aiFocusGroups=aiFocusGroups;
+  window.rkCriterion=rkCriterion;
 
   /* ═══════════ TEKSTO SANDARA ═══════════
      Sritis pasako, KOKIŲ elementų tekste ieškoti; sandara — KAIP juos sudėlioti.
@@ -8169,6 +8663,7 @@ function mmCmdList(){
   add('Atidaryti iš kompiuterio','Rinkmenos',()=>click('#tbOpenMenu .tbItem:nth-child(2)'));
   add('Išsaugoti žemėlapį','Rinkmenos',()=>{ try{ saveMap(); }catch(e){} });
   add('Papildyti žemėlapį','Rinkmenos',()=>click('#tbAdd'));
+  add('Rakursas — perdėlioti pagal klausimą','Rinkmenos',()=>click('#tbFocus'));
   add('Spausdinti','Rinkmenos',()=>window.print());
   add('Eksportuoti PNG','Rinkmenos',()=>click('#tbShareMenu [data-a="png"]'));
   add('Eksportuoti JSON','Rinkmenos',()=>click('#tbShareMenu [data-a="json"]'));
@@ -9029,6 +9524,124 @@ function mmAddInit(){
 }
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',mmAddInit); else mmAddInit();
 </script>
+
+<script>
+/* ══════════ RAKURSO REŽIMAS · SĄSAJA ══════════════════════════════════════
+   Veiksmas — juostoje, būsena — centrinėje kortelėje. Tai du skirtingi dalykai.
+   Ženkliuko „perdėliok pagal šią mintį" ant paprastų kortelių NĖRA sąmoningai:
+   tada kiekviena kortelė virstų mygtuku, o žemėlapis — navigacijos meniu. */
+function mmRkInit(){
+  var wrap=document.getElementById('rkWrap'); if(!wrap) return;
+  var tx=document.getElementById('rkText'), go=document.getElementById('rkGo'),
+      hint=document.getElementById('rkHint'), st=document.getElementById('rkState'),
+      stx=document.getElementById('rkStateTx'), busy=false;
+
+  function say(html, mode){            /* mode: '' | 'done' | 'err' */
+    st.className='rkState on'+(mode?' '+mode:'');
+    stx.innerHTML=html;
+  }
+  function clearSay(){ st.className='rkState'; stx.innerHTML=''; }
+  function sync(){ go.disabled = busy || !tx.value.trim(); }
+
+  function open(){
+    wrap.classList.add('on'); wrap.setAttribute('aria-hidden','false');
+    tx.value = DATA.focus || '';
+    clearSay();
+    if(DATA.focus && DATA.focusHow)
+      say('<b>Dabartinis rakursas suprastas kaip '+rkKindTxt(DATA.focusKind)+'</b>'
+          + rkEsc(DATA.focusHow), 'done');
+    go.textContent='Perdėlioti pagal rakursą';
+    hint.textContent='Įrašyk klausimą, teiginį arba sąvoką';
+    sync(); setTimeout(function(){ tx.focus(); }, 60);
+  }
+  function close(){ wrap.classList.remove('on'); wrap.setAttribute('aria-hidden','true'); }
+  window.mmRkOpen=open;
+
+  document.getElementById('tbFocus').addEventListener('click',function(e){ e.stopPropagation(); open(); });
+  document.getElementById('rkClose').onclick=close;
+  document.getElementById('rkCancel').onclick=close;
+  document.getElementById('rkBack').onclick=function(){ if(!busy) close(); };
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape' && wrap.classList.contains('on') && !busy) close(); });
+  tx.addEventListener('input',sync);
+  /* Ctrl+Enter — paleidimas nepaliekant lauko */
+  tx.addEventListener('keydown',function(e){
+    if((e.ctrlKey||e.metaKey) && e.key==='Enter' && !go.disabled) go.click(); });
+
+  go.onclick=async function(){
+    var focus=tx.value.trim(); if(!focus||busy) return;
+
+    if(!window.mmGetAIKey || !window.mmGetAIKey()){
+      say('<b>Reikia Claude API rakto</b>Vertinimą atlieka modelis, todėl be rakto '
+        + 'perdėlioti neįmanoma. Raktas saugomas tik tavo naršyklėje ir siunčiamas tik į api.anthropic.com.'
+        + '<button class="rkKeyBtn" id="rkKeyBtn">Įvesti raktą</button>', 'err');
+      var kb=document.getElementById('rkKeyBtn');
+      if(kb) kb.onclick=function(){
+        var k=prompt('Įklijuok savo Claude API raktą (sk-ant-...).\n\nJis saugomas TIK tavo naršyklėje '
+          + 'ir siunčiamas tik į api.anthropic.com.\nUž naudojimą moki pagal savo Anthropic paskyrą.');
+        if(k&&k.trim()){ window.mmSetAIKey(k.trim()); clearSay(); }
+      };
+      return;
+    }
+
+    busy=true; sync(); go.textContent='Vertinama…';
+    try{
+      var src=rkSource(), pool=rkPool(src.root);
+      if(!pool.length) throw new Error('Žemėlapyje nėra kortelių');
+      say('<b>Vertinamos kortelės</b>Modelis peržiūri visas '+pool.length
+        + ' korteles ir sprendžia, kuri kaip siejasi su rakursu.');
+
+      var rank=await window.aiRankByFocus(focus, pool, function(i,n){
+        if(n>1) say('<b>Vertinamos kortelės</b>Dalis '+(i+1)+' iš '+n+' ('+pool.length+' kortelių).');
+      });
+
+      var kindTx=rkKindTxt(rank.rakursas.rusis);
+      say('<b>Suprasta kaip '+kindTx+'</b>'+rkEsc(rank.rakursas.kaip_supratau||rkCriterion(rank.rakursas.rusis))
+        + '<br>Dėliojamas žemėlapis…');
+
+      var directs=(rank.korteles||[]).filter(function(c){ return c.lygis==='tiesioginis'; });
+      var byId={}; pool.forEach(function(n){ byId[n.id]=n; });
+      var groups=[];
+      try{
+        groups=await window.aiFocusGroups(focus, rank.rakursas.rusis,
+          directs.map(function(c){ return {id:c.id, pavadinimas:byId[c.id]?byId[c.id].label:''}; })
+                 .filter(function(o){ return o.pavadinimas; }));
+      }catch(e){ groups=[]; }   /* potemės — pagerinimas, ne būtinybė */
+
+      var res=window.mmBuildFocusMap(focus, rank, groups);
+      if(!res.ok){ say('<b>Nepavyko</b>'+rkEsc(res.zinute), 'err'); return; }
+
+      var s=res.statistika;
+      var msg='<b>Suprasta kaip '+rkKindTxt(s.rusis)+'</b>'+rkEsc(s.kaip||rkCriterion(s.rusis));
+      msg+='<br>Į žemėlapį pateko <b style="display:inline">'+s.rasta+'</b> mintys iš '+s.viso+'.';
+      if(s.potemiu) msg+=' Sudarytos potemės ('+s.potemiu+' kortelės).';
+      if(s.rasta<=2) msg+='<br>Rasta nedaug — jei tikėjaisi daugiau, pabandyk suformuluoti plačiau.';
+      if(s.paneigia && s.paneigia > s.rasta/2)
+        msg+='<br>Dauguma rastų minčių šį teiginį riboja arba paneigia.';
+      else if(s.paneigia)
+        msg+='<br>Iš jų '+s.paneigia+' teiginį riboja arba paneigia (ženklas ≠ kortelėje).';
+      if(s.viso>=10 && s.rasta/s.viso>=0.9)
+        msg+='<br>Rakursas beveik nieko neatsijojo — jei nori tikslesnio žemėlapio, susiaurink jį.';
+      msg+='<br>Pirminis žemėlapis „'+rkEsc(s.originalas)+'" išsaugotas ir randamas skiltyje „Iš išsaugotų žemėlapių".';
+      say(msg, 'done');
+      go.textContent='Perdėlioti dar kartą';
+      hint.textContent='Žemėlapis perdėliotas';
+    }catch(err){
+      say('<b>Nepavyko perdėlioti</b>'+rkEsc(String(err && err.message || err))
+        + '<br>Žemėlapis liko nepakitęs.', 'err');
+      go.textContent='Perdėlioti pagal rakursą';
+    }finally{ busy=false; sync(); }
+  };
+  sync();
+}
+function rkKindTxt(k){ return k==='klausimas'?'klausimas':k==='teiginys'?'teiginys':'sąvoka'; }
+function rkEsc(s){ return String(s==null?'':s).replace(/[&<>]/g,function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]; }); }
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',mmRkInit); else mmRkInit();
+</script>
+
+<script>
+</script>
 <div id="addWrap" aria-hidden="true">
   <div id="addBack"></div>
   <div id="addPanel" role="dialog" aria-modal="true" aria-labelledby="addTitle">
@@ -9074,6 +9687,33 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
       <span class="apHint" id="addHint">Įklijuokite tekstą arba pasirinkite failą</span>
       <button class="apNo" id="addCancel">Atsisakyti</button>
       <button class="apGo" id="addGo" disabled>Papildyti</button>
+    </div>
+  </div>
+</div>
+<div id="rkWrap" aria-hidden="true">
+  <div id="rkBack"></div>
+  <div id="rkPanel" role="dialog" aria-modal="true" aria-labelledby="rkTitle">
+    <div class="apHead">
+      <span class="apIco">◈</span>
+      <div class="apTx"><b id="rkTitle">Rakursas</b>
+        <span>Medžiaga perdėliojama pagal tai, kiek kiekviena mintis siejasi su tavo klausimu</span></div>
+      <button class="apX" id="rkClose" aria-label="Uždaryti">✕</button>
+    </div>
+    <div class="apBody">
+      <div class="apAuto"><span class="apAutoIco">◎</span>
+        <span>Bus sukurtas <b>naujas žemėlapis</b>. Dabartinis lieka nepakitęs ir randamas
+        skiltyje „Iš išsaugotų žemėlapių"</span></div>
+
+      <label class="apLbl" for="rkText">Klausimas, teiginys arba sąvoka</label>
+      <textarea id="rkText" rows="3" spellcheck="false"
+        placeholder="Kodėl tvanas laikomas istoriniu faktu? &#183; Tvanas buvo tikras įvykis &#183; tikėjimas"></textarea>
+
+      <div class="rkState" id="rkState"><span class="rkDot"></span><span id="rkStateTx"></span></div>
+    </div>
+    <div class="apFoot">
+      <span class="apHint" id="rkHint">Įrašyk klausimą, teiginį arba sąvoką</span>
+      <button class="apNo" id="rkCancel">Atsisakyti</button>
+      <button class="apGo" id="rkGo" disabled>Perdėlioti pagal rakursą</button>
     </div>
   </div>
 </div>
