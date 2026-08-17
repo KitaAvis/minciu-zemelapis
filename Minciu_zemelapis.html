@@ -486,6 +486,14 @@
     transform:translateX(-50%);margin:0;order:0;font-size:.4em;min-width:2.1em;height:2.1em;
     padding:0 .55em;border-radius:.62em;opacity:.72;letter-spacing:.6px;
     background:transparent;box-shadow:inset 0 0 0 1.5px currentColor}
+  /* APSKRITOJE CENTRINĖJE KORTELĖJE ženkliukai NEGALI likti flex eilėje:
+     jie nustumia pavadinimą iš vidurio ir sulimpa vienas ant kito. „+N" jau
+     iškeltas absoliučiai į viršų (žr. taisyklę aukščiau) — ✎ gauna veidrodinę
+     vietą apačioje. Tas pats dydis ir forma, kad pora atrodytų viena sistema. */
+  .n-center .mineB, body[data-theme] .n-center .mineB{position:absolute;left:50%;bottom:9%;
+    transform:translateX(-50%);margin:0;order:0;font-size:.4em;min-width:2.1em;height:2.1em;
+    padding:0 .55em;border-radius:.62em;opacity:.8;
+    background:transparent;box-shadow:inset 0 0 0 1.5px currentColor}
   .node .cnt{margin-left:auto;display:inline-flex;align-items:center;justify-content:center;
     min-width:38px;height:38px;padding:0 11px;border-radius:11px;background:transparent;
     box-shadow:inset 0 0 0 1.5px currentColor;font-size:21px;font-weight:600;line-height:1;
@@ -4216,6 +4224,35 @@ function applyFmtStyles(){
     } }
   });
 }
+/* ══ CENTRINIS PAVADINIMAS PRIVALO TILPTI ═════════════════════════════════
+   Centrinė kortelė yra FIKSUOTO dydžio apskritimas, o pavadinimo ilgis —
+   ne. Ilgas pavadinimas išlipdavo pro apatinį kraštą (išmatuota: 97px), ir
+   tekstas atsidurdavo ant fono bei ant ženkliukų. Šriftas mažinamas tol, kol
+   tekstas telpa — MATUOJAMA, ne spėjama pagal simbolių skaičių: ilgi žodžiai,
+   diakritikos, tema ir šriftas keičia rezultatą.
+   Mažinamas kortelės, o ne pavadinimo šriftas, nes ženkliukai `+N` ir `✎`
+   savo dydį skaičiuoja `em` — taip visa kortelė lieka viena sistema. */
+function fitCenterText(){
+  const el=document.querySelector('.node.n-center'); if(!el) return;
+  const lbl=el.querySelector('.nodeLbl'); if(!lbl) return;
+  const base=Math.round((el.offsetWidth||376)/376*42);   /* atitinka dydžio keitimo rankenėlę */
+  el.style.fontSize=base+'px';
+  /* Ženkliukams reikia SAVO vietos. Pavadinimas centruojamas, todėl atsarga
+     imama vienoda iš abiejų pusių — pagal tą ženkliuką, kuris kiša toliau.
+     Atstumai skaitomi iš tikrųjų elementų, o ne rašomi ranka: jie nurodyti
+     procentais, tad priklauso nuo kortelės dydžio, kurį naudotojas gali keisti. */
+  const H=el.clientHeight;
+  let res=10;
+  const cn=el.querySelector('.cnt'), mb=el.querySelector('.mineB');
+  if(cn) res=Math.max(res, cn.offsetTop+cn.offsetHeight+6);
+  if(mb) res=Math.max(res, H-mb.offsetTop+6);
+  const room=H-2*res;
+  if(lbl.scrollHeight<=room) return;
+  let fs=base, guard=0;
+  while(lbl.scrollHeight>room && fs>17 && guard++<40){    /* 17px — riba, žemiau neįskaitoma */
+    fs-=1.5; el.style.fontSize=fs+'px';
+  }
+}
 function render(){
   computeGama();
   layout();
@@ -4462,6 +4499,7 @@ function render(){
     if(!n._c&&n.children) n.children.forEach(draw);
   })(DATA);
   applyCustomColors();  // pritaikom individualias spalvas po piešimo
+  fitCenterText();      // centrinis pavadinimas privalo tilpti į apskritimą
   applyCardSizes();     // visoms temoms vienodi šriftų ir kortelės dydžiai
   applyCosmosStyle();   // cosmos: kortelės spalvinamos pagal šaką
   applyGama();          // spalvų gama (jei pasirinkta) — virš temos spalvų
