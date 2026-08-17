@@ -2411,7 +2411,7 @@ body[data-theme="cosmos"] #backToUpload:hover, body[data-theme="night"] #backToU
         <div class="sRow">
           <input id="sInput" type="text" placeholder="Ieškoti žodžio ar frazės…" autocomplete="off" spellcheck="false">
           <span id="sCount"></span>
-          <button id="sClear" aria-label="Išvalyti">✕</button>
+          <button id="sClear" aria-label="Išvalyti / uždaryti" title="Išvalyti; kai tuščia — uždaryti">✕</button>
         </div>
         <div class="sScope"><button id="sThis" class="on">Šiame žemėlapyje</button><button id="sAll">Visuose išsaugotuose</button></div>
         <div id="sLens"></div>
@@ -7234,7 +7234,12 @@ function sSnippet(n){
   btn.addEventListener('click',e=>{ e.stopPropagation();
     panel.classList.contains('open') ? close(true) : open(); });
   panel.addEventListener('click',e=>e.stopPropagation());
-  document.getElementById('sClear').addEventListener('click',()=>{ inp.value=''; setQuery(''); run(); inp.focus(); });
+  /* ✕ UŽDARO skydelį — būtent to vartotojas ir tikisi paspaudęs kampe.
+     Jei laukelyje yra tekstas, pirmas paspaudimas jį išvalo, antras uždaro. */
+  document.getElementById('sClear').addEventListener('click',()=>{
+    if(inp.value.trim()){ inp.value=''; setQuery(''); run(); inp.focus(); }
+    else close(true);
+  });
 
   inp.addEventListener('input',()=>{ clearTimeout(tmr); tmr=setTimeout(()=>{ setQuery(inp.value); run(); },200); });
   inp.addEventListener('keydown',e=>{
@@ -7675,7 +7680,12 @@ var MM_SIG = {
     [10, /\b(pavyzdžiui|iliustracij|palyginimas|analogij)/i],   /* įveda pavyzdį */
     [ 8, /\b(pavyzdys|pavyzdį)\b/i],                            /* pateikia pavyzdį */
     [ 5, /\b(pavyzdžio|pavyzdžiu)\b/i],                         /* dažniausiai TIK nurodo į pavyzdį */
-    [ 7, /\b(tarsi|panašiai kaip|kaip ir šiandien|įsivaizduokime|įsivaizduok|palyginkime)\b/i]
+    [ 7, /\b(tarsi|panašiai kaip|kaip ir šiandien|įsivaizduokime|įsivaizduok|palyginkime)\b/i],
+    /* PALYGINIMAS veiksmu: „padėtį galima lyginti su Sodoma ir Gomora" */
+    [ 9, /\b(galima\s+(?:pa)?lyginti\s+su|prilygsta|lygintina\s+su)\b/i],
+    /* palyginimo antraštė: „Nojaus laikais — kaip Sodoma ir Gomora" */
+    [ 8, /—\s*kaip\s+\p{Lu}/u, 'lbl'],
+    [ 5, /\blyg\s/i]
   ],
   'n-data': [
     [ 9, /\b\d+(?:[.,]\d+)?\s*(m\.|m\b|metų|metai|metus|km\/h|km|kg|t\b|tonų|trilijonų|milijardų|milijonų|proc\.?|%|cm|kub\.|kubinių|litrų|kartų)/],
@@ -7791,7 +7801,12 @@ function mmClassify(label, note, hasKids){
   /* 6. Patarimas / veiksmas — skatinamoji forma. Pavadinimas svarbesnis už tekstą;
         „Klauskime savęs: ar elgiuosi teisingai?" yra raginimas, ne klausimas. */
   if(mmHas(RX_HORT_L, L)) return 'n-step';
-  if(mmHas(RX_HORT_N, N) && !mmHas(RX_READCUE, N)) return 'n-step';
+  /* „Pagalvokime: … padėtį galima lyginti su Sodoma" — skatinamasis ĮVADAS
+     neturi užgožti turinio: jei tekste yra aiškus palyginimo/pavyzdžio
+     žymuo, sprendžia svėrimas žemiau, ne pirmas žodis. */
+  if(mmHas(RX_HORT_N, N) && !mmHas(RX_READCUE, N)
+     && !/(galima\s+(?:pa)?lyginti\s+su|pavyzdžiui|iliustracij|palyginim|analogij)/i.test(N))
+    return 'n-step';
 
   /* 7. Klausimas — klausia PATS pavadinimas (o ne kur nors tekste esantis sakinys) */
   if(/\?\s*$/.test(L)) return 'n-question';
