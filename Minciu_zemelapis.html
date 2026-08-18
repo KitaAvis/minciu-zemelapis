@@ -3246,7 +3246,13 @@ const OBJ={}; (function idx(n,p){n._p=p;OBJ[n.id]=n;(n.children||[]).forEach(c=>
    (įkėlus iš failo ar iš Saved Maps) — kitaip OBJ lieka rodyti į senas korteles
    ir lūžta užrašinė, vilkimas, formatavimas bei miniatiūra. */
 function indexTree(){ Object.keys(OBJ).forEach(k=>delete OBJ[k]);
-  (function idx(n,p){ n._p=p; OBJ[n.id]=n; (n.children||[]).forEach(c=>idx(c,n)); })(DATA,null); }
+  (function idx(n,p){ n._p=p; OBJ[n.id]=n; (n.children||[]).forEach(c=>idx(c,n)); })(DATA,null);
+  /* Grafas atnaujinamas čia, nes indexTree kviečia VISI keliai, keičiantys
+     sandarą: įkėlimas, išsaugoto atidarymas, rakurso perdėliojimas, atšaukimas.
+     Kabinti prie kiekvieno atskirai reikštų anksčiau ar vėliau vieną pamiršti. */
+  try{ mmMigrateGraph(); }catch(e){}
+  try{ mmGraphSync(); }catch(e){}
+}
 // HIERARCHINĖ NUMERACIJA: potemės = romėniški (I,II,III); jų kortelės = 1,2,3; gilesnės = 1.1, 1.1.1...
 const ROMAN=["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
 let NUMBERING_ON=true;
@@ -4769,6 +4775,11 @@ function render(){
   applyGama();          // spalvų gama (jei pasirinkta) — virš temos spalvų
   applyFmtStyles();     // formato skydelio nustatymai (virs temos stilių)
   applyBranchSel();     // atkuriam pažymėtos šakos apvadą po perpiešimo
+  /* Grafas atnaujinamas ČIA, o ne tik indexTree'e: paleidžiant OBJ statomas
+     įterptine eilute (žr. `const OBJ={}` viršuje), tad indexTree pirmo kartelio
+     apskritai nemato. Sąsajų kešas šiuo momentu jau paruoštas ženkliukams,
+     todėl mmRelations() nieko papildomai neskaičiuoja. */
+  try{ mmMigrateGraph(); mmGraphSync(); }catch(e){}
   // ── išmatuojam realius kortelių pločius → atstūmimas naudoja tikrus dydžius (ne fiks. 312)
   let wChanged=false;
   document.querySelectorAll('.node').forEach(el=>{
@@ -4800,6 +4811,137 @@ function render(){
    Sąsaja gimsta iš ↳ eilutės pastaboje, kurioje paminėtas kitos kortelės
    pavadinimas. Iš jų: punktyrinės linijos žemėlapyje, abipusė skiltis
    „Susijusios kortelės" užrašinėje ir spausdinamas sąrašas. */
+/* ══════════ SEMANTINIS GRAFAS ════════════════════════════════════════════
+   Struktūros (radialinis, laiko juosta, matrica…) yra PROJEKCIJOS ant to
+   paties grafo. Taip jau ir buvo: visi devyni išdėstymai skaito tą patį medį
+   per vieną VK(). Trūko tik tipizuotų duomenų — jie pridedami čia.
+
+   Hierarchija laikoma MEDYJE, ne briaunų sąraše: n.children YRA hierarchinės
+   briaunos, ir laikyti jas dar kartą reikštų tą patį dalyką dviejose vietose,
+   kurios anksčiau ar vėliau išsiskiria. Briaunų sąraše — tik kryžminiai ryšiai.
+   Briaunos tipas vis tiek saugomas: jo prireiks, jei kada kortelė turės du
+   tėvus, ir tada hierarchija nebetilps į medį. */
+
+/* Uždaras ryšių etikečių sąrašas. Laisvas tekstas čia neleidžiamas, nes juo
+   remsis mokymosi režimo klausimai: klaidingi atsakymai imami iš to paties
+   sąrašo. Savais žodžiais rašomos etiketės lieka sąvokų žemėlapio burbuluose
+   (n.rel) — tai atskiras, vartotojo kuriamas turinys, ir jis nekeičiamas. */
+const MM_EDGE_LABELS = ['sukelia','yra_dalis','yra_pavyzdys','priestarauja','patvirtina',
+                        'seka_po','priklauso_nuo','apibrezia','panasus_i','skiriasi_tuo'];
+const MM_NODE_TYPES  = ['saknis','tema','detale','terminas','data','skaicius'];
+const MM_GRAPH_V = 1;
+
+/* Datos ir skaičiai atpažįstami taisyklėmis, ne modeliu: čia nėra semantinio
+   sprendimo, tik forma. Semantinį sprendimą — ryšio etiketę — priims modelis
+   3 žingsnyje. */
+const RX_METAI = /(^|[^0-9])(1[0-9]{3}|20[0-9]{2})([^0-9]|$)/;
+const RX_MENUO = /(sausi|vasari|kov|balandž|geguž|biržel|liep|rugpjū|rugsėj|spali|lapkri|gruodž)/i;
+const RX_SKAICIUS = /([0-9]{2,}|[0-9]+ *%|procent)/i;
+
+function mmNodeType(n){
+  if(!n) return 'detale';
+  if(!n._p) return 'saknis';
+  if(n._p && !n._p._p) return 'tema';
+  const s = String(n.label||'');
+  if(RX_METAI.test(s) || RX_MENUO.test(s)) return 'data';
+  if(RX_SKAICIUS.test(s)) return 'skaicius';
+  let role=null; try{ role = window.mmNodeRole ? window.mmNodeRole(n) : null; }catch(e){}
+  if(role==='n-def') return 'terminas';
+  return 'detale';
+}
+
+/* Svarba skaičiuojama iš SANDAROS, ne iš teksto: gylis, pošakės dydis, kiek
+   kartų į kortelę rodo kitos, ir kortelės vaidmuo. Šaknis visada 1,0.
+   Skaičiuojama, o ne prašoma modelio: čia nėra ko spręsti, tik ką suskaičiuoti,
+   ir vartotojui tai nieko nekainuoja. */
+function mmGraphSync(){
+  if(typeof DATA==='undefined' || !DATA) return;
+  const ids=Object.keys(OBJ);
+  if(!ids.length) return;
+  const lapai={}, gylis={}, kryz={};
+  (function w(n,d){
+    gylis[n.id]=d;
+    const k=n.children||[];
+    if(!k.length){ lapai[n.id]=1; return 1; }
+    let s=0; k.forEach(c=>{ s+=w(c,d+1); });
+    lapai[n.id]=s; return s;
+  })(DATA,0);
+  const br = (DATA.edges && DATA.edges.length) ? DATA.edges
+           : (function(){ try{ return mmRelations().map(p=>({from_id:p.from_id||p.a,to_id:p.to_id||p.b})); }
+                          catch(e){ return []; } })();
+  br.forEach(e=>{ kryz[e.from_id]=(kryz[e.from_id]||0)+1; kryz[e.to_id]=(kryz[e.to_id]||0)+1; });
+  let maxL=1, maxK=1;
+  ids.forEach(id=>{ if((lapai[id]||0)>maxL) maxL=lapai[id]; if((kryz[id]||0)>maxK) maxK=kryz[id]; });
+  ids.forEach(id=>{
+    const n=OBJ[id]; if(!n) return;
+    n.tipas = mmNodeType(n);
+    if(n.tipas==='saknis'){ n.svarba=1; return; }
+    let role=null; try{ role = window.mmNodeRole ? window.mmNodeRole(n) : null; }catch(e){}
+    const bonus = (role==='n-action'||role==='n-question') ? 1 : 0.4;
+    const d = gylis[id]||1;
+    const raw = 0.45*(1/(1+d)) + 0.30*((lapai[id]||1)/maxL) + 0.15*((kryz[id]||0)/maxK) + 0.10*bonus;
+    n.svarba = Math.round(Math.min(1, raw*1.35)*100)/100;
+  });
+}
+
+/* Vienkartinė migracija. Kryžminiai ryšiai iki šiol NEBUVO saugomi — jie
+   kaskart išvedami iš užrašų eilučių pagal pavadinimų sutapimą. Čia jie
+   paverčiami tikromis briaunomis su kryptimi ir stiprumu. Etiketė lieka
+   tuščia: ją parinks modelis 3 žingsnyje, nes tai semantinis sprendimas.
+   Seni žemėlapiai be `edges` veikia kaip veikė — išvedimas lieka atsarginiu
+   keliu (žr. mmGraph), todėl nieko nelūžta. */
+function mmMigrateGraph(force){
+  if(typeof DATA==='undefined' || !DATA) return 0;
+  if(!force && DATA.graphV >= MM_GRAPH_V) return 0;
+  let poros=[]; try{ poros=mmRelations(); }catch(e){ poros=[]; }
+  const senos={};
+  (DATA.edges||[]).forEach(e=>{ senos[e.from_id+'|'+e.to_id]=e; });
+  const out=[];
+  poros.forEach(p=>{
+    const f=p.from_id||p.a, t=p.to_id||p.b;
+    if(!OBJ[f] || !OBJ[t]) return;
+    const buvo = senos[f+'|'+t] || senos[t+'|'+f];
+    const kartai = p.kartai||1;
+    out.push({
+      from_id:f, to_id:t, tipas:'kryzminis',
+      etikete: buvo ? (buvo.etikete||null) : null,
+      kryptis: p.abipus ? 'abipuse' : 'vienpuse',
+      stiprumas: (buvo && buvo.stiprumas) ? buvo.stiprumas
+                 : Math.round(Math.min(0.9, 0.3 + 0.2*kartai)*100)/100
+    });
+  });
+  DATA.edges = out;
+  DATA.graphV = MM_GRAPH_V;
+  return out.length;
+}
+
+/* Vienintelės durys į grafą. Briaunos su dingusiais galais atmetamos
+   SKAITANT, o ne trinamos: kortelė gali sugrįžti atšaukiant veiksmą, ir
+   ištrynus briauną ji grįžtų be ryšių. */
+function mmGraph(){
+  const nodes=[];
+  (function w(n,d){
+    nodes.push({id:n.id, tekstas:n.label||'', lygis:d,
+                tevas_id:(n._p?n._p.id:null),
+                tipas:n.tipas||mmNodeType(n),
+                svarba:(typeof n.svarba==='number'?n.svarba:0)});
+    (n.children||[]).forEach(c=>w(c,d+1));
+  })(DATA,0);
+  let edges = DATA.edges;
+  if(!edges){
+    try{ edges = mmRelations().map(p=>({from_id:p.from_id||p.a, to_id:p.to_id||p.b,
+      tipas:'kryzminis', etikete:null, kryptis:p.abipus?'abipuse':'vienpuse',
+      stiprumas:Math.round(Math.min(0.9,0.3+0.2*(p.kartai||1))*100)/100})); }
+    catch(e){ edges=[]; }
+  }
+  edges = edges.filter(e=>OBJ[e.from_id] && OBJ[e.to_id]);
+  return {nodes:nodes, edges:edges};
+}
+window.mmGraph=mmGraph;
+window.mmMigrateGraph=mmMigrateGraph;
+window.mmGraphSync=mmGraphSync;
+window.MM_EDGE_LABELS=MM_EDGE_LABELS;
+
 let REL_CACHE=null;
 function mmRelations(){
   if(REL_CACHE) return REL_CACHE;
@@ -4819,7 +4961,13 @@ function mmRelations(){
         const t=OBJ[tid];
         if(t && (t._p===n || n._p===t)) return;    /* tėvą ir vaiką jau jungia tikra linija */
         const key=n.id<tid ? n.id+'|'+tid : tid+'|'+n.id;
-        if(!seen[key]){ seen[key]=1; pairs.push({a:n.id,b:tid}); }
+        /* Kryptis ir pasikartojimų skaičius reikalingi grafo briaunoms.
+           .a/.b palieka porą betvarkę — juos skaito jau esami naudotojai;
+           .from_id/.to_id įrašo, KURI kortelė į kurią rodo. */
+        if(!seen[key]){ seen[key]={a:n.id,b:tid,from_id:n.id,to_id:tid,kartai:1,abipus:false};
+          pairs.push(seen[key]); }
+        else { seen[key].kartai++;
+          if(seen[key].from_id!==n.id) seen[key].abipus=true; }
       });
     });
     (n.children||[]).forEach(w);
@@ -5856,7 +6004,12 @@ function snapshot(){
   for(const id in OBJ){ const n=OBJ[id];
     s[id]={label:n.label,customColor:n.customColor,icon:n.icon,img:n.img,_c:n._c,w:n.w,sc:n.sc,st:n.st,rel:n.rel,mine:n.mine,
            focus:n.focus,focusKind:n.focusKind,focusHow:n.focusHow,focusFrom:n.focusFrom,
-           fitLvl:n.fitLvl,fitRel:n.fitRel,fitWhy:n.fitWhy,fmt:(n.fmt?JSON.stringify(n.fmt):undefined),
+           fitLvl:n.fitLvl,fitRel:n.fitRel,fitWhy:n.fitWhy,
+           tipas:n.tipas,svarba:n.svarba,graphV:n.graphV,
+           /* briaunos — kaip eilutė: masyvas būtų išsaugotas nuoroda, ir vėlesnis
+              jo pakeitimas tyliai perrašytų jau padarytą momentinę nuotrauką */
+           edges:(n.edges?JSON.stringify(n.edges):undefined),
+           fmt:(n.fmt?JSON.stringify(n.fmt):undefined),
            mx:(manual[id]?manual[id].x:undefined),my:(manual[id]?manual[id].y:undefined),
            /* SANDARA — kad būtų galima atšaukti ir kortelės perkėlimą į kitą tėvinę kortelę */
            p:(n._p?n._p.id:null), i:(n._p?(n._p.children||[]).indexOf(n):-1)};
@@ -5899,6 +6052,8 @@ function restoreSnap(s){
     n.st=s[id].st; n.rel=s[id].rel; n.mine=s[id].mine;
     n.focus=s[id].focus; n.focusKind=s[id].focusKind; n.focusHow=s[id].focusHow; n.focusFrom=s[id].focusFrom;
     n.fitLvl=s[id].fitLvl; n.fitRel=s[id].fitRel; n.fitWhy=s[id].fitWhy;
+    n.tipas=s[id].tipas; n.svarba=s[id].svarba; n.graphV=s[id].graphV;
+    n.edges = s[id].edges ? JSON.parse(s[id].edges) : undefined;
     n.w=s[id].w; n.sc=s[id].sc;
     n.fmt = s[id].fmt ? JSON.parse(s[id].fmt) : undefined;
     if(s[id].mx===undefined) delete manual[id]; else manual[id]={x:s[id].mx,y:s[id].my};
@@ -5921,6 +6076,8 @@ function doUndo(){
     n.st=s[id].st; n.rel=s[id].rel; n.mine=s[id].mine;
     n.focus=s[id].focus; n.focusKind=s[id].focusKind; n.focusHow=s[id].focusHow; n.focusFrom=s[id].focusFrom;
     n.fitLvl=s[id].fitLvl; n.fitRel=s[id].fitRel; n.fitWhy=s[id].fitWhy;
+    n.tipas=s[id].tipas; n.svarba=s[id].svarba; n.graphV=s[id].graphV;
+    n.edges = s[id].edges ? JSON.parse(s[id].edges) : undefined;
     n.w=s[id].w; n.sc=s[id].sc;
     n.fmt = s[id].fmt ? JSON.parse(s[id].fmt) : undefined;
     if(s[id].mx!==undefined) manual[id]={x:s[id].mx,y:s[id].my}; else delete manual[id];
@@ -6244,6 +6401,9 @@ function cleanTree(n){ return {id:n.id,label:n.label,cls:n.cls,icon:n.icon,img:n
      tyliai dingsta išsaugant arba atšaukiant (žr. CLAUDE.md). */
   focus:n.focus,focusKind:n.focusKind,focusHow:n.focusHow,focusFrom:n.focusFrom,
   fitLvl:n.fitLvl,fitRel:n.fitRel,fitWhy:n.fitWhy,
+  /* SEMANTINIS GRAFAS: tipas ir svarba visose kortelėse, briaunos ir versija —
+     tik šaknyje (kitur jų nėra, tad jokio pertekliaus). */
+  tipas:n.tipas,svarba:n.svarba,edges:n.edges,graphV:n.graphV,
   customColor:n.customColor,w:n.w,scale:n.scale,_c:!!n._c,children:(n.children||[]).map(cleanTree)}; }
 function saveMap(){
   let arr=[]; try{ arr=JSON.parse(localStorage.getItem('mm_saved_maps')||'[]'); }catch(e){}
